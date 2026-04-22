@@ -88,7 +88,7 @@
 
     /* The password — stored as a simple reversed + base64 check for light obfuscation.
        Not truly secure (client-side never is), but keeps casual visitors out. */
-    var PASS = atob('dmFpYmhhdjIwMjY='); // "vaibhav2026"
+    var PASS = atob('Y2xhc3N5dmFpYmhhdkAxNQ=='); // "classyvaibhav@15"
 
     function attempt() {
       if (inp.value === PASS) {

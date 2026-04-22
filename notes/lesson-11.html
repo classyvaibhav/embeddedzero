@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 11 &mdash; Your First Real Project!</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 11</div>
+    <span class="lesson-tag">Lesson 11 of 12</span>
+    <h1>Your First Real Project &mdash; Sensor Hub</h1>
+    <p class="subtitle">Put it all together! ESP32 + temperature sensor + pressure sensor + OLED display + button. With full BOM. This is your portfolio piece.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Have built a complete, functional embedded project</li>
+        <li>Know how to create a professional BOM (Bill of Materials)</li>
+        <li>Have a GitHub repo recruiters can actually click through</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 11</strong> &middot; Next: Where to Go Next &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>The Project: Environmental Sensor Hub</h2>
+    <p>You'll build a device that reads <strong>temperature, humidity, and pressure</strong>, displays them on an OLED screen, and lets you toggle between screens with a button. This combines everything you've learned: GPIO, I2C, button debouncing, display driving.</p>
+
+    <div class="callout key">
+      <strong class="label">&#128202; What You're Building</strong>
+      A pocket-sized weather station. Reads DHT22 (temp + humidity) + BMP280 (pressure + altitude). Displays on a 128&times;64 OLED. Press a button to cycle views: Summary / Detailed / Historical Graph.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>The Bill of Materials (BOM)</h2>
+    <p>A BOM is the shopping list for your project. Every engineering project starts with one. This is exactly the skill recruiters test in hardware interviews.</p>
+
+    <table>
+      <tr><th>#</th><th>Part</th><th>MPN</th><th>Qty</th><th>Unit</th><th>Source</th><th>Notes</th></tr>
+      <tr><td>1</td><td>ESP32 DevKit v1</td><td>ESP32-DEVKITC-32D</td><td>1</td><td>&#8377;450</td><td>Robu.in</td><td>Main MCU</td></tr>
+      <tr><td>2</td><td>DHT22 temp/humidity sensor</td><td>AM2302</td><td>1</td><td>&#8377;250</td><td>Robu.in</td><td>Accurate, single-wire</td></tr>
+      <tr><td>3</td><td>BMP280 pressure sensor</td><td>BMP280 breakout</td><td>1</td><td>&#8377;150</td><td>Robu.in</td><td>I2C</td></tr>
+      <tr><td>4</td><td>0.96" OLED I2C</td><td>SSD1306 128&times;64</td><td>1</td><td>&#8377;180</td><td>Robu.in</td><td>I2C shared with BMP</td></tr>
+      <tr><td>5</td><td>Push button tactile</td><td>generic 6&times;6 mm</td><td>1</td><td>&#8377;5</td><td>Robu.in</td><td>View toggle</td></tr>
+      <tr><td>6</td><td>10 k&Omega; resistor</td><td>0.25 W 5%</td><td>1</td><td>&#8377;1</td><td>Robu.in</td><td>DHT22 pull-up</td></tr>
+      <tr><td>7</td><td>Breadboard 830-point</td><td>SYB-120</td><td>1</td><td>&#8377;120</td><td>Robu.in</td><td>Prototype</td></tr>
+      <tr><td>8</td><td>Jumper wires (M-M, M-F)</td><td>40-pack</td><td>1 set</td><td>&#8377;80</td><td>Robu.in</td><td>Connections</td></tr>
+      <tr><td>9</td><td>USB-C cable</td><td>A to micro-USB or C</td><td>1</td><td>&#8377;100</td><td>Local</td><td>Power + program</td></tr>
+    </table>
+
+    <p style="margin-top:12px"><strong>Total: ~&#8377;1,336</strong>. One-time buy. You'll use these components for dozens of future projects too.</p>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Connection Guide</h2>
+    <p>Wire each ESP32 pin to the corresponding pin on each module. This table is how professional hardware engineers actually document wiring &mdash; far easier to follow than a schematic with crossing wires.</p>
+
+    <table>
+      <tr><th>ESP32 Pin</th><th>Goes To</th><th>Purpose</th></tr>
+      <tr><td><strong>3V3</strong></td><td>OLED V+, BMP280 V+, DHT22 V+</td><td>Power (3.3 V) for all 3 sensors</td></tr>
+      <tr><td><strong>GND</strong></td><td>OLED GND, BMP280 GND, DHT22 GND, Button (one leg)</td><td>Common ground for everything</td></tr>
+      <tr><td><strong>GPIO 21</strong> (SDA)</td><td>OLED SDA <em>and</em> BMP280 SDA</td><td>I2C data &mdash; both sensors share this wire</td></tr>
+      <tr><td><strong>GPIO 22</strong> (SCL)</td><td>OLED SCL <em>and</em> BMP280 SCL</td><td>I2C clock &mdash; both sensors share this wire</td></tr>
+      <tr><td><strong>GPIO 5</strong></td><td>DHT22 DATA</td><td>Sensor data (single-wire protocol)</td></tr>
+      <tr><td><strong>GPIO 4</strong></td><td>Button (other leg)</td><td>Screen toggle input (INPUT_PULLUP)</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; Don't Forget</strong>
+      <ul>
+        <li>Add a <strong>10 k&Omega; pull-up resistor</strong> between the DHT22 DATA pin and 3V3. DHT22 won't communicate without it.</li>
+        <li>OLED and BMP280 are <strong>both I2C</strong> &mdash; they share SDA/SCL wires but have different addresses (0x3C and 0x76). The library handles address selection automatically.</li>
+        <li>Button uses <code>INPUT_PULLUP</code> in code, so no external pull-up needed for it.</li>
+      </ul>
+    </div>
+
+    <h3 style="margin-top:24px">How the I2C Bus Works</h3>
+    <p>The clever part of this circuit is how OLED and BMP280 both connect to the same two wires:</p>
+
+    <div class="diagram">
+      <svg width="540" height="180" viewBox="0 0 540 180" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="540" height="180" fill="white"/>
+
+        <rect x="20" y="60" width="110" height="80" rx="6" fill="#6b21a8" stroke="#a855f7" stroke-width="2"/>
+        <text x="45" y="88" font-size="12" fill="white" font-weight="700">ESP32</text>
+        <text x="48" y="108" font-size="10" fill="#d8b4fe">GPIO 21</text>
+        <text x="48" y="125" font-size="10" fill="#d8b4fe">GPIO 22</text>
+
+        <line x1="130" y1="108" x2="510" y2="108" stroke="#fde047" stroke-width="3"/>
+        <text x="340" y="102" font-size="11" fill="#a16207" font-weight="700">SDA (shared data line)</text>
+
+        <line x1="130" y1="125" x2="510" y2="125" stroke="#60a5fa" stroke-width="3"/>
+        <text x="340" y="144" font-size="11" fill="#1e3a8a" font-weight="700">SCL (shared clock line)</text>
+
+        <rect x="200" y="20" width="120" height="40" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="232" y="40" font-size="12" font-weight="700">OLED</text>
+        <text x="220" y="55" font-size="10" fill="#15803d">address 0x3C</text>
+        <line x1="240" y1="60" x2="240" y2="108" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <line x1="280" y1="60" x2="280" y2="125" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+        <rect x="380" y="20" width="130" height="40" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+        <text x="410" y="40" font-size="12" font-weight="700">BMP280</text>
+        <text x="400" y="55" font-size="10" fill="#92400e">address 0x76</text>
+        <line x1="420" y1="60" x2="420" y2="108" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <line x1="460" y1="60" x2="460" y2="125" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+        <text x="20" y="170" font-size="10" fill="#64748b" font-style="italic">Both slaves listen on the same wires. The address in each message tells them which one should respond.</text>
+      </svg>
+      <div class="caption">I2C bus &mdash; one master (ESP32), two slaves sharing two wires.</div>
+    </div>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Easier Alternative</strong>
+      Many hobbyists use a small <strong>4-pin or 6-pin terminal strip</strong> on a breadboard to distribute 3V3 and GND across multiple modules. It keeps the wiring cleaner. Once you add a third I2C device, this becomes essential.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>The Complete Code</h2>
+
+    <pre class="code">#include &lt;Wire.h&gt;
+#include &lt;Adafruit_GFX.h&gt;
+#include &lt;Adafruit_SSD1306.h&gt;
+#include &lt;Adafruit_BMP280.h&gt;
+#include &lt;DHT.h&gt;
+
+#define DHT_PIN <span class="num">5</span>
+#define BTN_PIN <span class="num">4</span>
+#define DHT_TYPE DHT22
+
+Adafruit_SSD1306 display(<span class="num">128</span>, <span class="num">64</span>);
+Adafruit_BMP280 bmp;
+DHT dht(DHT_PIN, DHT_TYPE);
+
+<span class="kw">int</span> screen = <span class="num">0</span>;
+<span class="kw">volatile</span> <span class="kw">bool</span> btnEvent = <span class="kw">false</span>;
+<span class="kw">unsigned</span> <span class="kw">long</span> lastBtn = <span class="num">0</span>;
+<span class="kw">unsigned</span> <span class="kw">long</span> lastRead = <span class="num">0</span>;
+<span class="kw">float</span> temp = <span class="num">0</span>, hum = <span class="num">0</span>, press = <span class="num">0</span>;
+
+<span class="kw">void</span> IRAM_ATTR <span class="fn">onButton</span>() {
+  <span class="kw">unsigned</span> <span class="kw">long</span> now = millis();
+  <span class="kw">if</span> (now - lastBtn &gt; <span class="num">200</span>) {
+    btnEvent = <span class="kw">true</span>;
+    lastBtn = now;
+  }
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="num">115200</span>);
+  pinMode(BTN_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(BTN_PIN), onButton, FALLING);
+
+  Wire.begin();
+  display.begin(SSD1306_SWITCHCAPVCC, <span class="num">0x3C</span>);
+  bmp.begin(<span class="num">0x76</span>);
+  dht.begin();
+
+  display.setTextColor(WHITE);
+  display.setTextSize(<span class="num">1</span>);
+  display.clearDisplay();
+  display.setCursor(<span class="num">0</span>, <span class="num">0</span>);
+  display.println(<span class="str">"Sensor Hub"</span>);
+  display.println(<span class="str">"Bahar's Project"</span>);
+  display.display();
+  delay(<span class="num">1500</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">unsigned</span> <span class="kw">long</span> now = millis();
+
+  <span class="cmt">// Read sensors every 2 seconds</span>
+  <span class="kw">if</span> (now - lastRead &gt;= <span class="num">2000</span>) {
+    lastRead = now;
+    temp = dht.readTemperature();
+    hum = dht.readHumidity();
+    press = bmp.readPressure() / <span class="num">100.0F</span>;  <span class="cmt">// convert Pa to hPa</span>
+  }
+
+  <span class="cmt">// Handle button: cycle screens</span>
+  <span class="kw">if</span> (btnEvent) {
+    btnEvent = <span class="kw">false</span>;
+    screen = (screen + <span class="num">1</span>) % <span class="num">3</span>;
+  }
+
+  <span class="cmt">// Render current screen</span>
+  display.clearDisplay();
+  display.setCursor(<span class="num">0</span>, <span class="num">0</span>);
+
+  <span class="kw">if</span> (screen == <span class="num">0</span>) {
+    display.println(<span class="str">"SUMMARY"</span>);
+    display.println();
+    display.print(<span class="str">"T: "</span>); display.print(temp, <span class="num">1</span>); display.println(<span class="str">" C"</span>);
+    display.print(<span class="str">"H: "</span>); display.print(hum, <span class="num">1</span>); display.println(<span class="str">" %"</span>);
+    display.print(<span class="str">"P: "</span>); display.print(press, <span class="num">0</span>); display.println(<span class="str">" hPa"</span>);
+  } <span class="kw">else</span> <span class="kw">if</span> (screen == <span class="num">1</span>) {
+    display.println(<span class="str">"DETAILED"</span>);
+    display.println();
+    display.print(<span class="str">"Temp: "</span>); display.print(temp, <span class="num">2</span>); display.println(<span class="str">" C"</span>);
+    display.print(<span class="str">"Humid: "</span>); display.print(hum, <span class="num">1</span>); display.println(<span class="str">" %"</span>);
+    display.print(<span class="str">"Press: "</span>); display.print(press, <span class="num">2</span>);
+    display.println(<span class="str">" hPa"</span>);
+    display.print(<span class="str">"Alt: "</span>); display.print(bmp.readAltitude(<span class="num">1013.25</span>), <span class="num">1</span>);
+    display.println(<span class="str">" m"</span>);
+  } <span class="kw">else</span> {
+    display.println(<span class="str">"ABOUT"</span>);
+    display.println();
+    display.println(<span class="str">"Bahar's Weather"</span>);
+    display.println(<span class="str">"Station v1.0"</span>);
+    display.println(<span class="str">"ESP32+DHT22+BMP"</span>);
+  }
+  display.display();
+  delay(<span class="num">100</span>);
+}</pre>
+
+    <!-- ================== WOKWI FULL PROJECT ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Build in Wokwi First!</span>
+        <h4>Simulate the Full Project</h4>
+      </div>
+      <p style="font-size:14px">Wokwi supports all these parts in simulation! Build it virtually first, then replicate on real hardware.</p>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open <a href="https://wokwi.com/projects/new/esp32" target="_blank">Wokwi &rarr; new ESP32 project</a></li>
+          <li>Add parts: SSD1306 OLED, DHT22, BMP280, push button</li>
+          <li>Wire per the diagram above (OLED + BMP share I2C bus)</li>
+          <li>In libraries panel: add <code>Adafruit SSD1306</code>, <code>Adafruit BMP280</code>, <code>DHT sensor library</code></li>
+          <li>Paste the full code</li>
+          <li>Click Play. OLED shows temperature / humidity / pressure</li>
+          <li>Click the button in the simulator &mdash; screen cycles through 3 views</li>
+          <li>In Wokwi's DHT22 and BMP280 panels, slide the values to simulate different readings</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/new/esp32" target="_blank">Open Wokwi ESP32 &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">5</span>Push to GitHub &mdash; Make It Your Portfolio</h2>
+    <p>This project should become your FIRST serious GitHub repo. Every recruiter checking out your profile will see this.</p>
+
+    <ol>
+      <li>Create repo: <code>bahar-jindani/esp32-sensor-hub</code></li>
+      <li>Add these files:
+        <ul>
+          <li><code>README.md</code> &mdash; project description, photos, features, BOM</li>
+          <li><code>sensor-hub.ino</code> &mdash; the code</li>
+          <li><code>schematic.png</code> &mdash; exported wiring diagram</li>
+          <li><code>BOM.csv</code> &mdash; the bill of materials</li>
+          <li><code>demo.gif</code> or <code>demo.mp4</code> &mdash; short video of it working</li>
+        </ul>
+      </li>
+      <li>Good README structure:
+        <ul>
+          <li>One-line description at the top</li>
+          <li>Screenshot / GIF of it working</li>
+          <li>Features bullet list</li>
+          <li>How to build (hardware + software)</li>
+          <li>Full BOM as a markdown table</li>
+          <li>Wiring diagram</li>
+          <li>What I learned section</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="callout key">
+      <strong class="label">&#127942; You Did It!</strong>
+      This is a real embedded project. You can talk about it in interviews. You built every piece from basic electronics understanding up to multi-sensor integration. This is the level of "Embedded Systems Trainee" hiring.
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>A real project integrates <em>everything</em>: GPIO, I2C, interrupts, BOM, documentation.</li>
+        <li>Always build in a simulator first (Wokwi) before real hardware &mdash; saves debugging time.</li>
+        <li>BOM quality matters &mdash; it's the shopping list that makes your project reproducible.</li>
+        <li>Push to GitHub with a good README. Your portfolio is your resume.</li>
+        <li>When it works: take a photo, record a 30-second video, post on LinkedIn.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-10.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Interrupts</span>
+      </a>
+      <a class="next" href="lesson-12.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Where to Go Next</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 11 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

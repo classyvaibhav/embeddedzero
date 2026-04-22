@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 7 &mdash; GPIO: Buttons &amp; LEDs</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 7</div>
+    <span class="lesson-tag">Lesson 7 of 12</span>
+    <h1>GPIO &mdash; Controlling &amp; Reading Pins</h1>
+    <p class="subtitle">Light up LEDs. Read button presses. Understand the counterintuitive INPUT_PULLUP mode that you'll use every day for the rest of your career.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Configure pins as inputs or outputs, with or without pull-ups</li>
+        <li>Read a push button and toggle an LED based on it</li>
+        <li>Understand active-low logic and why buttons usually connect to ground</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 7</strong> &middot; Next: ADC &amp; PWM &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>Three Pin Modes</h2>
+    <p>Every GPIO pin on an MCU can be in one of three modes. You pick with <code>pinMode()</code> in <code>setup()</code>:</p>
+
+    <table>
+      <tr><th>Mode</th><th>What it does</th><th>When to use</th></tr>
+      <tr><td><code>OUTPUT</code></td><td>Drives voltage HIGH or LOW</td><td>LEDs, motor control, signalling</td></tr>
+      <tr><td><code>INPUT</code></td><td>High-impedance read (floating)</td><td>External pull-up/down already present</td></tr>
+      <tr><td><code>INPUT_PULLUP</code></td><td>Input with internal ~50 k&Omega; pull-up</td><td>Buttons &mdash; most common mode!</td></tr>
+    </table>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>The Counterintuitive Button</h2>
+    <p>Here's the thing that trips up every beginner. A button with <code>INPUT_PULLUP</code> wires like this:</p>
+
+    <div class="diagram">
+      <img src="assets/images/ArduinoUno_Button_InternalPullUpResistor_WiringDiagram.png" alt="Internal pull-up resistor configuration showing button between GPIO and GND with internal 20k resistor inside the microcontroller">
+      <div class="caption">Left: breadboard wiring. Right: what's happening electrically. The internal 20 k&Omega; resistor holds the pin HIGH by default. Pressing the button connects the pin to GND &rarr; pin reads LOW.</div>
+    </div>
+
+    <div class="callout key">
+      <strong class="label">&#127942; The Counterintuitive Part</strong>
+      Button NOT pressed &rarr; <code>digitalRead()</code> returns <strong>HIGH</strong>.<br>
+      Button PRESSED &rarr; <code>digitalRead()</code> returns <strong>LOW</strong>.
+      <br><br>
+      This is called <em>active-low</em> logic. It feels wrong at first, but 90% of real-world buttons work this way because connecting the other leg to GND is electrically simpler.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>The Code</h2>
+
+    <pre class="code"><span class="kw">const</span> <span class="kw">int</span> BTN_PIN = <span class="num">4</span>;
+<span class="kw">const</span> <span class="kw">int</span> LED_PIN = <span class="num">2</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(BTN_PIN, INPUT_PULLUP);     <span class="cmt">// button with internal pullup</span>
+  pinMode(LED_PIN, OUTPUT);           <span class="cmt">// LED as output</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (digitalRead(BTN_PIN) == LOW) {   <span class="cmt">// button is pressed</span>
+    digitalWrite(LED_PIN, HIGH);       <span class="cmt">// turn LED on</span>
+  } <span class="kw">else</span> {
+    digitalWrite(LED_PIN, LOW);        <span class="cmt">// otherwise off</span>
+  }
+}</pre>
+
+    <!-- ================== WOKWI SIM ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Button-Controlled LED in Wokwi</h4>
+      </div>
+
+      <div class="sim-screenshot">
+        <img src="assets/images/Button-Controlled LED in Wokwi.png" alt="Button-controlled LED circuit in Wokwi simulator showing Arduino Uno with LED on pin 13 and button">
+        <div class="caption">Actual Wokwi workspace. Click the button in the simulator; the LED turns on.</div>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open the ready-made project &rarr; <a href="https://wokwi.com/projects/375237011181407233" target="_blank"><strong>wokwi.com/projects/375237011181407233</strong></a></li>
+          <li>The circuit is already wired for you (Pin 2 LED, Pin 4 button)</li>
+          <li>Click the green <strong>Play</strong> button (top-right)</li>
+          <li>Click the button in the simulator &mdash; LED turns on. Release &mdash; LED off.</li>
+          <li><strong>Challenge:</strong> Modify the code so pressing TOGGLES the LED (press once = on, press again = off). Hint: track state in a <code>bool</code> variable and flip it on each press.</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/375237011181407233" target="_blank">Open Project in Wokwi &rarr;</a>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; ESP32 Pin Warnings</strong>
+      On ESP32, avoid using GPIO 0, 2, 12, 15 for <em>buttons with external pullups</em>. These are "strapping pins" &mdash; their state at boot affects how the ESP32 starts up. Safe button pins: GPIO 4, 5, 13, 14, 17, 18, 19, 23, 25&ndash;27, 32, 33.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>Driving Real Loads</h2>
+    <p>Remember: GPIO pins output only ~20 mA. You can light an LED directly, but for motors or bigger loads, you need the transistor circuits from Lesson 3. The GPIO controls the transistor's base/gate; the transistor controls the load.</p>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Which mode for a button wired to GND without external resistor?</summary>
+        <div class="answer"><strong>INPUT_PULLUP</strong>. The internal pull-up holds the pin HIGH until the button connects it to GND.</div>
+      </details>
+
+      <details class="q">
+        <summary>What does <code>digitalRead()</code> return when the pressed INPUT_PULLUP button is closed?</summary>
+        <div class="answer"><strong>LOW</strong>. Pressed = connected to GND = low voltage = LOW.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why not use GPIO 12 for a button on ESP32?</summary>
+        <div class="answer">Strapping pin &mdash; its state at boot affects flash voltage selection. Pulling it via a button/resistor could prevent the board from booting reliably.</div>
+      </details>
+
+      <details class="q">
+        <summary>Can a GPIO pin drive a 500 mA motor directly?</summary>
+        <div class="answer">No. GPIO limits ~20 mA. Use a transistor (MOSFET preferred) as shown in Lesson 3.</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>Three pin modes: <code>OUTPUT</code>, <code>INPUT</code>, <code>INPUT_PULLUP</code>.</li>
+        <li>Buttons usually wire to GND with INPUT_PULLUP &mdash; pressed reads LOW.</li>
+        <li>GPIO can source/sink ~20 mA. Bigger loads need a transistor switch.</li>
+        <li>Avoid ESP32 strapping pins (0, 2, 12, 15) for external circuits without care.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-06.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Your First Arduino</span>
+      </a>
+      <a class="next" href="lesson-08.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">ADC &amp; PWM</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 7 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

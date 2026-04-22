@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 8 &mdash; Analog World: ADC &amp; PWM</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 8</div>
+    <span class="lesson-tag">Lesson 8 of 12</span>
+    <h1>The Analog World &mdash; ADC &amp; PWM</h1>
+    <p class="subtitle">Digital pins are just HIGH or LOW. But sensors give smooth voltages, and LEDs can fade at any brightness. ADC and PWM bridge the digital and analog worlds.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Read a potentiometer with <code>analogRead()</code> and convert to volts</li>
+        <li>Fade an LED smoothly with PWM</li>
+        <li>Understand why PWM doesn't "really" output analog voltage</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 8</strong> &middot; Next: Serial, I2C, SPI &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>ADC &mdash; Reading the Analog World</h2>
+    <p>Most sensors (temperature, pressure, light, sound) output a continuously-varying voltage. Your MCU's CPU only understands numbers. The <strong>Analog-to-Digital Converter (ADC)</strong> bridges them: input voltage in, integer number out.</p>
+
+    <table>
+      <tr><th>Board</th><th>Resolution</th><th>Range</th><th>Mapping</th></tr>
+      <tr><td>Arduino Uno</td><td>10-bit</td><td>0 &ndash; 1023</td><td>0V &rarr; 0; 5V &rarr; 1023</td></tr>
+      <tr><td>ESP32</td><td>12-bit (configurable)</td><td>0 &ndash; 4095</td><td>0V &rarr; 0; 3.3V &rarr; 4095</td></tr>
+    </table>
+
+    <div class="formula">
+      Volts = raw &times; V<sub>ref</sub> / (2<sup>N</sup> &minus; 1)
+    </div>
+
+    <p><strong>Example:</strong> ESP32 reads raw = 2048. Volts = 2048 &times; 3.3 / 4095 = <strong>1.65 V</strong> (halfway).</p>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; The Classic First Experiment</strong>
+      Wire a 10k potentiometer: outer legs to V<sub>cc</sub> and GND, wiper (middle leg) to an ADC pin. As you turn the knob, you'll see the ADC value sweep from 0 to max. This is the fundamental input pattern for every sensor you'll ever read.
+    </div>
+
+    <!-- ================== TINKERCAD POT ADC ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Potentiometer to Serial Monitor (Tinkercad)</h4>
+      </div>
+
+      <div class="sim-screenshot">
+        <img src="assets/images/Potentiometer to Serial Monitor (Tinkercad).png" alt="Tinkercad circuit with Arduino Uno connected to a 10k potentiometer on a breadboard, wiper going to analog input A0">
+        <div class="caption">Real Tinkercad workspace. Potentiometer on the breadboard; wiper wired to Arduino A0.</div>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open the ready-made Tinkercad project &rarr; <a href="https://www.tinkercad.com/things/8HRPCkX6sl5/editel" target="_blank"><strong>Tinkercad &mdash; Potentiometer to Serial</strong></a></li>
+          <li>Everything is already wired (5V, GND, wiper &rarr; A0)</li>
+          <li>Paste this code into the Code panel:
+            <pre class="code" style="font-size:12px"><span class="kw">void</span> <span class="fn">setup</span>() { Serial.begin(<span class="num">9600</span>); }
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> raw = analogRead(A0);
+  <span class="kw">float</span> v = raw * <span class="num">5.0</span> / <span class="num">1023.0</span>;
+  Serial.print(<span class="str">"raw="</span>); Serial.print(raw);
+  Serial.print(<span class="str">" V="</span>); Serial.println(v, <span class="num">2</span>);
+  delay(<span class="num">200</span>);
+}</pre>
+          </li>
+          <li>Click <strong>Start Simulation</strong></li>
+          <li>Open Serial Monitor (bottom of screen)</li>
+          <li>Drag the pot slider. Values sweep from 0 to 1023 and volts from 0 to 5.</li>
+        </ol>
+        <a class="sim-button" href="https://www.tinkercad.com/things/8HRPCkX6sl5/editel" target="_blank">Open in Tinkercad &rarr;</a>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; ESP32 ADC Gotchas</strong>
+      <ul>
+        <li>ESP32 has <strong>ADC1</strong> (GPIO 32&ndash;39) and <strong>ADC2</strong> (GPIO 0, 2, 4, 12-15, 25-27). ADC2 shuts down when Wi-Fi is active. <em>Use ADC1 pins.</em></li>
+        <li>Readings are noisy. Average 10 samples for clean results.</li>
+        <li>Nonlinear near 0V and near V<sub>ref</sub>. Avoid the extreme ends.</li>
+      </ul>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>PWM &mdash; Fake Analog Output</h2>
+    <p>GPIO pins only output HIGH or LOW. But what if we switch them <em>very fast</em>, spending 30% of the time HIGH and 70% LOW? The <em>average</em> voltage is 30% of V<sub>cc</sub>. If a load has any inertia (an LED filament, a motor, a speaker), it responds to the average &mdash; so the load "sees" an analog voltage.</p>
+
+    <p>This is <strong>Pulse Width Modulation (PWM)</strong>. The fraction of time spent HIGH is the <strong>duty cycle</strong>:</p>
+
+    <div class="formula">
+      V<sub>avg</sub> = V<sub>cc</sub> &times; (duty / 255)
+    </div>
+
+    <div class="diagram">
+      <svg width="540" height="180" viewBox="0 0 540 180">
+        <rect x="0" y="0" width="540" height="180" fill="#fafaf9"/>
+        <text x="10" y="22" font-size="13" font-weight="700" fill="#0369a1">PWM at Different Duty Cycles (5V supply)</text>
+
+        <!-- 25% -->
+        <text x="20" y="55" font-size="11" fill="#0369a1" font-weight="700">25% duty</text>
+        <text x="20" y="68" font-size="10" fill="#64748b">avg = 1.25V</text>
+        <line x1="120" y1="40" x2="140" y2="40" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="140" y1="40" x2="140" y2="75" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="140" y1="75" x2="195" y2="75" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="195" y1="75" x2="195" y2="40" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="195" y1="40" x2="215" y2="40" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="215" y1="40" x2="215" y2="75" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="215" y1="75" x2="270" y2="75" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="270" y1="75" x2="270" y2="40" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="270" y1="40" x2="290" y2="40" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="290" y1="40" x2="290" y2="75" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="290" y1="75" x2="340" y2="75" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="120" y1="65" x2="340" y2="65" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="67" font-size="10" fill="#dc2626">1.25V avg</text>
+
+        <!-- 50% -->
+        <text x="20" y="110" font-size="11" fill="#0369a1" font-weight="700">50% duty</text>
+        <text x="20" y="123" font-size="10" fill="#64748b">avg = 2.50V</text>
+        <line x1="120" y1="95" x2="160" y2="95" stroke="#16a34a" stroke-width="2"/>
+        <line x1="160" y1="95" x2="160" y2="130" stroke="#16a34a" stroke-width="2"/>
+        <line x1="160" y1="130" x2="200" y2="130" stroke="#16a34a" stroke-width="2"/>
+        <line x1="200" y1="130" x2="200" y2="95" stroke="#16a34a" stroke-width="2"/>
+        <line x1="200" y1="95" x2="240" y2="95" stroke="#16a34a" stroke-width="2"/>
+        <line x1="240" y1="95" x2="240" y2="130" stroke="#16a34a" stroke-width="2"/>
+        <line x1="240" y1="130" x2="280" y2="130" stroke="#16a34a" stroke-width="2"/>
+        <line x1="280" y1="130" x2="280" y2="95" stroke="#16a34a" stroke-width="2"/>
+        <line x1="280" y1="95" x2="320" y2="95" stroke="#16a34a" stroke-width="2"/>
+        <line x1="320" y1="95" x2="320" y2="130" stroke="#16a34a" stroke-width="2"/>
+        <line x1="320" y1="130" x2="340" y2="130" stroke="#16a34a" stroke-width="2"/>
+        <line x1="120" y1="112" x2="340" y2="112" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="114" font-size="10" fill="#dc2626">2.50V avg</text>
+
+        <!-- 75% -->
+        <text x="20" y="160" font-size="11" fill="#0369a1" font-weight="700">75% duty</text>
+        <text x="20" y="173" font-size="10" fill="#64748b">avg = 3.75V</text>
+        <line x1="120" y1="145" x2="175" y2="145" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="175" y1="145" x2="175" y2="168" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="175" y1="168" x2="195" y2="168" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="195" y1="168" x2="195" y2="145" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="195" y1="145" x2="255" y2="145" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="255" y1="145" x2="255" y2="168" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="255" y1="168" x2="275" y2="168" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="275" y1="168" x2="275" y2="145" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="275" y1="145" x2="335" y2="145" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="335" y1="145" x2="335" y2="168" stroke="#f59e0b" stroke-width="2"/>
+        <line x1="120" y1="151" x2="340" y2="151" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="153" font-size="10" fill="#dc2626">3.75V avg</text>
+      </svg>
+      <div class="caption">Duty cycle controls average voltage. 0% = 0V; 100% = full V<sub>cc</sub>.</div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Fading an LED with PWM</h2>
+    <p>Arduino Uno: <code>analogWrite(pin, 0..255)</code>. Works on pins 3, 5, 6, 9, 10, 11. On ESP32, same function works, or use <code>ledcWrite()</code> for more control.</p>
+
+    <pre class="code"><span class="kw">const</span> <span class="kw">int</span> LED = <span class="num">9</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() { pinMode(LED, OUTPUT); }
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cmt">// Fade up</span>
+  <span class="kw">for</span> (<span class="kw">int</span> d = <span class="num">0</span>; d &lt;= <span class="num">255</span>; d++) {
+    analogWrite(LED, d);
+    delay(<span class="num">10</span>);
+  }
+  <span class="cmt">// Fade down</span>
+  <span class="kw">for</span> (<span class="kw">int</span> d = <span class="num">255</span>; d &gt;= <span class="num">0</span>; d--) {
+    analogWrite(LED, d);
+    delay(<span class="num">10</span>);
+  }
+}</pre>
+
+    <!-- ================== TINKERCAD BREATHING LED ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Breathing LED in Tinkercad</h4>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open the ready-made project &rarr; <a href="https://www.tinkercad.com/things/hKe5Cf7sRHY/editel" target="_blank"><strong>Tinkercad &mdash; Breathing LED</strong></a></li>
+          <li>The circuit is already wired (Pin 9 &rarr; 220 &Omega; &rarr; LED &rarr; GND)</li>
+          <li>Paste the fade code above into the Code panel</li>
+          <li>Click <strong>Start Simulation</strong></li>
+          <li>The LED smoothly brightens and dims &mdash; "breathing" pattern</li>
+          <li><strong>Experiment 1:</strong> change <code>delay(10)</code> to <code>delay(2)</code> &mdash; much faster breathing</li>
+          <li><strong>Experiment 2:</strong> replace the loop body with just <code>analogWrite(LED, 30);</code>. LED stays dim but steady.</li>
+          <li><strong>Experiment 3:</strong> try <code>analogWrite(LED, 200);</code>. Brighter, still steady.</li>
+        </ol>
+        <a class="sim-button" href="https://www.tinkercad.com/things/hKe5Cf7sRHY/editel" target="_blank">Open in Tinkercad &rarr;</a>
+      </div>
+    </div>
+
+    <div class="callout key">
+      <strong class="label">&#128161; Why PWM for Motors?</strong>
+      PWM is how you vary motor speed without wasting energy as heat. An analog voltage controller (like a potentiometer) would dissipate power. PWM just switches the MOSFET on/off rapidly &mdash; the motor averages it, and efficiency stays ~95%.
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>ESP32 ADC with V<sub>ref</sub>=3.3V, 12-bit. Raw=3000. Voltage?</summary>
+        <div class="answer">V = 3000 &times; 3.3 / 4095 = <strong>2.42V</strong>.</div>
+      </details>
+
+      <details class="q">
+        <summary>Can ESP32 read 5V directly?</summary>
+        <div class="answer"><strong>No.</strong> ADC max is 3.3V. Use a voltage divider (from Lesson 2!) to scale 5V down to 3.3V.</div>
+      </details>
+
+      <details class="q">
+        <summary>PWM duty=64 on 8-bit, 3.3V supply. Average voltage?</summary>
+        <div class="answer">64/255 &times; 3.3 = <strong>0.83V</strong>.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why use PWM to dim an LED instead of a variable resistor?</summary>
+        <div class="answer">PWM is more efficient (no wasted heat), gives wider dynamic range, and doesn't shift the LED's colour (which a variable resistor slightly does at low currents).</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li><strong>ADC</strong> converts analog voltage &rarr; integer. Arduino 10-bit (0&ndash;1023); ESP32 12-bit (0&ndash;4095).</li>
+        <li>ESP32: use <strong>ADC1 pins</strong> (32&ndash;39). ADC2 fights with Wi-Fi.</li>
+        <li><strong>PWM</strong> fakes analog output by switching HIGH/LOW fast. Duty cycle = fraction of time HIGH.</li>
+        <li>Arduino: <code>analogWrite(pin, 0..255)</code> on PWM-capable pins (3, 5, 6, 9, 10, 11).</li>
+        <li>Used for: LED brightness, motor speed, audio tones, servo control.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-07.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">GPIO &amp; Buttons</span>
+      </a>
+      <a class="next" href="lesson-09.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Serial, I2C, SPI</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 8 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 1 &mdash; Electricity Basics &amp; Ohm's Law</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 1</div>
+    <span class="lesson-tag">Lesson 1 of 12</span>
+    <h1>Electricity Basics &amp; Ohm's Law</h1>
+    <p class="subtitle">Voltage, current, resistance, power. How to light up an LED without blowing it. The single most-used formula in all of electronics.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Explain V, I, R, P in plain words and tell conventional current from electron flow</li>
+        <li>Use Ohm's law to calculate the right resistor for an LED</li>
+        <li>Build an LED circuit in Tinkercad and watch it light up</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 1</strong> &middot; Next: Resistors &amp; Caps &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>The Four Things You Measure</h2>
+    <p>Everything in electronics comes down to four quantities. Let's meet them.</p>
+
+    <div class="callout physics">
+      <strong class="label">&#9881; Your Physics Brain Already Knows This</strong>
+      Remember <em>V = W/q</em> from your EM course? That's voltage &mdash; energy per unit charge. We'll build on what you already know. Just swap the notation to engineering units.
+    </div>
+
+    <h3>Voltage (V)</h3>
+    <p>The "pressure" that pushes charges around. Measured in <strong>volts</strong>. Think of it like water pressure &mdash; the taller the tank, the harder the water is pushed through the pipe.</p>
+    <p>Voltage is always a <em>difference</em> between two points. When someone says "5 volts", they mean "5 volts above ground".</p>
+
+    <h3>Current (I)</h3>
+    <p>The rate at which charges flow. Measured in <strong>amperes (A)</strong>. In our water analogy, this is the flow rate &mdash; litres per second through the pipe.</p>
+    <p>Important: <strong>conventional current</strong> flows from + to &minus; (from high voltage to low), but <strong>electrons</strong> actually flow the other way. Just a convention Ben Franklin got wrong 200 years ago &mdash; we're stuck with it.</p>
+
+    <h3>Resistance (R)</h3>
+    <p>The opposition to current flow. Measured in <strong>ohms (&Omega;)</strong>. In the water analogy, a narrow pipe has high resistance; a wide pipe has low resistance.</p>
+
+    <h3>Power (P)</h3>
+    <p>The rate of energy transfer. Measured in <strong>watts (W)</strong>. A 1-watt device uses 1 joule of energy every second.</p>
+
+    <div class="diagram">
+      <svg width="540" height="200" viewBox="0 0 540 200">
+        <rect x="0" y="0" width="540" height="200" fill="#fafaf9"/>
+        <!-- Water analogy -->
+        <rect x="20" y="20" width="50" height="100" fill="#22d3ee" stroke="#0369a1" stroke-width="2"/>
+        <text x="30" y="140" font-size="12" font-weight="700" fill="#0369a1">Tank</text>
+        <text x="22" y="155" font-size="11" fill="#64748b">(voltage)</text>
+        <rect x="70" y="100" width="180" height="20" fill="#22d3ee" stroke="#0369a1" stroke-width="2"/>
+        <polygon points="230,105 245,110 230,115" fill="#dc2626"/>
+        <text x="135" y="140" font-size="12" font-weight="700" fill="#0369a1">Pipe flow</text>
+        <text x="130" y="155" font-size="11" fill="#64748b">(current)</text>
+
+        <rect x="200" y="102" width="30" height="16" fill="#f59e0b" stroke="#92400e" stroke-width="1"/>
+        <text x="180" y="90" font-size="11" fill="#92400e">narrowing (resistance)</text>
+
+        <!-- Electrical equivalent -->
+        <line x1="330" y1="30" x2="330" y2="100" stroke="#0f172a" stroke-width="2"/>
+        <line x1="310" y1="40" x2="350" y2="40" stroke="#0f172a" stroke-width="3"/>
+        <line x1="320" y1="55" x2="340" y2="55" stroke="#0f172a" stroke-width="3"/>
+        <line x1="310" y1="70" x2="350" y2="70" stroke="#0f172a" stroke-width="3"/>
+        <line x1="320" y1="85" x2="340" y2="85" stroke="#0f172a" stroke-width="3"/>
+        <text x="295" y="140" font-size="12" font-weight="700" fill="#0369a1">Battery</text>
+        <text x="295" y="155" font-size="11" fill="#64748b">(voltage)</text>
+
+        <line x1="330" y1="30" x2="470" y2="30" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="470" y1="30" x2="470" y2="50" stroke="#0ea5e9" stroke-width="2"/>
+        <polyline points="470,50 478,55 462,65 478,75 462,85 470,90" stroke="#0f172a" stroke-width="2" fill="none"/>
+        <line x1="470" y1="90" x2="470" y2="110" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="470" y1="110" x2="330" y2="110" stroke="#0ea5e9" stroke-width="2"/>
+        <text x="485" y="70" font-size="12" font-weight="700" fill="#92400e">R</text>
+        <text x="440" y="155" font-size="11" fill="#64748b">(resistance)</text>
+
+        <polygon points="400,22 412,28 400,34" fill="#dc2626"/>
+        <line x1="360" y1="28" x2="404" y2="28" stroke="#dc2626" stroke-width="2"/>
+        <text x="370" y="20" font-size="11" fill="#dc2626">I (current)</text>
+      </svg>
+      <div class="caption">Water analogy on the left, circuit equivalent on the right. They behave the same way.</div>
+    </div>
+
+    <div class="callout key">
+      <strong class="label">&#128196; Key Relationships</strong>
+      <ul style="margin-top:6px">
+        <li>Voltage &rarr; <em>what drives</em> the current</li>
+        <li>Current &rarr; <em>what flows</em> through the circuit</li>
+        <li>Resistance &rarr; <em>what opposes</em> the flow</li>
+        <li>Power &rarr; <em>the rate</em> at which energy is used (as heat, light, motion)</li>
+      </ul>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>Ohm's Law &mdash; The Most Famous Equation</h2>
+    <p>For ohmic materials (like resistors), voltage and current are directly proportional. The constant of proportionality is the resistance:</p>
+
+    <div class="formula">
+      <strong>V</strong> = <strong>I</strong> &middot; <strong>R</strong>
+    </div>
+
+    <p>Rearrange it three ways:</p>
+
+    <div class="formula">
+      <strong>V = I&middot;R</strong> &nbsp;&nbsp;&middot;&nbsp;&nbsp; <strong>I = V / R</strong> &nbsp;&nbsp;&middot;&nbsp;&nbsp; <strong>R = V / I</strong>
+    </div>
+
+    <p>And the three forms of power:</p>
+
+    <div class="formula">
+      <strong>P = V&middot;I</strong> &nbsp;=&nbsp; <strong>I&sup2;&middot;R</strong> &nbsp;=&nbsp; <strong>V&sup2;/R</strong>
+    </div>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; Heads Up</strong>
+      Ohm's law <em>only works for linear components</em> &mdash; resistors, plain wires. It does <strong>not</strong> apply to diodes, LEDs, or transistors. For those, you use Ohm's law on the resistor in series with them, not on them directly.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>The LED Problem (Classic Example)</h2>
+    <p>An LED needs a certain voltage across it to light up (~2V for a red LED), and a certain current flowing through it (~20 mA is typical). If you connect it directly to 5V, it will either burn out or cause excessive current. You need a <strong>current-limiting resistor</strong> in series.</p>
+
+    <p>Here's how to calculate it:</p>
+
+    <ol>
+      <li><strong>Figure out the voltage across the resistor:</strong> V<sub>R</sub> = V<sub>supply</sub> &minus; V<sub>LED</sub> = 5V &minus; 2V = <strong>3V</strong></li>
+      <li><strong>Apply Ohm's law:</strong> R = V<sub>R</sub> / I = 3V / 0.020A = <strong>150 &Omega;</strong></li>
+      <li><strong>Check the power dissipation:</strong> P = V<sub>R</sub> &middot; I = 3 &times; 0.020 = <strong>60 mW</strong></li>
+      <li><strong>Pick a resistor rating:</strong> A standard 1/4 watt (250 mW) resistor handles 60 mW easily.</li>
+    </ol>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Engineer's Shortcut</strong>
+      For most LEDs from 5V supply, use <strong>220 &Omega;</strong> (gives ~13 mA, slightly dim but safe). For 3.3V supply, use <strong>150 &Omega;</strong>. Memorise these two values &mdash; they cover 90% of hobby LED work.
+    </div>
+
+    <!-- ================== TINKERCAD SIMULATOR ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Light up an LED in Tinkercad</h4>
+      </div>
+      <p style="font-size:14px;margin-bottom:12px">Let's build the circuit without any real hardware. Tinkercad Circuits runs in your browser &mdash; free, no install.</p>
+
+      <div class="sim-steps">
+        <strong>Step-by-step:</strong>
+        <ol>
+          <li>Open <a href="https://www.tinkercad.com/circuits" target="_blank">tinkercad.com/circuits</a> (free account; signs in with Google)</li>
+          <li>Click "Create new Circuit"</li>
+          <li>Drag a <strong>9V battery</strong>, a <strong>resistor</strong> (set to 220 &Omega;), and an <strong>LED</strong> (red) onto the canvas</li>
+          <li>Click the resistor, change "Resistance" to <strong>220 &Omega;</strong> in the panel</li>
+          <li>Connect: battery + &rarr; resistor &rarr; LED anode (longer leg); LED cathode (shorter leg) &rarr; battery &minus;</li>
+          <li>Click <strong>"Start Simulation"</strong> in the top-right</li>
+          <li>&#127881; The LED lights up! Turn on the multimeter and measure the current &mdash; it should be ~13 mA.</li>
+        </ol>
+        <a class="sim-button" href="https://www.tinkercad.com/circuits" target="_blank">Open Tinkercad Circuits &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>Work This Out Yourself</h2>
+    <p>Solve these three problems with paper and pen before you check the answers. This is where understanding becomes instinct.</p>
+
+    <table>
+      <tr><th>Problem</th><th>Supply V</th><th>LED V<sub>f</sub></th><th>Desired I</th><th>What R?</th></tr>
+      <tr><td>1. Green LED on Arduino 5V</td><td>5 V</td><td>2.2 V</td><td>15 mA</td><td>?</td></tr>
+      <tr><td>2. Blue LED on ESP32 3.3V</td><td>3.3 V</td><td>3.0 V</td><td>10 mA</td><td>?</td></tr>
+      <tr><td>3. Red LED on 12V car battery</td><td>12 V</td><td>2.0 V</td><td>20 mA</td><td>?</td></tr>
+    </table>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Problem 1 &mdash; Green LED on 5V, V<sub>f</sub>=2.2V, I=15 mA</summary>
+        <div class="answer">
+          R = (V<sub>s</sub> &minus; V<sub>f</sub>) / I = (5 &minus; 2.2) / 0.015 = <strong>186 &Omega;</strong>.<br>
+          Nearest E12 standard value: <strong>180 &Omega;</strong> (slightly above, fewer current). Or <strong>220 &Omega;</strong> (safer, slightly dimmer).
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>Problem 2 &mdash; Blue LED on 3.3V, V<sub>f</sub>=3.0V, I=10 mA</summary>
+        <div class="answer">
+          R = (3.3 &minus; 3.0) / 0.010 = <strong>30 &Omega;</strong>.<br>
+          Nearest E12: <strong>33 &Omega;</strong>. Close to the margin &mdash; 3.3V supplies with 3V LEDs don't have much headroom. Adjust if LED doesn't light.
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>Problem 3 &mdash; Red LED on 12V, V<sub>f</sub>=2V, I=20 mA</summary>
+        <div class="answer">
+          R = (12 &minus; 2) / 0.020 = <strong>500 &Omega;</strong>.<br>
+          Nearest E12: <strong>470 &Omega;</strong>. Power dissipated: P = 10 &times; 0.020 = 0.2 W. A 1/4 W resistor is borderline &mdash; use 1/2 W to be safe.
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>Why doesn't Ohm's law work on the LED directly?</summary>
+        <div class="answer">
+          The LED's current-voltage curve is exponential, not linear. Ohm's law (V=IR) assumes linearity. That's why you always need a <em>separate</em> resistor in series to limit current; the resistor is where Ohm's law does its work.
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>Electrons flow from where to where in a battery-resistor loop?</summary>
+        <div class="answer">
+          Electrons flow from the &minus; terminal, through the wire and resistor, to the + terminal &mdash; the <em>opposite</em> direction of the conventional current arrow. Both conventions are valid; we use "conventional" because it was named first (even though it's physically backwards).
+        </div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li><strong>V</strong> (volts) = voltage between two points; <strong>I</strong> (amps) = current through a wire; <strong>R</strong> (ohms) = resistance; <strong>P</strong> (watts) = power.</li>
+        <li>Ohm's law: <strong>V = I &middot; R</strong>. Can rearrange to find any missing value.</li>
+        <li>Power: <strong>P = V &middot; I = I&sup2;R = V&sup2;/R</strong>. Always check your resistor's wattage rating.</li>
+        <li>To light an LED: pick R = (V<sub>supply</sub> &minus; V<sub>f</sub>) / I.</li>
+        <li>Ohm's law only works for <em>linear</em> components. LEDs, diodes, transistors don't follow it directly.</li>
+        <li>Conventional current flows + &rarr; &minus;; electrons actually flow the opposite way. Just a naming convention.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="index.html">
+        <span class="direction">&larr; Back to</span>
+        <span class="title">Course Home</span>
+      </a>
+      <a class="next" href="lesson-02.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Resistors, Caps &amp; Voltage Dividers</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Lesson 1 of 12 &middot; Made with &#9829; for Bahar
+  </div>
+</footer>
+
+</body>
+</html>

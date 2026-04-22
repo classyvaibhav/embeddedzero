@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2 &mdash; Resistors, Capacitors &amp; Voltage Dividers</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 2</div>
+    <span class="lesson-tag">Lesson 2 of 12</span>
+    <h1>Resistors, Capacitors &amp; Voltage Dividers</h1>
+    <p class="subtitle">Decode any resistor in 5 seconds. Understand what capacitors really do. Master the most-used formula in practical electronics: the voltage divider.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Read any resistor colour code without hesitation</li>
+        <li>Pick the right capacitor type (ceramic, electrolytic, tantalum)</li>
+        <li>Use voltage dividers to scale sensor signals to your MCU's input range</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 2</strong> &middot; Next: Diodes &amp; Transistors &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>The Humble Resistor</h2>
+    <p>The most common component on any board. Its only job: limit current. Simple but essential.</p>
+
+    <h3>Reading the Colour Code</h3>
+    <p>Every resistor has coloured bands printed on it. Four bands is standard. Read them left-to-right, with the tolerance band (gold or silver) always on the right:</p>
+
+    <table>
+      <tr><th>Colour</th><th>Digit</th><th>Multiplier</th><th>Tolerance</th></tr>
+      <tr><td style="background:#000;color:white">Black</td><td>0</td><td>&times;1</td><td>&mdash;</td></tr>
+      <tr><td style="background:#92400e;color:white">Brown</td><td>1</td><td>&times;10</td><td>&plusmn;1%</td></tr>
+      <tr><td style="background:#dc2626;color:white">Red</td><td>2</td><td>&times;100</td><td>&plusmn;2%</td></tr>
+      <tr><td style="background:#ea580c;color:white">Orange</td><td>3</td><td>&times;1,000</td><td>&mdash;</td></tr>
+      <tr><td style="background:#eab308">Yellow</td><td>4</td><td>&times;10,000</td><td>&mdash;</td></tr>
+      <tr><td style="background:#16a34a;color:white">Green</td><td>5</td><td>&times;100,000</td><td>&plusmn;0.5%</td></tr>
+      <tr><td style="background:#2563eb;color:white">Blue</td><td>6</td><td>&times;1,000,000</td><td>&plusmn;0.25%</td></tr>
+      <tr><td style="background:#8b5cf6;color:white">Violet</td><td>7</td><td>&times;10M</td><td>&plusmn;0.1%</td></tr>
+      <tr><td style="background:#fbbf24">Gold</td><td>&mdash;</td><td>&times;0.1</td><td>&plusmn;5%</td></tr>
+      <tr><td style="background:#cbd5e1">Silver</td><td>&mdash;</td><td>&times;0.01</td><td>&plusmn;10%</td></tr>
+    </table>
+
+    <div class="diagram">
+      <svg width="520" height="140" viewBox="0 0 520 140">
+        <rect x="0" y="0" width="520" height="140" fill="#fafaf9"/>
+        <line x1="30" y1="70" x2="100" y2="70" stroke="#444" stroke-width="1.5"/>
+        <rect x="100" y="55" width="320" height="30" rx="8" fill="#fef9c3" stroke="#78350f" stroke-width="1.5"/>
+        <rect x="130" y="52" width="16" height="36" fill="#92400e"/>
+        <rect x="165" y="52" width="16" height="36" fill="#000"/>
+        <rect x="200" y="52" width="16" height="36" fill="#ea580c"/>
+        <rect x="380" y="52" width="16" height="36" fill="#fbbf24"/>
+        <line x1="420" y1="70" x2="490" y2="70" stroke="#444" stroke-width="1.5"/>
+        <text x="125" y="115" font-size="11" fill="#92400e">Brown</text>
+        <text x="162" y="115" font-size="11" fill="#0f172a">Black</text>
+        <text x="195" y="115" font-size="11" fill="#ea580c">Orange</text>
+        <text x="380" y="115" font-size="11" fill="#a16207">Gold</text>
+        <text x="150" y="35" font-size="14" font-weight="700" fill="#0f172a">1</text>
+        <text x="172" y="35" font-size="14" font-weight="700" fill="#0f172a">0</text>
+        <text x="202" y="35" font-size="14" font-weight="700" fill="#0f172a">&times;10&sup3;</text>
+        <text x="370" y="35" font-size="14" font-weight="700" fill="#0f172a">&plusmn;5%</text>
+        <text x="200" y="135" font-size="13" font-weight="700" fill="#0369a1">= 10 &times; 1000 = 10 k&Omega; &plusmn;5%</text>
+      </svg>
+      <div class="caption">A 10 k&Omega; resistor: Brown (1), Black (0), Orange (&times;1000), Gold (&plusmn;5%).</div>
+    </div>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Memorise This Rhyme</strong>
+      "<strong>B</strong>. <strong>B</strong>. <strong>R</strong>oy of <strong>G</strong>reat <strong>B</strong>ritain has a <strong>V</strong>ery <strong>G</strong>ood <strong>W</strong>ife" &mdash; Black, Brown, Red, Orange, Yellow, Green, Blue, Violet, Grey, White. That's the digits 0&ndash;9 in order.
+    </div>
+
+    <h3>Standard Values &mdash; You Won't See "11.3 k&Omega;" in Real Life</h3>
+    <p>Resistors come in standard <strong>E12 values</strong>: 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82 &mdash; and their decade multiples (100, 120, 150, etc.). When you calculate "need 186 &Omega;", you pick the <em>nearest E12 value</em>: 180 or 220.</p>
+
+    <h3>Series and Parallel</h3>
+    <div class="formula">
+      <strong>Series:</strong> R<sub>total</sub> = R<sub>1</sub> + R<sub>2</sub> + ...<br>
+      <strong>Parallel:</strong> 1/R<sub>total</sub> = 1/R<sub>1</sub> + 1/R<sub>2</sub> + ... &nbsp;&middot;&nbsp; Or for two: R<sub>1</sub>R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>)
+    </div>
+
+    <p>Example: Two 10 k&Omega; resistors in parallel = 5 k&Omega;. Two 10 k&Omega; in series = 20 k&Omega;.</p>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>Capacitors &mdash; Little Charge Buckets</h2>
+    <p>A capacitor stores charge. When you apply voltage across it, charge flows in. When you remove the voltage, charge flows out. Capacitance is measured in <strong>farads (F)</strong>, but real-world values are tiny: picofarads (pF), nanofarads (nF), and microfarads (&mu;F).</p>
+
+    <div class="callout physics">
+      <strong class="label">&#9881; Physics Link</strong>
+      Q = C &middot; V. Sound familiar? Same equation you saw in your EM physics course. A 100 nF cap at 5V stores Q = 10<sup>-7</sup> &times; 5 = 500 nC of charge. Tiny but enough to matter.
+    </div>
+
+    <h3>Three Types You'll Actually Use</h3>
+
+    <table>
+      <tr><th>Type</th><th>Values</th><th>Polarity?</th><th>What it's for</th></tr>
+      <tr><td><strong>Ceramic (MLCC)</strong></td><td>1 pF &ndash; 10 &mu;F</td><td>No</td><td>Decoupling, HF filtering (most common)</td></tr>
+      <tr><td><strong>Electrolytic</strong></td><td>1 &mu;F &ndash; 10 mF</td><td><span style="color:#dc2626">Yes!</span></td><td>Bulk power filtering</td></tr>
+      <tr><td><strong>Tantalum</strong></td><td>0.1 &mu;F &ndash; 1 mF</td><td><span style="color:#dc2626">Yes!</span></td><td>Stable power rails</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; Never Reverse an Electrolytic Cap</strong>
+      Electrolytic capacitors have a <strong>stripe</strong> on the side marking the <em>negative</em> terminal. If you install it backwards, it can literally explode. This is not a joke &mdash; I've seen it happen. Always double-check.
+    </div>
+
+    <h3>The 100 nF "Decoupling" Trick</h3>
+    <p>Every single IC on every single board needs a <strong>100 nF ceramic capacitor</strong> placed as close as possible to its V<sub>cc</sub> pin. Why? At high switching frequencies, this cap acts as a "local charge reservoir" that smooths out noise before it can cause glitches.</p>
+    <p>This is the single most-important rule in all of electronics design. Learn to spot these caps on every schematic &mdash; if you don't see them, the board is broken.</p>
+
+    <!-- ================== WOKWI SIMULATOR ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>See RC Charging in Wokwi</h4>
+      </div>
+      <p style="font-size:14px">Let's watch a capacitor charge up in real-time. This is called the "RC time constant" &mdash; a concept we'll use later for switch debouncing and reset circuits.</p>
+
+      <div class="sim-steps">
+        <strong>Step-by-step:</strong>
+        <ol>
+          <li>Go to <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank">wokwi.com &rarr; New Arduino Uno project</a></li>
+          <li>Click the <strong>+</strong> button, add a 10 k&Omega; resistor and a 100 &mu;F capacitor</li>
+          <li>Wire: Arduino 5V &rarr; resistor &rarr; capacitor + &rarr; Arduino GND (cap &minus; leg)</li>
+          <li>Wire a jumper from the cap + leg to Arduino A0 (so we can measure voltage)</li>
+          <li>Paste this code:
+            <pre class="code" style="margin-top:8px;font-size:12px"><span class="kw">void</span> <span class="fn">setup</span>() { Serial.begin(<span class="num">9600</span>); }
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> raw = analogRead(A0);
+  <span class="kw">float</span> v = raw * <span class="num">5.0</span> / <span class="num">1023.0</span>;
+  Serial.print(<span class="str">"V="</span>); Serial.println(v);
+  delay(<span class="num">500</span>);
+}</pre>
+          </li>
+          <li>Click <strong>Play</strong>. Watch the voltage rise from 0V toward 5V.</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank">Open Wokwi Arduino &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>The Voltage Divider &mdash; Most-Used Formula Ever</h2>
+    <p>Take two resistors in series across a voltage. The voltage at the midpoint is a fraction of the input, scaled by the resistor values:</p>
+
+    <div class="formula">
+      <strong>V<sub>out</sub> = V<sub>in</sub> &times; R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>)</strong>
+    </div>
+
+    <div class="diagram">
+      <svg width="400" height="240" viewBox="0 0 400 240">
+        <rect x="0" y="0" width="400" height="240" fill="#fafaf9"/>
+        <text x="40" y="30" font-size="13" font-family="Courier New" fill="#0369a1">V_in = 5V</text>
+        <line x1="40" y1="40" x2="180" y2="40" stroke="#0f172a" stroke-width="2"/>
+        <line x1="180" y1="40" x2="180" y2="75" stroke="#0f172a" stroke-width="2"/>
+        <polyline points="180,75 188,80 172,88 188,96 172,104 188,112 180,117" stroke="#0f172a" stroke-width="2" fill="none"/>
+        <text x="205" y="98" font-size="13" font-family="Courier New">R&#8321; = 1.8k</text>
+        <line x1="180" y1="117" x2="180" y2="135" stroke="#0f172a" stroke-width="2"/>
+        <circle cx="180" cy="135" r="5" fill="#0f172a"/>
+        <line x1="180" y1="135" x2="280" y2="135" stroke="#0f172a" stroke-width="2"/>
+        <text x="295" y="140" font-size="13" font-family="Courier New" fill="#dc2626">V_out = 3.24V</text>
+        <line x1="180" y1="135" x2="180" y2="155" stroke="#0f172a" stroke-width="2"/>
+        <polyline points="180,155 188,160 172,168 188,176 172,184 188,192 180,197" stroke="#0f172a" stroke-width="2" fill="none"/>
+        <text x="205" y="178" font-size="13" font-family="Courier New">R&#8322; = 3.3k</text>
+        <line x1="180" y1="197" x2="180" y2="215" stroke="#0f172a" stroke-width="2"/>
+        <line x1="160" y1="215" x2="200" y2="215" stroke="#0f172a" stroke-width="2"/>
+        <line x1="168" y1="220" x2="192" y2="220" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="175" y1="225" x2="185" y2="225" stroke="#0f172a" stroke-width="1"/>
+        <text x="168" y="236" font-size="10" fill="#64748b">GND</text>
+      </svg>
+      <div class="caption">Classic voltage divider. V<sub>out</sub> = 5 &times; 3.3/(1.8+3.3) = 3.24V &mdash; perfect for an ESP32 ADC input.</div>
+    </div>
+
+    <div class="callout key">
+      <strong class="label">&#128065; Where You'll Use This</strong>
+      <ul>
+        <li>Scaling a 0&ndash;5V sensor down to 0&ndash;3.3V for an ESP32 ADC input</li>
+        <li>Reading a battery voltage through an ADC (if V<sub>bat</sub> &gt; V<sub>ref</sub>)</li>
+        <li>Making a <strong>reference voltage</strong> for a comparator</li>
+        <li>Biasing a sensor (like an LDR or thermistor)</li>
+      </ul>
+    </div>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; Watch Out: Loading Effect</strong>
+      Voltage dividers are great for <em>signal</em> inputs (where almost no current flows), but useless for <em>power</em>. If you try to power a whole circuit through a divider, the current drawn will crash the output voltage. For power, use a regulator instead.
+    </div>
+
+    <h3>Quick Example</h3>
+    <p><strong>Problem:</strong> You have a sensor that outputs 0&ndash;5V. Your ESP32 ADC can only handle 0&ndash;3.3V. What divider do you use?</p>
+    <ol>
+      <li>You need V<sub>out</sub>/V<sub>in</sub> = 3.3/5 = 0.66</li>
+      <li>So R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>) = 0.66</li>
+      <li>Solving: R<sub>1</sub>/R<sub>2</sub> = (1/0.66) &minus; 1 = 0.515</li>
+      <li>Pick R<sub>2</sub> = 10 k&Omega;, then R<sub>1</sub> = 5.15 k&Omega; &mdash; use standard 4.7 k&Omega;. Or: R<sub>1</sub> = 1.8 k&Omega;, R<sub>2</sub> = 3.3 k&Omega; (from the diagram above).</li>
+    </ol>
+
+    <!-- ================== TINKERCAD VOLTAGE DIVIDER ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Build a Voltage Divider in Tinkercad</h4>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Your challenge:</strong>
+        <ol>
+          <li>Open Tinkercad Circuits</li>
+          <li>Drop: 5V battery (or USB adapter component), two resistors (10k and 20k), a multimeter</li>
+          <li>Wire them in series: 5V &rarr; 10k &rarr; 20k &rarr; GND</li>
+          <li>Connect the multimeter between the midpoint (between resistors) and GND</li>
+          <li>Set multimeter to DC voltage. Start simulation. You should read ~3.33V</li>
+          <li><strong>Bonus:</strong> Swap R<sub>1</sub> and R<sub>2</sub>. What do you read now? (Should be ~1.67V &mdash; half of 5/3)</li>
+        </ol>
+        <a class="sim-button" href="https://www.tinkercad.com/circuits" target="_blank">Open Tinkercad &rarr;</a>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Red-Red-Brown-Gold &mdash; what's the value?</summary>
+        <div class="answer">Red (2), Red (2), Brown (&times;10), Gold (&plusmn;5%) = <strong>220 &Omega; &plusmn;5%</strong>. A very common resistor for current-limiting LEDs.</div>
+      </details>
+
+      <details class="q">
+        <summary>A cap marked "104" &mdash; what does that mean?</summary>
+        <div class="answer">
+          Ceramic cap marking: first two digits are the value, third is the multiplier <em>in picofarads</em>. So "104" = 10 &times; 10<sup>4</sup> pF = 100,000 pF = <strong>100 nF (0.1 &mu;F)</strong>. The most-common decoupling cap value ever.
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>You need 75 &Omega;, but E12 values only have 68 and 82. Which do you pick for an LED?</summary>
+        <div class="answer">
+          Pick <strong>82 &Omega;</strong> (higher). Higher R means slightly <em>less</em> current, which is safer &mdash; the LED will be slightly dimmer but won't be over-driven. Going with 68 &Omega; would give slightly too much current.
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>Voltage divider: V<sub>in</sub>=9V, R<sub>1</sub>=10k, R<sub>2</sub>=20k. V<sub>out</sub>=?</summary>
+        <div class="answer">V<sub>out</sub> = 9 &times; 20/(10+20) = 9 &times; 2/3 = <strong>6V</strong>.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why can't you use a voltage divider to convert 12V down to 5V to power an MCU?</summary>
+        <div class="answer">
+          Because an MCU draws real current. When the MCU starts pulling 50&ndash;100 mA, the resistors in the divider will drop huge voltages (V=IR) &mdash; enough to crash the midpoint voltage way below 5V. Dividers only work for <em>signal</em> inputs (where very little current flows). For power, use a regulator chip like <code class="inline">AMS1117-5</code>.
+        </div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>Resistors use <strong>colour codes</strong> &mdash; read left to right, tolerance band on the right.</li>
+        <li>Standard <strong>E12 values</strong>: 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82 (and decade multiples).</li>
+        <li><strong>Series:</strong> add resistances. <strong>Parallel:</strong> 1/R<sub>total</sub> = sum of 1/R (or use R<sub>1</sub>R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>) for two).</li>
+        <li><strong>Ceramic caps</strong> for decoupling/filtering, <strong>electrolytics</strong> for bulk power. Never reverse electrolytics!</li>
+        <li>Every IC needs a <strong>100 nF ceramic cap</strong> right next to its V<sub>cc</sub> pin. Always. No exceptions.</li>
+        <li><strong>Voltage divider:</strong> V<sub>out</sub> = V<sub>in</sub> &middot; R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>). Used everywhere for level-shifting signals.</li>
+        <li>Dividers are for <em>signals</em>, not for <em>power</em>. Use regulators for power.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-01.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Electricity &amp; Ohm's Law</span>
+      </a>
+      <a class="next" href="lesson-03.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Diodes, LEDs &amp; Transistors</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 2 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

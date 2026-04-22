@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 3 &mdash; Diodes, LEDs &amp; Transistor Switches</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 3</div>
+    <span class="lesson-tag">Lesson 3 of 12</span>
+    <h1>Diodes, LEDs &amp; Transistor Switches</h1>
+    <p class="subtitle">One-way current gates. Making light. Controlling big loads (motors, relays, LED strips) from tiny microcontroller pins.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Explain forward and reverse bias with your physics brain</li>
+        <li>Pick the right transistor (BJT or MOSFET) for a given switching job</li>
+        <li>Drive a relay from a 3.3V GPIO pin</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 3</strong> &middot; Next: Op-Amps &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>Diodes &mdash; The Electrical Check Valve</h2>
+    <p>A diode is the simplest semiconductor device: current flows one way, but not the other. Think of it like a one-way valve in plumbing.</p>
+
+    <div class="callout physics">
+      <strong class="label">&#9881; You Already Know the Physics</strong>
+      From your semiconductor physics course: a diode is a PN junction. Forward bias lowers the barrier and electrons flow easily. Reverse bias widens the depletion region and blocks current. That's it &mdash; we're just putting that theory to practical use.
+    </div>
+
+    <h3>Key Numbers to Memorise</h3>
+    <p>Every diode has a <strong>forward voltage drop</strong> V<sub>f</sub>. This is the voltage lost across the diode when it conducts:</p>
+
+    <table>
+      <tr><th>Diode Type</th><th>V<sub>f</sub></th><th>Common Use</th><th>Example Part</th></tr>
+      <tr><td>Silicon (standard)</td><td>0.7 V</td><td>Signal, rectification</td><td>1N4148, 1N4007</td></tr>
+      <tr><td>Schottky (low-drop)</td><td>0.3 V</td><td>Power, reverse-polarity protection</td><td>1N5819</td></tr>
+      <tr><td>Red LED</td><td>~2.0 V</td><td>Status light</td><td>Any 5mm red</td></tr>
+      <tr><td>Green LED</td><td>~2.2 V</td><td>Status light</td><td>Any 5mm green</td></tr>
+      <tr><td>Blue / White LED</td><td>~3.0&ndash;3.4 V</td><td>Status, indicator</td><td>Any 5mm blue</td></tr>
+      <tr><td>Zener</td><td>varies</td><td>Voltage reference</td><td>5.1V, 3.3V Zener</td></tr>
+    </table>
+
+    <div class="diagram">
+      <svg width="480" height="180" viewBox="0 0 480 180">
+        <rect x="0" y="0" width="480" height="180" fill="#fafaf9"/>
+        <line x1="240" y1="20" x2="240" y2="160" stroke="#cbd5e1" stroke-width="1"/>
+        <line x1="40" y1="100" x2="440" y2="100" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="445" y="105" font-size="12">V</text>
+        <text x="246" y="18" font-size="12">I</text>
+        <path d="M 80 100 L 240 100 L 290 98 Q 305 90 315 50" stroke="#0ea5e9" stroke-width="3" fill="none"/>
+        <path d="M 40 155 L 50 110 L 80 100" stroke="#0ea5e9" stroke-width="3" fill="none"/>
+        <text x="295" y="60" font-size="12" fill="#0ea5e9" font-weight="700">Forward</text>
+        <text x="295" y="75" font-size="11" fill="#0369a1">(conducts)</text>
+        <text x="60" y="150" font-size="11" fill="#0ea5e9">Reverse breakdown</text>
+        <text x="60" y="165" font-size="11" fill="#0369a1">(destructive for normal diodes)</text>
+        <line x1="284" y1="95" x2="284" y2="105" stroke="#0f172a" stroke-width="1"/>
+        <text x="248" y="118" font-size="11" fill="#64748b">V_f ~0.7V (Si)</text>
+      </svg>
+      <div class="caption">The diode's current-voltage curve. Nothing flows until V<sub>f</sub>, then it conducts exponentially.</div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>Why LEDs Always Need a Resistor</h2>
+    <p>You met this in Lesson 1 &mdash; here's the <em>why</em>. An LED's I-V curve is exponential. A tiny change in voltage above V<sub>f</sub> causes a huge jump in current. There's no "self-limiting" behaviour. Without a resistor, the LED pulls enormous current, heats up, and dies in seconds.</p>
+
+    <p>The resistor does the current limiting: it has a linear relationship, so the voltage drop across it scales with current. This creates a stable operating point.</p>
+
+    <!-- ================== TINKERCAD SIM ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>LED Without a Resistor (in simulation only!)</h4>
+      </div>
+      <p style="font-size:14px">In real life, connecting an LED directly to 5V blows it in seconds. In a simulator you can actually do this and watch it happen &mdash; safely.</p>
+
+      <div class="sim-steps">
+        <strong>Try this experiment:</strong>
+        <ol>
+          <li>Open Tinkercad Circuits</li>
+          <li>Wire: 5V battery directly to LED to GND (<strong>no resistor</strong>)</li>
+          <li>Start simulation &mdash; Tinkercad shows a popup: "The LED has burned out"</li>
+          <li>Now add a 220 &Omega; resistor in series. Simulate again. LED glows safely.</li>
+          <li>This gives you <em>intuition</em> for why current limiting matters. Rule: every LED gets a resistor.</li>
+        </ol>
+        <a class="sim-button" href="https://www.tinkercad.com/circuits" target="_blank">Open Tinkercad &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Transistors &mdash; Switches That MCUs Can Control</h2>
+    <p>Your ESP32's GPIO pins output 3.3V, but only at ~20 mA. You can light an LED directly, but you <em>cannot</em> run a motor, relay, or bright LED strip &mdash; they need much more current. So we use a <strong>transistor as a switch</strong>: the tiny GPIO signal controls a big current path to V+.</p>
+
+    <h3>Two Flavours: BJT and MOSFET</h3>
+
+    <table>
+      <tr><th></th><th>BJT (2N2222)</th><th>MOSFET (IRLZ44N)</th></tr>
+      <tr><td>Controlled by</td><td>Base <em>current</em></td><td>Gate <em>voltage</em></td></tr>
+      <tr><td>Input pin</td><td>Base (B)</td><td>Gate (G)</td></tr>
+      <tr><td>Current rating</td><td>~800 mA</td><td>47 A!</td></tr>
+      <tr><td>Input resistor needed</td><td>Yes (base R)</td><td>No (optional)</td></tr>
+      <tr><td>Good for</td><td>Small LEDs, small relays</td><td>Motors, LED strips, big loads</td></tr>
+      <tr><td>Cost</td><td>~&#8377;3</td><td>~&#8377;25</td></tr>
+    </table>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Easy Rule</strong>
+      <strong>Small stuff (&lt;100 mA):</strong> BJT like 2N2222. <strong>Big stuff:</strong> logic-level N-MOSFET like IRLZ44N. "Logic-level" is important: it means the MOSFET fully turns on at 3.3V or 5V (not just 10V).
+    </div>
+
+    <h3>Wiring a BJT Switch</h3>
+    <div class="diagram">
+      <svg width="420" height="240" viewBox="0 0 420 240">
+        <rect x="0" y="0" width="420" height="240" fill="#fafaf9"/>
+        <text x="195" y="20" font-size="12" fill="#dc2626">+5V</text>
+        <line x1="210" y1="28" x2="210" y2="70" stroke="#0f172a" stroke-width="2"/>
+        <rect x="195" y="70" width="30" height="50" fill="none" stroke="#0f172a" stroke-width="2"/>
+        <text x="238" y="100" font-size="12" fill="#64748b">Load (relay, LED, etc.)</text>
+        <line x1="210" y1="120" x2="210" y2="145" stroke="#0f172a" stroke-width="2"/>
+        <circle cx="210" cy="160" r="18" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+        <line x1="210" y1="145" x2="210" y2="152" stroke="#0f172a" stroke-width="2"/>
+        <line x1="200" y1="160" x2="192" y2="160" stroke="#0f172a" stroke-width="2"/>
+        <line x1="210" y1="168" x2="210" y2="195" stroke="#0f172a" stroke-width="2"/>
+        <text x="235" y="163" font-size="11" fill="#64748b">Q = 2N2222</text>
+        <!-- base R -->
+        <polyline points="90,160 98,155 82,150 98,145 82,140 98,135 90,130" stroke="#0f172a" stroke-width="2" fill="none"/>
+        <line x1="90" y1="160" x2="192" y2="160" stroke="#0f172a" stroke-width="2"/>
+        <line x1="90" y1="130" x2="90" y2="100" stroke="#0f172a" stroke-width="2"/>
+        <text x="40" y="95" font-size="12" fill="#0369a1" font-weight="700">GPIO 3.3V</text>
+        <text x="100" y="128" font-size="11" fill="#64748b">R_B = 1k&Omega;</text>
+        <!-- GND -->
+        <line x1="210" y1="195" x2="210" y2="215" stroke="#0f172a" stroke-width="2"/>
+        <line x1="195" y1="215" x2="225" y2="215" stroke="#0f172a" stroke-width="2"/>
+        <line x1="201" y1="220" x2="219" y2="220" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="207" y1="225" x2="213" y2="225" stroke="#0f172a" stroke-width="1"/>
+      </svg>
+      <div class="caption">NPN BJT as a low-side switch. When GPIO goes HIGH, transistor turns on, load gets power.</div>
+    </div>
+
+    <h3>Sizing the Base Resistor</h3>
+    <p>Rule of thumb: you want the transistor fully "saturated" (on as hard as possible). Drive ~10&times; more base current than strictly needed:</p>
+
+    <div class="formula">
+      R<sub>B</sub> = (V<sub>GPIO</sub> &minus; 0.7V) / I<sub>B</sub><br>
+      where I<sub>B</sub> = (I<sub>load</sub> / &beta;) &times; 10
+    </div>
+
+    <p><strong>Example:</strong> Drive a 100 mA relay with a 2N2222 (&beta;=100) from 3.3V GPIO. I<sub>B</sub> = (0.1/100) &times; 10 = 10 mA. R<sub>B</sub> = (3.3&minus;0.7)/0.010 = 260 &Omega; &rarr; pick <strong>220 &Omega;</strong>.</p>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; The Flyback Diode Rule</strong>
+      Whenever you switch an <strong>inductive load</strong> (relay coil, motor, solenoid), you <em>must</em> add a reverse-biased diode across the load. When the transistor turns off, the inductor generates a huge voltage spike that will destroy the transistor. The diode absorbs that spike safely. Use a 1N4007 or similar, cathode (stripe) pointing toward V+.
+    </div>
+
+    <!-- ================== WOKWI TRANSISTOR SIM ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Control a Motor with a MOSFET in Wokwi</h4>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Build this in Wokwi:</strong>
+        <ol>
+          <li>Go to <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank">wokwi.com &rarr; new Arduino Uno</a></li>
+          <li>Add: IRLZ44N MOSFET, DC motor, 1N4007 diode, 12V battery (external power)</li>
+          <li>Arduino pin 9 &rarr; MOSFET gate (G)</li>
+          <li>Motor: one lead to +12V, other lead to MOSFET drain (D)</li>
+          <li>MOSFET source (S) &rarr; GND (both Arduino GND and battery &minus;)</li>
+          <li>Diode across motor: cathode (stripe) toward +12V, anode toward drain</li>
+          <li>Code: <code>analogWrite(9, 128);</code> in setup() &mdash; gives 50% speed</li>
+          <li>Press Play. Motor spins at half speed. Change 128 to 255 (full speed) or 64 (slow).</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank">Open Wokwi &rarr;</a>
+      </div>
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Why can't you connect a 5V signal backwards through an LED?</summary>
+        <div class="answer">Backwards = reverse-biased. Diodes block reverse current (until breakdown voltage, which destroys normal diodes). So no current flows, and no light.</div>
+      </details>
+
+      <details class="q">
+        <summary>You need to switch a 2A motor from an ESP32 GPIO. BJT or MOSFET?</summary>
+        <div class="answer"><strong>Logic-level N-MOSFET</strong> (like IRLZ44N). A 2N2222 BJT is rated 800 mA &mdash; you'd burn it at 2A. MOSFETs handle tens of amps easily.</div>
+      </details>
+
+      <details class="q">
+        <summary>What does "logic-level" mean for a MOSFET?</summary>
+        <div class="answer">The MOSFET fully turns on with a low gate voltage (3.3V or 5V). A standard MOSFET needs 10V on the gate, which an MCU can't deliver. Always buy <em>logic-level</em> MOSFETs for MCU-driven designs.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why do you need a flyback diode across a relay coil?</summary>
+        <div class="answer">The relay coil is inductive. When the MOSFET/BJT switches off, the coil's stored magnetic field collapses and creates a huge reverse voltage spike (hundreds of volts). The flyback diode shorts that spike safely, protecting the transistor from destruction.</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>A diode conducts only one way. Forward V<sub>f</sub>: Si ~0.7V, Schottky ~0.3V, LEDs ~2&ndash;3V.</li>
+        <li>LEDs always need a current-limiting resistor &mdash; they're not ohmic.</li>
+        <li>Use a <strong>BJT</strong> (like 2N2222) to switch small loads &lt;100 mA.</li>
+        <li>Use a <strong>logic-level N-MOSFET</strong> (like IRLZ44N) to switch big loads from a 3.3V MCU.</li>
+        <li>BJTs need a <strong>base resistor</strong>. MOSFETs don't (but benefit from a small gate resistor).</li>
+        <li>Always add a <strong>flyback diode</strong> across any inductive load (relays, motors).</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-02.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Resistors, Caps &amp; Dividers</span>
+      </a>
+      <a class="next" href="lesson-04.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Op-Amps: The Golden Rules</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 3 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

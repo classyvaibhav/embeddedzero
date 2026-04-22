@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Overview &amp; Pedagogy</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Overview</div>
+    <h1>Teaching Overview &amp; Pedagogy</h1>
+    <p class="subtitle">How to run sessions so Bahar actually retains the material, not just nods along.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html" class="active">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html">Part 1</a>
+    <a href="hardware.html">Part 2</a>
+    <a href="embedded.html">Part 3</a>
+    <a href="pcb.html">Part 4</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html">Cheats</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2><span class="num">01</span>Student Context</h2>
+      <p class="part-sub">Everything below is tuned for Bahar's specific starting point. Adjust if you teach someone else later.</p>
+    </div>
+    <div class="pedagogy">
+      <h3>Who Bahar Is (for teaching purposes)</h3>
+      <ul>
+        <li>MSc Applied Physics &mdash; strong in physics fundamentals (EM theory, semiconductor band structure, optics, numerical methods).</li>
+        <li>Electronics was an <strong>elective</strong>, so her gates/flip-flops/op-amps knowledge is theoretical but not intuitive.</li>
+        <li>Python programmer for numerical work, but C/C++ is new.</li>
+        <li>1-week Aimtron internship &mdash; has touched a real PCB, tested dashcams, seen Laplacian/Sobel calibration. Leverage this context constantly.</li>
+        <li>Target is an <strong>Embedded Systems Trainee</strong> role, not a firmware dev role. Her bar is "understand what an Arduino sketch does and can modify it", not "write interrupt handlers from scratch".</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2><span class="num">02</span>Teaching Principles</h2>
+    </div>
+    <div class="pedagogy">
+      <ul>
+        <li><strong>Build first, explain second.</strong> Wire the circuit on a breadboard / in Tinkercad <em>before</em> deriving the formula. She needs physical intuition before symbolic reasoning &mdash; otherwise it sits in her head as another exam topic.</li>
+        <li><strong>One concept per session.</strong> Don't stack topics. A focused 45-minute session on "voltage divider" beats a 2-hour kitchen-sink session.</li>
+        <li><strong>End every session with three check-questions.</strong> If she can't answer all three, plan a 15-minute review at the start of next session. No moving on silently.</li>
+        <li><strong>Use her physics background as leverage.</strong> When explaining PN junctions, op-amps, or signal conditioning, anchor in physics she already knows (semiconductor band theory, circuit analysis).</li>
+        <li><strong>Avoid bare-metal firmware rabbit holes.</strong> You know the deep NXP/Yocto stack &mdash; resist the urge to show it. She needs Arduino-level confidence first.</li>
+        <li><strong>Gotcha callouts first.</strong> In every topic card, there's a <em>gotcha</em> section. Read that <em>before</em> the session so you know what to emphasise.</li>
+        <li><strong>Link theory to Aimtron.</strong> When you cover camera calibration or PCB inspection, explicitly point at her internship. Keeps the relevance high.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2><span class="num">03</span>45-Minute Session Template</h2>
+    </div>
+    <div class="pedagogy">
+      <div class="pedagogy-grid">
+        <div>
+          <h4>Minute 0&ndash;5: Recap</h4>
+          Ask last session's check-questions again. Catches concepts that didn't stick after 24&ndash;48h of forgetting.
+        </div>
+        <div>
+          <h4>Minute 5&ndash;15: Concept</h4>
+          Whiteboard / paper. Use the diagram in the topic card. Don't skip the worked example with real numbers.
+        </div>
+        <div>
+          <h4>Minute 15&ndash;35: Hands-on</h4>
+          Breadboard or Tinkercad. <em>She</em> drives; you guide. If hardware isn't available, Tinkercad Circuits or Wokwi are free and fine.
+        </div>
+        <div>
+          <h4>Minute 35&ndash;45: Check + Homework</h4>
+          Ask the 3 check-questions. Assign a small task for her to attempt alone before the next session.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2><span class="num">04</span>Hardware You'll Need</h2>
+    </div>
+    <div class="pedagogy">
+      <ul>
+        <li><strong>ESP32 DevKit v1</strong> &mdash; ~&#8377;450 &mdash; primary MCU for this curriculum</li>
+        <li><strong>Arduino Uno R3</strong> &mdash; ~&#8377;500 &mdash; easier for first circuits (5V tolerant, mature ecosystem)</li>
+        <li><strong>Breadboard 830-point + jumper wire kit</strong> &mdash; ~&#8377;300</li>
+        <li><strong>Component assortment</strong> &mdash; ~&#8377;600&ndash;800 total:
+          <ul>
+            <li>Resistor pack (10 &Omega; to 1 M&Omega;, 1/4 W)</li>
+            <li>Capacitor pack (ceramic + electrolytic)</li>
+            <li>LEDs (3 mm / 5 mm, various colours)</li>
+            <li>Push buttons, 10 k&Omega; potentiometer, slide switches</li>
+            <li>Transistors: 2N2222 (NPN), 2N3906 (PNP), IRLZ44N (logic-level N-MOSFET)</li>
+            <li>Op-amp: LM358</li>
+            <li>Sensors: DHT11, BMP280, 0.96" OLED (I2C)</li>
+            <li>Misc: 1N4148 diode, 1N5819 Schottky, voltage regulator AMS1117-3.3</li>
+          </ul>
+        </li>
+        <li><strong>Digital multimeter</strong> &mdash; she has one in the Applied Physics lab</li>
+        <li><strong>Oscilloscope</strong> &mdash; lab access is enough</li>
+        <li><strong>USB cables, jumper wires (M-M, M-F, F-F)</strong></li>
+      </ul>
+      <p style="margin-top:10px;font-size:13.5px;color:var(--muted)"><strong>Total one-time spend ~&#8377;1800.</strong> Buy from <a href="https://robu.in/" target="_blank">Robu.in</a> (cheapest, reliable for Gujarat) or Amazon.in. Typical arrival: 3&ndash;5 days.</p>
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2><span class="num">05</span>Software Setup</h2>
+    </div>
+    <div class="pedagogy">
+      <ul>
+        <li><strong>Arduino IDE 2.x</strong> &mdash; install on her laptop. Add ESP32 board package via Preferences &rarr; Additional Board URLs.</li>
+        <li><strong>KiCad 8.x</strong> &mdash; for reading/modifying PCB projects later (Week 8).</li>
+        <li><strong>VS Code + PlatformIO</strong> extension &mdash; optional upgrade from Arduino IDE once she's comfortable.</li>
+        <li><strong>Git + GitHub</strong> &mdash; non-negotiable. Create her account session 1.</li>
+        <li><strong>Browser tabs</strong> she should always have open:
+          <ul>
+            <li>This teaching guide (Symbols page in particular)</li>
+            <li><a href="https://www.digikey.in/" target="_blank">DigiKey India</a> for parts lookup</li>
+            <li><a href="https://wokwi.com/" target="_blank">Wokwi</a> for browser simulation</li>
+            <li><a href="https://randomnerdtutorials.com/" target="_blank">Random Nerd Tutorials</a> for ESP32 examples</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="index.html">&larr; Home</a> &middot; Next: <a href="symbols.html">Symbols Reference &rarr;</a>
+  </div>
+</footer>
+
+</body>
+</html>

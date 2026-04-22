@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Part 4 &middot; PCB &amp; Closing</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Part 4 &middot; PCB &amp; Closing</div>
+    <h1>Part 4 &mdash; Light PCB &amp; Interview Closing</h1>
+    <p class="subtitle">4 topics &middot; Weeks 8&ndash;10 &middot; Just enough PCB literacy for interviews. Then apply, interview, close.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html">Part 1</a>
+    <a href="hardware.html">Part 2</a>
+    <a href="embedded.html">Part 3</a>
+    <a href="pcb.html" class="active">Part 4</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html">Cheats</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+
+    <!-- ============ T4.1 ============ -->
+    <div class="topic" id="t4-1">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T4.1</div><h3>PCB Basics &mdash; Layers, Traces, Vias, Copper Pour</h3></div>
+        <div class="topic-meta">Session 37 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Look at any 2-layer PCB and identify traces, vias, ground pour, silkscreen, footprints.</div>
+        <div class="concept">
+          <p>A PCB is a sandwich: FR4 substrate + copper layers + solder mask + silkscreen. Most entry-level designs are 2-layer.</p>
+          <ul>
+            <li><strong>Traces:</strong> copper paths carrying signals/power.</li>
+            <li><strong>Vias:</strong> plated holes connecting layers.</li>
+            <li><strong>Pads:</strong> where components solder on.</li>
+            <li><strong>Silkscreen:</strong> white text labels on top/bottom.</li>
+            <li><strong>Solder mask:</strong> green/black coating preventing solder bridges.</li>
+            <li><strong>Ground plane:</strong> large copper area tied to GND. Noise + return paths.</li>
+          </ul>
+        </div>
+
+        <div class="block-diagram">
+          <svg width="620" height="200" viewBox="0 0 620 200">
+            <text x="10" y="20" font-size="14" font-weight="700">2-Layer PCB Cross-Section</text>
+            <rect x="40" y="60" width="540" height="20" fill="#ffffff" stroke="#0f172a" stroke-width="1"/>
+            <text x="230" y="75" font-size="11">Silkscreen (white labels)</text>
+            <rect x="40" y="80" width="540" height="15" fill="#16a34a" opacity="0.6"/>
+            <text x="230" y="92" font-size="10" fill="white">Solder mask (green)</text>
+            <rect x="40" y="95" width="540" height="15" fill="#f59e0b"/>
+            <text x="220" y="107" font-size="10" fill="#78350f">Top copper (signals + pads)</text>
+            <rect x="40" y="110" width="540" height="40" fill="#fef3c7"/>
+            <text x="230" y="135" font-size="11" fill="#92400e">FR4 substrate (1.6 mm fiberglass)</text>
+            <rect x="40" y="150" width="540" height="15" fill="#f59e0b"/>
+            <text x="210" y="162" font-size="10" fill="#78350f">Bottom copper (ground pour)</text>
+            <rect x="40" y="165" width="540" height="15" fill="#16a34a" opacity="0.6"/>
+            <text x="230" y="177" font-size="10" fill="white">Solder mask (bottom)</text>
+
+            <circle cx="140" cy="128" r="5" fill="#b45309" stroke="#92400e" stroke-width="1"/>
+            <line x1="140" y1="103" x2="140" y2="157" stroke="#b45309" stroke-width="4" opacity="0.5"/>
+            <text x="125" y="50" font-size="10" fill="#92400e">via</text>
+
+            <circle cx="400" cy="102" r="7" fill="#b45309" stroke="#92400e" stroke-width="1"/>
+            <text x="388" y="50" font-size="10" fill="#92400e">pad</text>
+          </svg>
+          <div class="caption">Top-to-bottom: silkscreen &rarr; soldermask &rarr; copper &rarr; FR4 substrate &rarr; copper &rarr; soldermask.</div>
+        </div>
+
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Give her an ESP32 DevKit + magnifier. Point to pads, vias, silkscreen, back-side copper pour.</li>
+            <li>Open KiCad. Download an ESP32 breakout project from GitHub.</li>
+            <li>Toggle layers: hide silkscreen, hide mask, see bare copper. Makes it tangible.</li>
+            <li>Goal is <strong>reading</strong>, not designing from scratch.</li>
+          </ol>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>What's a via? <span class="ans">Plated hole connecting layers</span></li>
+            <li>Why ground pour? <span class="ans">Noise + return paths</span></li>
+            <li>Why silkscreen white? <span class="ans">Contrast on green mask</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T4.2 ============ -->
+    <div class="topic" id="t4-2">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T4.2</div><h3>KiCad Walkthrough &mdash; Schematic &rarr; Layout &rarr; Gerber</h3></div>
+        <div class="topic-meta">Session 38 &middot; 90 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Open an existing KiCad project, understand workflow, export Gerbers.</div>
+        <div class="concept">
+          <p>Schematic editor (draw) &rarr; Symbol-to-footprint mapping &rarr; PCB editor (place + route) &rarr; Design Rule Check &rarr; Gerber export.</p>
+          <p>Don't teach from-scratch design. Just familiarity to read PCB projects and make small changes.</p>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Install KiCad 8.x (free).</li>
+            <li>Clone a simple ESP32 breakout from GitHub.</li>
+            <li>Schematic editor first &mdash; she already knows schematics from Part 2.</li>
+            <li>PCB editor: layer panel, footprints, traces, ground fill.</li>
+            <li>Run DRC &mdash; shows trace/spacing violations.</li>
+            <li>File &rarr; Plot &rarr; Gerber. Show the .gbr files &mdash; what a PCB fab gets.</li>
+            <li>Homework: modify a silkscreen label, re-export. Done &mdash; enough for entry-level.</li>
+          </ol>
+        </div>
+        <div class="resource"><strong>Reference:</strong> <a href="https://www.youtube.com/playlist?list=PLXvLToQzgzdcpOiCg3S38jJjHj2YUHMc5" target="_blank">Shawn Hymel &mdash; KiCad Tutorials</a> &middot; <a href="https://docs.kicad.org/" target="_blank">KiCad Docs</a></div>
+      </div>
+    </div>
+
+    <!-- ============ T4.3 ============ -->
+    <div class="topic" id="t4-3">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T4.3</div><h3>Resume, LinkedIn &amp; Portfolio Final Pass</h3></div>
+        <div class="topic-meta">Session 39 &middot; 60 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Resume + LinkedIn + GitHub polished, keyword-loaded, ATS-friendly before application blitz.</div>
+        <div class="teach">
+          <strong>Walk through together</strong>
+          <ol>
+            <li>Open her LaTeX resume. Every TODO filled (dissertation, GitHub, projects).</li>
+            <li>LinkedIn: custom URL, headline, About, Skills &ge; 15, Featured section with 2&ndash;3 pinned projects.</li>
+            <li>GitHub: profile README, &ge; 3 repos with README + screenshots.</li>
+            <li>Compile resume on Overleaf. Save as <code class="inline">Bahar_Jindani_Resume_2026.pdf</code>.</li>
+            <li>Two versions: <em>Hardware-leaning</em> vs <em>Embedded-SW-leaning</em>. Swap role + reorder skills.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T4.4 ============ -->
+    <div class="topic" id="t4-4">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T4.4</div><h3>Mock Interview &mdash; Run Her Through a Real One</h3></div>
+        <div class="topic-meta">Weekly Session 40+ &middot; 45 min each</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She handles a 30-min technical + 15-min HR without freezing.</div>
+        <div class="teach">
+          <strong>Structure each mock</strong>
+          <ol>
+            <li><strong>5 min HR warm-up:</strong> Tell me about yourself. Why this role? Any questions?</li>
+            <li><strong>15 min schematic / circuit:</strong> Show open-source schematic. Pick a block. Pick R for LED. Read datasheet snippet.</li>
+            <li><strong>10 min protocol / code:</strong> I2C vs SPI? Walk a sketch. What's <code class="inline">volatile</code>?</li>
+            <li><strong>5 min project walkthrough:</strong> Aimtron story + 1 GitHub project. 2-min STAR-format pitch.</li>
+            <li><strong>5 min feedback:</strong> What went well, what to work on. Record her phone for replay.</li>
+          </ol>
+          <p style="margin-top:10px;font-size:13.5px"><strong>Do this weekly from Week 7.</strong> Compounds quickly.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="embedded.html">&larr; Part 3</a> &middot; <a href="index.html">Home</a> &middot; Next: <a href="labs.html">Labs &rarr;</a>
+  </div>
+</footer>
+
+</body>
+</html>

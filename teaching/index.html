@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Home</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Teaching Guide &mdash; Embedded Systems Mentorship</h1>
+    <p class="subtitle">Instructor's handbook for Vaibhav &middot; curriculum for teaching Bahar Jindani electronics + embedded + entry-level hardware from the ground up.</p>
+    <div class="stats">
+      <div class="stat"><div class="label">Student</div><div class="value">Bahar Jindani (MSc Applied Physics)</div></div>
+      <div class="stat"><div class="label">Total Sessions</div><div class="value">~40 sessions &middot; 45&ndash;60 min</div></div>
+      <div class="stat"><div class="label">Timeline</div><div class="value">10 weeks</div></div>
+      <div class="stat"><div class="label">Target Role</div><div class="value">Embedded Systems Trainee (HW + SW)</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html" class="active">Home</a>
+    <a href="overview.html">Overview &amp; Pedagogy</a>
+    <a href="symbols.html">Symbols Reference</a>
+    <a href="electronics.html">Part 1 &middot; Electronics</a>
+    <a href="hardware.html">Part 2 &middot; Hardware</a>
+    <a href="embedded.html">Part 3 &middot; Embedded</a>
+    <a href="pcb.html">Part 4 &middot; PCB + Closing</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html">Cheat Sheets</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2>Teaching Path</h2>
+      <p class="part-sub">Each section below is a self-contained page. Start with Overview, then work through parts in order. Labs run alongside theory &mdash; one hands-on build per 1&ndash;2 theory sessions.</p>
+    </div>
+
+    <div class="index-grid">
+
+      <a class="index-card" href="overview.html">
+        <div class="icon">00</div>
+        <h3>Overview &amp; Pedagogy</h3>
+        <p>How to run sessions, the 45-min template, hardware shopping list, and teaching principles tuned for Bahar's physics background.</p>
+        <span class="tag">Read First</span>
+      </a>
+
+      <a class="index-card" href="symbols.html">
+        <div class="icon">&#9881;</div>
+        <h3>Symbols Reference</h3>
+        <p>Visual gallery of 32 electronics component symbols &mdash; resistors, caps, diodes, transistors, op-amps, logic gates, and more. Open it as a second tab while teaching.</p>
+        <span class="tag">Always Open</span>
+      </a>
+
+      <a class="index-card" href="electronics.html">
+        <div class="icon">01</div>
+        <h3>Part 1 &middot; Basic Electronics</h3>
+        <p>13 topics. V/I/R/P, Ohm's &amp; Kirchhoff's laws, dividers, resistors, caps, RC, diodes, BJT, MOSFET, op-amps, digital logic. Weeks 1&ndash;2.</p>
+        <span class="tag">Weeks 1&ndash;2</span>
+      </a>
+
+      <a class="index-card" href="hardware.html">
+        <div class="icon">02</div>
+        <h3>Part 2 &middot; Hardware &amp; BOM</h3>
+        <p>8 topics. Schematic reading, power supplies (LDO vs buck), datasheet analysis, component selection, BOM creation, sourcing, reset circuits. Weeks 3&ndash;4.</p>
+        <span class="tag">Weeks 3&ndash;4</span>
+      </a>
+
+      <a class="index-card" href="embedded.html">
+        <div class="icon">03</div>
+        <h3>Part 3 &middot; Embedded Systems</h3>
+        <p>Starts from <em>"What is an embedded system?"</em>. Then MCU vs MPU, memory types, boot process, Arduino/ESP32, GPIO/ADC/PWM, UART/I2C/SPI, interrupts. 15 topics. Weeks 5&ndash;7.</p>
+        <span class="tag">Weeks 5&ndash;7</span>
+      </a>
+
+      <a class="index-card" href="pcb.html">
+        <div class="icon">04</div>
+        <h3>Part 4 &middot; PCB + Closing</h3>
+        <p>4 topics. PCB anatomy, KiCad walkthrough, resume / LinkedIn / portfolio final pass, mock interviews. Weeks 8&ndash;10.</p>
+        <span class="tag">Weeks 8&ndash;10</span>
+      </a>
+
+      <a class="index-card" href="labs.html">
+        <div class="icon">&#128296;</div>
+        <h3>Labs</h3>
+        <p>21 hands-on builds. One lab per 1&ndash;2 theory sessions. Uses ESP32 + Arduino + breadboard kit (~&#8377;1800 one-time cost).</p>
+        <span class="tag">Hands-On</span>
+      </a>
+
+      <a class="index-card" href="cheats.html">
+        <div class="icon">&#9748;</div>
+        <h3>Cheat Sheets</h3>
+        <p>Resistor colour code, UART/I2C/SPI comparison, ESP32 pinout quirks, ready-to-paste code snippets, "always keep in stock" component list, mnemonics.</p>
+        <span class="tag">Quick Ref</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="part">
+  <div class="wrap">
+    <div class="part-header">
+      <h2>How to Use This Guide</h2>
+    </div>
+
+    <div class="pedagogy">
+      <h3>Daily Flow</h3>
+      <ol style="padding-left:20px">
+        <li><strong>Pre-session</strong> (5 min): Open the relevant topic card. Read the <em>Gotcha</em> and <em>Check</em> sections so you know where she'll stumble.</li>
+        <li><strong>Run the session</strong> (45 min): Use the suggested script. Follow the 45-min template from the Overview page.</li>
+        <li><strong>Assign the lab</strong>: Link from the topic card to the corresponding Lab entry. Give her a deadline (next session).</li>
+        <li><strong>Post-session</strong>: Note what check-questions she missed. Hit those in next session's 5-min recap.</li>
+      </ol>
+    </div>
+
+    <div class="pedagogy" style="margin-top:16px">
+      <h3>Key Design Choices in This Guide</h3>
+      <ul>
+        <li><strong>SVG-first diagrams.</strong> Every schematic in this guide is inline SVG &mdash; no broken images, no external dependencies. Just open the file.</li>
+        <li><strong>Answers embedded in check-questions.</strong> You don't have to remember or look up &mdash; the answer is right there in a monospace tag.</li>
+        <li><strong>Gotcha boxes are first-class.</strong> Every topic has one, because teaching means <em>pre-empting</em> confusion, not reacting to it.</li>
+        <li><strong>Application-level only.</strong> No RTOS, no bare-metal C, no deep firmware. She needs Arduino-level confidence first.</li>
+        <li><strong>Symbol references are visual.</strong> The Symbols page has SVG graphics for every component &mdash; not just a name-table.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Teaching companion for <strong>Vaibhav Kawade</strong> (Embedded R&amp;D, Omnidya Tech) &middot; mentoring Bahar Jindani through Embedded Systems entry-level prep &middot; April 2026
+    <br><br>
+    Related artefacts: <a href="../career_plan.html">Bahar's Career Plan</a> &middot; <a href="../resume/">LaTeX Resume Source</a>
+  </div>
+</footer>
+
+</body>
+</html>

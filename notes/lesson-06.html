@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 6 &mdash; Your First Arduino: Blink!</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 6</div>
+    <span class="lesson-tag">Lesson 6 of 12</span>
+    <h1>Your First Arduino: Blink!</h1>
+    <p class="subtitle">The "Hello World" of embedded systems. Install the tools. Upload a sketch. Make an LED blink. You're officially an embedded developer after this lesson.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Have Arduino IDE installed with ESP32 board support</li>
+        <li>Upload the Blink sketch and watch the LED blink</li>
+        <li>Understand <code>setup()</code> and <code>loop()</code> &mdash; the two functions in every sketch</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 6</strong> &middot; Next: GPIO &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>Install the Tools</h2>
+
+    <h3>Step 1: Install Arduino IDE</h3>
+    <ol>
+      <li>Go to <a href="https://www.arduino.cc/en/software" target="_blank">arduino.cc/en/software</a></li>
+      <li>Download <strong>Arduino IDE 2.x</strong> for your OS (Windows / Mac / Linux)</li>
+      <li>Install it. Open the IDE. You should see an empty sketch window.</li>
+    </ol>
+
+    <h3>Step 2: Add ESP32 Board Support (if you have an ESP32)</h3>
+    <ol>
+      <li>Open Arduino IDE &rarr; <strong>File &rarr; Preferences</strong></li>
+      <li>Find "Additional Boards Manager URLs" &rarr; paste:<br>
+        <code class="inline">https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json</code>
+      </li>
+      <li>Click OK.</li>
+      <li>Open <strong>Tools &rarr; Board &rarr; Boards Manager</strong>. Search "esp32". Install "esp32 by Espressif Systems".</li>
+      <li>After install, go to <strong>Tools &rarr; Board &rarr; ESP32 Arduino</strong> and pick "<strong>ESP32 Dev Module</strong>".</li>
+    </ol>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Skip This If&hellip;</strong>
+      If you don't have an ESP32 yet, you can still follow along using the <strong>Arduino Uno</strong> simulation in Wokwi or Tinkercad. Every lesson will show both paths.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>The Classic Blink Sketch</h2>
+    <p>Arduino IDE &rarr; <strong>File &rarr; Examples &rarr; 01.Basics &rarr; Blink</strong>. You'll see this code:</p>
+
+    <pre class="code"><span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="cmt">// runs once when the board is reset / powered on</span>
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cmt">// runs forever after setup()</span>
+  digitalWrite(LED_BUILTIN, HIGH);    <span class="cmt">// LED on</span>
+  delay(<span class="num">1000</span>);                        <span class="cmt">// wait 1 second</span>
+  digitalWrite(LED_BUILTIN, LOW);     <span class="cmt">// LED off</span>
+  delay(<span class="num">1000</span>);                        <span class="cmt">// wait 1 second</span>
+}</pre>
+
+    <h3>Understanding Every Line</h3>
+    <ul>
+      <li><strong><code>void setup() { ... }</code></strong> &mdash; runs ONCE when power is applied or the board resets. Use for one-time initialisation.</li>
+      <li><strong><code>pinMode(LED_BUILTIN, OUTPUT);</code></strong> &mdash; tells the MCU that this pin should send signals out (instead of reading them in). <code>LED_BUILTIN</code> is a special constant (pin 13 on Uno, pin 2 on ESP32).</li>
+      <li><strong><code>void loop() { ... }</code></strong> &mdash; runs FOREVER after setup. This is your main program. Everything the MCU does happens here.</li>
+      <li><strong><code>digitalWrite(pin, HIGH);</code></strong> &mdash; makes the pin output 3.3V (or 5V on Uno). <code>LOW</code> makes it 0V.</li>
+      <li><strong><code>delay(1000);</code></strong> &mdash; pause for 1000 milliseconds (1 second). The CPU does nothing else during this time.</li>
+    </ul>
+
+    <div class="callout physics">
+      <strong class="label">&#128161; The Mental Model</strong>
+      When you click "Upload", your PC compiles this code to machine instructions for the MCU, sends them over USB to the MCU's Flash memory, then resets the MCU. The MCU runs <code>setup()</code> once, then <code>loop()</code> over and over forever. That's it. Every embedded program in the world follows this pattern.
+    </div>
+
+    <!-- ================== WOKWI BLINK ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Blink an LED in Wokwi (no hardware needed!)</h4>
+      </div>
+      <p style="font-size:14px">If you don't have hardware yet, no problem &mdash; Wokwi runs a perfect Arduino simulator in your browser.</p>
+
+      <div class="sim-screenshot">
+        <img src="assets/images/Arduino_LEDBlink_Pin3.gif" alt="Arduino LED blinking animation on pin 3">
+        <div class="caption">Real Arduino Uno running the Blink sketch. The LED turns on and off every second &mdash; exactly what your code does.</div>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Do this now:</strong>
+        <ol>
+          <li>Open <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank">wokwi.com &rarr; New Arduino Uno project</a></li>
+          <li>You'll see an empty sketch and an Arduino board on the right</li>
+          <li>Delete the default code, paste the Blink sketch above</li>
+          <li>Click the green <strong>Play</strong> button (top-right)</li>
+          <li>&#127881; The onboard LED blinks every second!</li>
+          <li><strong>Challenge:</strong> Change both <code>delay(1000)</code> to <code>delay(200)</code>. Upload. LED blinks 5 times per second.</li>
+          <li><strong>Save your project:</strong> click "Save" in Wokwi. You can come back to it anytime.</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank">Open Wokwi Arduino &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Upload to a Real Board</h2>
+    <p>If you have the physical hardware (Arduino Uno or ESP32 DevKit), let's put the code on real silicon.</p>
+
+    <ol>
+      <li>Connect the board via USB to your laptop</li>
+      <li>In Arduino IDE: <strong>Tools &rarr; Board &rarr; (Arduino Uno or ESP32 Dev Module)</strong></li>
+      <li>In Arduino IDE: <strong>Tools &rarr; Port &rarr;</strong> select the COM port (usually COM3/COM4 on Windows, /dev/ttyUSB0 on Linux)</li>
+      <li>Paste the Blink code (or open Examples &rarr; 01.Basics &rarr; Blink)</li>
+      <li>Click the <strong>&rarr; Upload</strong> button (right arrow icon, top-left)</li>
+      <li>Wait ~15 seconds. You'll see "Done uploading" at the bottom</li>
+      <li>&#127881; The onboard LED (usually labelled "L" or "D13") starts blinking every second!</li>
+    </ol>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; Common Issues</strong>
+      <ul>
+        <li><strong>Wrong COM port:</strong> unplug the board, check which ports appear; plug in, see which one shows up &mdash; that's yours.</li>
+        <li><strong>Driver missing (Windows):</strong> ESP32 boards need the CP210x driver. Download from <a href="https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers" target="_blank">Silicon Labs</a>.</li>
+        <li><strong>"Failed to connect to ESP32":</strong> some ESP32 boards need you to hold BOOT button while the upload starts. Release after "Connecting..." appears.</li>
+        <li><strong>Upload succeeds but nothing happens:</strong> wrong board type selected. Double-check Tools &rarr; Board.</li>
+      </ul>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>Modify &amp; Experiment</h2>
+    <p>Now that Blink works, try these variations. Each is a tiny change to the code. The muscle of "change code &rarr; upload &rarr; observe" is what makes you an embedded developer:</p>
+
+    <h3>Experiment 1: Faster Blink</h3>
+    <pre class="code">delay(<span class="num">100</span>);   <span class="cmt">// change 1000 to 100 &mdash; 10 Hz blinking</span></pre>
+
+    <h3>Experiment 2: Morse Code SOS</h3>
+    <pre class="code"><span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="cmt">// S (three short)</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+    digitalWrite(LED_BUILTIN, HIGH); delay(<span class="num">200</span>);
+    digitalWrite(LED_BUILTIN, LOW);  delay(<span class="num">200</span>);
+  }
+  delay(<span class="num">300</span>);
+  <span class="cmt">// O (three long)</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+    digitalWrite(LED_BUILTIN, HIGH); delay(<span class="num">600</span>);
+    digitalWrite(LED_BUILTIN, LOW);  delay(<span class="num">200</span>);
+  }
+  delay(<span class="num">300</span>);
+  <span class="cmt">// S again</span>
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+    digitalWrite(LED_BUILTIN, HIGH); delay(<span class="num">200</span>);
+    digitalWrite(LED_BUILTIN, LOW);  delay(<span class="num">200</span>);
+  }
+  delay(<span class="num">1500</span>);
+}</pre>
+
+    <h3>Experiment 3: Serial Monitor</h3>
+    <p>The Serial Monitor lets your MCU print messages to your PC. This is the #1 debugging tool.</p>
+
+    <pre class="code"><span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(<span class="num">115200</span>);             <span class="cmt">// start serial at 115200 baud</span>
+  Serial.println(<span class="str">"Bahar's first Arduino sketch!"</span>);
+}
+
+<span class="kw">int</span> count = <span class="num">0</span>;
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  Serial.print(<span class="str">"Blink #"</span>); Serial.println(++count);
+  delay(<span class="num">500</span>);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(<span class="num">500</span>);
+}</pre>
+
+    <p>After uploading: click the <strong>Serial Monitor</strong> icon (top-right). Set baud rate to <strong>115200</strong>. Watch your messages appear!</p>
+
+    <div class="callout tip">
+      <strong class="label">&#127775; Push to GitHub Today</strong>
+      This is your first embedded project. Even if it's "just Blink", create a GitHub repo called <code>bahar-embedded-journey</code> and push your Blink sketch. Six months from now, when you have 15 projects on there, recruiters will see your steady progress. Start today.
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>What runs first &mdash; <code>setup()</code> or <code>loop()</code>?</summary>
+        <div class="answer"><code>setup()</code> &mdash; it runs ONCE at boot. Then <code>loop()</code> runs forever.</div>
+      </details>
+
+      <details class="q">
+        <summary>How many times does <code>loop()</code> execute?</summary>
+        <div class="answer">Forever &mdash; until you power off or press reset. Every time it returns, it gets called again immediately.</div>
+      </details>
+
+      <details class="q">
+        <summary>If I want the LED to blink every 250 ms, what do I change?</summary>
+        <div class="answer">Change both <code>delay(1000)</code> calls to <code>delay(250)</code>.</div>
+      </details>
+
+      <details class="q">
+        <summary>What does <code>pinMode(5, OUTPUT)</code> do?</summary>
+        <div class="answer">Configures GPIO pin 5 as an output so it can drive voltage to external devices (LEDs, etc.). Without this, the pin defaults to high-impedance input.</div>
+      </details>
+
+      <details class="q">
+        <summary>My Serial Monitor shows gibberish. What's wrong?</summary>
+        <div class="answer">Baud rate mismatch. <code>Serial.begin(115200)</code> in code must match the Serial Monitor dropdown (bottom-right). Set both to 115200.</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>Every Arduino sketch has two functions: <code>setup()</code> (runs once) and <code>loop()</code> (runs forever).</li>
+        <li><code>pinMode()</code> configures whether a pin is input or output.</li>
+        <li><code>digitalWrite(pin, HIGH/LOW)</code> sets the output voltage.</li>
+        <li><code>delay(ms)</code> pauses for milliseconds.</li>
+        <li><code>Serial.begin()</code> + <code>Serial.println()</code> &mdash; your #1 debugging tool.</li>
+        <li>Always push code to GitHub. Even tiny sketches. Build your portfolio from day one.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-05.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">What Is Embedded?</span>
+      </a>
+      <a class="next" href="lesson-07.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">GPIO &mdash; Buttons &amp; LEDs</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 6 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

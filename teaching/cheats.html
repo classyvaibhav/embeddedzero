@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Cheat Sheets</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Cheat Sheets</div>
+    <h1>Quick Reference Cheat Sheets</h1>
+    <p class="subtitle">Keep these open in a second tab while teaching. Fast lookup, no thinking required.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html">Part 1</a>
+    <a href="hardware.html">Part 2</a>
+    <a href="embedded.html">Part 3</a>
+    <a href="pcb.html">Part 4</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html" class="active">Cheats</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+
+    <!-- ============ C.1 COLOUR CODE ============ -->
+    <div class="topic" id="c-colour">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">C.1</div><h3>Resistor Colour Code (4-Band)</h3></div>
+        <div class="topic-meta">Quick ref</div>
+      </div>
+      <div class="topic-body">
+        <p style="font-size:14px;color:var(--ink-soft)">Read bands left to right. Tolerance band (gold/silver) on right.</p>
+        <table class="ref">
+          <tr><th>Colour</th><th>Digit</th><th>Multiplier</th><th>Tolerance</th></tr>
+          <tr><td style="background:#000;color:white">Black</td><td>0</td><td>&times;1</td><td>&mdash;</td></tr>
+          <tr><td style="background:#92400e;color:white">Brown</td><td>1</td><td>&times;10</td><td>&plusmn;1%</td></tr>
+          <tr><td style="background:#dc2626;color:white">Red</td><td>2</td><td>&times;100</td><td>&plusmn;2%</td></tr>
+          <tr><td style="background:#ea580c;color:white">Orange</td><td>3</td><td>&times;1k</td><td>&mdash;</td></tr>
+          <tr><td style="background:#eab308">Yellow</td><td>4</td><td>&times;10k</td><td>&mdash;</td></tr>
+          <tr><td style="background:#16a34a;color:white">Green</td><td>5</td><td>&times;100k</td><td>&plusmn;0.5%</td></tr>
+          <tr><td style="background:#2563eb;color:white">Blue</td><td>6</td><td>&times;1M</td><td>&plusmn;0.25%</td></tr>
+          <tr><td style="background:#8b5cf6;color:white">Violet</td><td>7</td><td>&times;10M</td><td>&plusmn;0.1%</td></tr>
+          <tr><td style="background:#64748b;color:white">Grey</td><td>8</td><td>&mdash;</td><td>&plusmn;0.05%</td></tr>
+          <tr><td style="background:#f1f5f9">White</td><td>9</td><td>&mdash;</td><td>&mdash;</td></tr>
+          <tr><td style="background:#fbbf24">Gold</td><td>&mdash;</td><td>&times;0.1</td><td>&plusmn;5%</td></tr>
+          <tr><td style="background:#cbd5e1">Silver</td><td>&mdash;</td><td>&times;0.01</td><td>&plusmn;10%</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ C.2 PROTOCOL ============ -->
+    <div class="topic" id="c-protocol">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">C.2</div><h3>UART vs I2C vs SPI</h3></div>
+        <div class="topic-meta">Quick ref</div>
+      </div>
+      <div class="topic-body">
+        <table class="ref">
+          <tr><th></th><th>UART</th><th>I2C</th><th>SPI</th></tr>
+          <tr><td><strong>Wires</strong></td><td>TX, RX + GND</td><td>SDA, SCL + GND</td><td>MOSI, MISO, SCK, CS + GND</td></tr>
+          <tr><td><strong>Clock</strong></td><td>Async</td><td>SCL shared</td><td>SCK shared</td></tr>
+          <tr><td><strong>Speed</strong></td><td>9.6&ndash;921.6 kbps</td><td>100k/400k/1M Hz</td><td>1 MHz&ndash;50+ MHz</td></tr>
+          <tr><td><strong>Addressing</strong></td><td>Point-to-point</td><td>7-bit</td><td>CS per slave</td></tr>
+          <tr><td><strong>Pull-ups</strong></td><td>No</td><td>Yes required</td><td>No</td></tr>
+          <tr><td><strong>Multi-master</strong></td><td>No</td><td>Yes</td><td>No</td></tr>
+          <tr><td><strong>Use</strong></td><td>PC link, GPS</td><td>Sensors, OLEDs</td><td>SD, fast sensors</td></tr>
+          <tr><td><strong>Library</strong></td><td>Serial</td><td>Wire</td><td>SPI</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ C.3 ESP32 ============ -->
+    <div class="topic" id="c-esp32">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">C.3</div><h3>ESP32 DevKit v1 &mdash; Pin Quick Card</h3></div>
+        <div class="topic-meta">Quick ref</div>
+      </div>
+      <div class="topic-body">
+        <table class="ref">
+          <tr><th>GPIO</th><th>Use</th><th>Notes</th></tr>
+          <tr><td>0</td><td>Strapping (BOOT)</td><td>Avoid external pull-ups</td></tr>
+          <tr><td>2</td><td>Onboard LED, strapping</td><td>OK as output</td></tr>
+          <tr><td>4, 5, 12&ndash;15</td><td>GPIO, some strapping</td><td>12, 15 cautious</td></tr>
+          <tr><td>16, 17</td><td>UART2 (RX2, TX2)</td><td>Second UART</td></tr>
+          <tr><td>18, 19, 23</td><td>SPI (SCK, MISO, MOSI)</td><td>Default VSPI</td></tr>
+          <tr><td>21, 22</td><td>I2C (SDA, SCL)</td><td>Default I2C</td></tr>
+          <tr><td>25, 26</td><td>DAC channels</td><td>Only 2 DAC pins</td></tr>
+          <tr><td>32&ndash;39</td><td>ADC1</td><td>Use for ADC; 36&ndash;39 input-only</td></tr>
+          <tr><td>34, 35, 36, 39</td><td>Input-only</td><td>No pull-up/down</td></tr>
+        </table>
+        <div class="resource"><strong>Reference:</strong> <a href="https://randomnerdtutorials.com/esp32-pinout-reference-gpios/" target="_blank">Random Nerd Tutorials ESP32 Pinout</a></div>
+      </div>
+    </div>
+
+    <!-- ============ C.4 CODE SNIPPETS ============ -->
+    <div class="topic" id="c-snippets">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">C.4</div><h3>Arduino / ESP32 Code Snippets</h3></div>
+        <div class="topic-meta">Quick ref</div>
+      </div>
+      <div class="topic-body">
+        <h4 style="font-size:13px;color:var(--primary-dark);margin-top:14px;text-transform:uppercase;letter-spacing:0.8px">Non-blocking interval</h4>
+        <pre class="code"><span class="kw">unsigned</span> <span class="kw">long</span> last = 0;
+<span class="kw">const</span> <span class="kw">unsigned</span> <span class="kw">long</span> INTERVAL = 1000;
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (millis() - last &gt;= INTERVAL) {
+    last = millis();
+    <span class="cmt">// periodic thing</span>
+  }
+}</pre>
+
+        <h4 style="font-size:13px;color:var(--primary-dark);margin-top:14px;text-transform:uppercase;letter-spacing:0.8px">Debounced button</h4>
+        <pre class="code"><span class="kw">const</span> <span class="kw">int</span> BTN = 4;
+<span class="kw">unsigned</span> <span class="kw">long</span> lastChg = 0;
+<span class="kw">int</span> lastState = HIGH;
+
+<span class="kw">bool</span> <span class="fn">btnPressed</span>() {
+  <span class="kw">int</span> s = digitalRead(BTN);
+  <span class="kw">if</span> (s != lastState &amp;&amp; millis() - lastChg &gt; 50) {
+    lastChg = millis(); lastState = s;
+    <span class="kw">return</span> s == LOW;
+  }
+  <span class="kw">return</span> <span class="kw">false</span>;
+}</pre>
+
+        <h4 style="font-size:13px;color:var(--primary-dark);margin-top:14px;text-transform:uppercase;letter-spacing:0.8px">I2C scan</h4>
+        <pre class="code">#include &lt;Wire.h&gt;
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(115200); Wire.begin();
+  <span class="kw">for</span> (<span class="kw">byte</span> a=1; a&lt;127; a++) {
+    Wire.beginTransmission(a);
+    <span class="kw">if</span> (Wire.endTransmission()==0) Serial.printf(<span class="str">"0x%02X\n"</span>, a);
+  }
+}</pre>
+
+        <h4 style="font-size:13px;color:var(--primary-dark);margin-top:14px;text-transform:uppercase;letter-spacing:0.8px">LEDC PWM (ESP32)</h4>
+        <pre class="code">ledcSetup(0, 5000, 8);     <span class="cmt">// ch 0, 5 kHz, 8-bit</span>
+ledcAttachPin(LED_PIN, 0);
+ledcWrite(0, 128);         <span class="cmt">// 50% duty</span></pre>
+
+        <h4 style="font-size:13px;color:var(--primary-dark);margin-top:14px;text-transform:uppercase;letter-spacing:0.8px">ADC &rarr; volts</h4>
+        <pre class="code">analogReadResolution(12);
+analogSetAttenuation(ADC_11db);
+<span class="kw">int</span> raw = analogRead(34);
+<span class="kw">float</span> v = raw * 3.3f / 4095.0f;</pre>
+      </div>
+    </div>
+
+    <!-- ============ C.5 STOCK COMPONENTS ============ -->
+    <div class="topic" id="c-values">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">C.5</div><h3>"Always Keep in Stock" Component List</h3></div>
+        <div class="topic-meta">Shopping ref</div>
+      </div>
+      <div class="topic-body">
+        <table class="ref">
+          <tr><th>Category</th><th>Values / Parts</th><th>Why</th></tr>
+          <tr><td>Resistors (1/4 W, 5%)</td><td>10&Omega;, 100&Omega;, 220&Omega;, 330&Omega;, 470&Omega;, 1k, 2.2k, 4.7k, 10k, 100k, 1M</td><td>99% of hobby needs</td></tr>
+          <tr><td>Ceramic caps</td><td>100 pF, 1 nF, 10 nF, 100 nF, 1 &mu;F</td><td>Decoupling, filtering</td></tr>
+          <tr><td>Electrolytics</td><td>1 &mu;F, 10 &mu;F, 100 &mu;F, 470 &mu;F (16/25V)</td><td>Bulk power</td></tr>
+          <tr><td>LEDs</td><td>3/5mm red, green, blue, white</td><td>Status</td></tr>
+          <tr><td>Diodes</td><td>1N4148, 1N4007, 1N5819 (Schottky)</td><td>Signal, power, protection</td></tr>
+          <tr><td>Transistors</td><td>2N2222 NPN, 2N3906 PNP, IRLZ44N N-MOSFET</td><td>Switching</td></tr>
+          <tr><td>Regulators</td><td>AMS1117-3.3, 7805</td><td>Power rails</td></tr>
+          <tr><td>Op-amps</td><td>LM358, TL072</td><td>Signal conditioning</td></tr>
+          <tr><td>Sensors</td><td>DHT11, BMP280, MPU6050, DS18B20</td><td>Temp/humid/IMU</td></tr>
+          <tr><td>Display</td><td>0.96" OLED I2C (SSD1306)</td><td>Visual output</td></tr>
+          <tr><td>Connectors</td><td>Male/female headers, JST 2-pin</td><td>Prototype</td></tr>
+          <tr><td>MCU boards</td><td>ESP32 DevKit, Arduino Uno R3, Nano</td><td>Three platforms cover most</td></tr>
+        </table>
+        <p style="font-size:13px;color:var(--muted);margin-top:12px"><strong>Total:</strong> ~&#8377;2500 from Robu.in. One-time, lasts months.</p>
+      </div>
+    </div>
+
+    <!-- ============ C.6 MNEMONICS ============ -->
+    <div class="topic" id="c-mnemonics">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">C.6</div><h3>Mnemonics &amp; Quick Reminders</h3></div>
+        <div class="topic-meta">Quick ref</div>
+      </div>
+      <div class="topic-body">
+        <ul style="padding-left:20px;font-size:14px;color:var(--ink-soft)">
+          <li><strong>"B. B. Roy of Great Britain has a Very Good Wife"</strong> &mdash; colour code mnemonic (Black, Brown, Red, Orange, Yellow, Green, Blue, Violet, Grey, White = 0&ndash;9).</li>
+          <li><strong>"NPN &mdash; Never Points iN"</strong> &mdash; arrow on NPN emitter points outward.</li>
+          <li><strong>"MOSI = Master Out Slave In; MISO = Master In Slave Out"</strong></li>
+          <li><strong>"Current flows through, voltage sits across, power dissipates"</strong> &mdash; language precision.</li>
+          <li><strong>Ohm's wheel:</strong> V=IR, I=V/R, R=V/I, P=VI=I&sup2;R=V&sup2;/R.</li>
+          <li><strong>5 time-constants rule:</strong> cap practically full / empty after 5&tau;.</li>
+          <li><strong>Decoupling rule:</strong> 100 nF ceramic near every V<sub>cc</sub> pin. No exceptions.</li>
+          <li><strong>Pull-up default:</strong> 10 k&Omega; for GPIO.</li>
+          <li><strong>I2C pull-ups:</strong> 4.7 k&Omega; default; 2.2 k&Omega; at higher speeds.</li>
+          <li><strong>ADC averaging:</strong> ESP32 noisy &mdash; average 10 reads.</li>
+          <li><strong>Flyback diode:</strong> always across inductive loads.</li>
+          <li><strong>Cap voltage margin:</strong> rating &ge; 2&times; expected.</li>
+          <li><strong>SMD resistor code:</strong> "103" = 10 k&Omega;; "4R7" = 4.7 &Omega;.</li>
+          <li><strong>Absolute max &ne; operating max</strong> &mdash; it's the destruction threshold.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="labs.html">&larr; Labs</a> &middot; <a href="index.html">Home</a>
+  </div>
+</footer>
+
+</body>
+</html>

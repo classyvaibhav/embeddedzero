@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Part 1 &middot; Basic Electronics</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Part 1 &middot; Basic Electronics</div>
+    <h1>Part 1 &mdash; Basic Electronics Fundamentals</h1>
+    <p class="subtitle">13 topics &middot; Weeks 1&ndash;2 &middot; Rebuild intuition her physics coursework didn't cement. These are the questions every hardware interview opens with.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html" class="active">Part 1</a>
+    <a href="hardware.html">Part 2</a>
+    <a href="embedded.html">Part 3</a>
+    <a href="pcb.html">Part 4</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html">Cheats</a>
+  </div>
+</nav>
+
+<nav class="toc" style="top:46px;background:#f1f5f9">
+  <div class="wrap">
+    <a href="#t1-1">T1.1 V/I/R/P</a>
+    <a href="#t1-2">T1.2 Ohm</a>
+    <a href="#t1-3">T1.3 Kirchhoff</a>
+    <a href="#t1-4">T1.4 Divider</a>
+    <a href="#t1-5">T1.5 Resistors</a>
+    <a href="#t1-6">T1.6 Capacitors</a>
+    <a href="#t1-7">T1.7 RC</a>
+    <a href="#t1-8">T1.8 Diodes</a>
+    <a href="#t1-9">T1.9 BJT</a>
+    <a href="#t1-10">T1.10 MOSFET</a>
+    <a href="#t1-11">T1.11 Op-Amp Rules</a>
+    <a href="#t1-12">T1.12 Op-Amp Configs</a>
+    <a href="#t1-13">T1.13 Digital Logic</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+
+    <!-- ============ T1.1 ============ -->
+    <div class="topic" id="t1-1">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.1</div><h3>Voltage, Current, Resistance &amp; Power</h3></div>
+        <div class="topic-meta">Session 1 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She can explain V, I, R, P in her own words and tell you the direction of conventional current vs electron flow.</div>
+        <div class="concept">
+          <p>The four variables that govern everything. Anchor her physics brain: voltage is potential energy per unit charge (like water pressure), current is flow rate of charge (like water flow), resistance opposes that flow (pipe narrowness), power is rate of energy transfer.</p>
+          <p>She already knows <em>V = W/q</em> from physics. The job is to remap those symbols onto engineering units and signs.</p>
+        </div>
+        <div class="diagram">
+          <svg width="420" height="170" viewBox="0 0 420 170">
+            <line x1="60" y1="40" x2="60" y2="130" stroke="#0f172a" stroke-width="2"/>
+            <line x1="40" y1="70" x2="80" y2="70" stroke="#0f172a" stroke-width="3"/>
+            <line x1="50" y1="100" x2="70" y2="100" stroke="#0f172a" stroke-width="3"/>
+            <text x="25" y="75" font-size="13" font-family="Courier New">+</text>
+            <text x="25" y="105" font-size="13" font-family="Courier New">&minus;</text>
+            <text x="30" y="150" font-size="12" fill="#64748b">9 V</text>
+            <line x1="60" y1="40" x2="260" y2="40" stroke="#0ea5e9" stroke-width="2"/>
+            <line x1="260" y1="40" x2="260" y2="60" stroke="#0ea5e9" stroke-width="2"/>
+            <line x1="260" y1="110" x2="260" y2="130" stroke="#0ea5e9" stroke-width="2"/>
+            <line x1="260" y1="130" x2="60" y2="130" stroke="#0ea5e9" stroke-width="2"/>
+            <polyline points="260,60 268,65 252,75 268,85 252,95 268,105 260,110" stroke="#0f172a" stroke-width="2" fill="none"/>
+            <text x="290" y="85" font-size="13" font-family="Courier New">R = 1 k&Omega;</text>
+            <polygon points="170,30 180,36 170,42" fill="#dc2626"/>
+            <line x1="130" y1="36" x2="172" y2="36" stroke="#dc2626" stroke-width="2"/>
+            <text x="140" y="25" font-size="12" fill="#dc2626" font-family="Courier New">I (conv.)</text>
+          </svg>
+          <div class="caption">Simple loop &mdash; conventional current flows out of the + terminal.</div>
+        </div>
+        <div class="formula"><strong>V</strong> = voltage <span class="unit">[V]</span> &nbsp; <strong>I</strong> = current <span class="unit">[A]</span> &nbsp; <strong>R</strong> = resistance <span class="unit">[&Omega;]</span> &nbsp; <strong>P</strong> = power <span class="unit">[W]</span></div>
+        <div class="example"><strong>Quick example:</strong> 9V battery drives 9 mA through 1 k&Omega;. P = V&times;I = 81 mW. (1/4 W resistor handles easily.)</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Water analogy on whiteboard: tank height = voltage, pipe flow = current, narrowness = resistance, work done = power.</li>
+            <li>Redraw same circuit electrically side-by-side.</li>
+            <li>Ask: "If I double the battery voltage, what happens to current?" &mdash; segues to Ohm's law.</li>
+            <li>Point out conventional current flows + &rarr; &minus; but electrons go opposite. Everyone gets this confused once &mdash; address head-on.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Mixing up voltage <em>across</em> a component vs potential <em>at</em> a node. Hammer: voltage is always a <em>difference</em>.</li>
+            <li>Unit prefixes (mA, &mu;A, mV). Drill: 0.005 A = 5 mA, 2 mV = 0.002 V.</li>
+            <li>Current <em>flows through</em>, voltage <em>across</em>, power <em>dissipates</em>. Correct her language every time.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Current through a 330 &Omega; resistor on 5 V? <span class="ans">15.15 mA</span></li>
+            <li>1 W resistor dissipates how many J/s? <span class="ans">1 J/s = 1 W</span></li>
+            <li>Electrons flow from where to where? <span class="ans">&minus; terminal &rarr; + terminal (opposite of conv. current)</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.2 ============ -->
+    <div class="topic" id="t1-2">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.2</div><h3>Ohm's Law</h3></div>
+        <div class="topic-meta">Session 2 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She solves V=IR in any direction, picks a current-limit resistor for any LED, explains why Ohm's law doesn't apply to diodes.</div>
+        <div class="concept">
+          <p>For linear (ohmic) components, V &propto; I with constant of proportionality R. Combine with P = VI for three power forms: P = VI = I&sup2;R = V&sup2;/R.</p>
+        </div>
+        <div class="formula">
+          <strong>V = I &middot; R</strong> &nbsp; <strong>I = V / R</strong> &nbsp; <strong>R = V / I</strong><br>
+          <strong>P = V&middot;I = I&sup2;&middot;R = V&sup2;/R</strong>
+        </div>
+        <div class="example"><strong>Classic LED example:</strong> Red LED V<sub>f</sub>=2.0 V, I<sub>f</sub>=20 mA, supply 5 V. R = (5&minus;2)/0.02 = <strong>150 &Omega;</strong>. P<sub>R</sub> = 60 mW (1/4 W fine).</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Walk the LED example on whiteboard. Give her 3 different LEDs + supplies; she solves.</li>
+            <li>Build on breadboard: 5V &rarr; 150 &Omega; &rarr; LED. Let her wire. Measure I with DMM in series.</li>
+            <li>Swap 1k&Omega; &rarr; LED dim. Swap 68&Omega; &rarr; calculate (would exceed rating).</li>
+            <li>Mention: LEDs aren't ohmic. V<sub>f</sub> stays constant. Resistor drops the rest.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Applying V=IR <em>across</em> the LED itself. Won't work.</li>
+            <li>Missing power check &mdash; she'll calculate R but skip wattage. Always check P.</li>
+            <li>Confusing voltage drop direction. Current enters higher-potential side of a resistor.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Pick R for green LED (V<sub>f</sub>=2.2 V, I<sub>f</sub>=15 mA) from 3.3 V. <span class="ans">(3.3-2.2)/0.015 = 73 &Omega; &rarr; use 82 &Omega;</span></li>
+            <li>Power dissipated by 220 &Omega; with 50 mA? <span class="ans">0.55 W &rarr; need 1 W resistor</span></li>
+            <li>Why does Ohm's law fail for a diode? <span class="ans">I&ndash;V is exponential, not linear</span></li>
+          </ol>
+        </div>
+        <div class="resource"><strong>Reference:</strong> <a href="https://learn.adafruit.com/all-about-leds/forward-voltage-and-kvl" target="_blank">Adafruit &mdash; LED Forward Voltage and KVL</a></div>
+      </div>
+    </div>
+
+    <!-- ============ T1.3 ============ -->
+    <div class="topic" id="t1-3">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.3</div><h3>Kirchhoff's Laws (KCL &amp; KVL)</h3></div>
+        <div class="topic-meta">Session 3 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She writes loop equations (KVL) and node equations (KCL) for a 3-resistor mixed network.</div>
+        <div class="concept">
+          <p><strong>KCL (nodes):</strong> Sum of currents into any node = 0. Charge conservation.</p>
+          <p><strong>KVL (loops):</strong> Sum of voltage drops around any closed loop = 0. Energy conservation.</p>
+          <p>These two + Ohm's law solve any passive linear circuit. The <em>intuition</em> matters more than formal mesh analysis.</p>
+        </div>
+        <div class="diagram">
+          <svg width="420" height="200" viewBox="0 0 420 200">
+            <circle cx="210" cy="100" r="5" fill="#0f172a"/>
+            <text x="225" y="105" font-size="13" font-family="Courier New">Node A</text>
+            <line x1="110" y1="100" x2="205" y2="100" stroke="#0ea5e9" stroke-width="2" marker-end="url(#ar)"/>
+            <line x1="215" y1="100" x2="310" y2="60" stroke="#dc2626" stroke-width="2" marker-end="url(#ar2)"/>
+            <line x1="215" y1="105" x2="310" y2="150" stroke="#16a34a" stroke-width="2" marker-end="url(#ar3)"/>
+            <defs>
+              <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#0ea5e9"/></marker>
+              <marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#dc2626"/></marker>
+              <marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#16a34a"/></marker>
+            </defs>
+            <text x="140" y="90" font-size="12" fill="#0ea5e9" font-family="Courier New">I&#8321; = 5 mA</text>
+            <text x="260" y="45" font-size="12" fill="#dc2626" font-family="Courier New">I&#8322; = 3 mA</text>
+            <text x="260" y="175" font-size="12" fill="#16a34a" font-family="Courier New">I&#8323; = 2 mA</text>
+            <text x="40" y="180" font-size="13" font-family="Courier New">KCL: I&#8321; = I&#8322; + I&#8323; &rarr; 5 = 3 + 2 &#10003;</text>
+          </svg>
+          <div class="caption">KCL at a node: currents in = currents out.</div>
+        </div>
+        <div class="formula">
+          <strong>KCL:</strong> &Sigma; I<sub>in</sub> = &Sigma; I<sub>out</sub> (at every node)<br>
+          <strong>KVL:</strong> &Sigma; V<sub>rises</sub> = &Sigma; V<sub>drops</sub> (around every loop)
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Whiteboard single-loop: 9V + 1k, 2k, 3k series. KVL: 9 = I(1k+2k+3k) &rarr; I = 1.5 mA. Verify drops sum to 9V.</li>
+            <li>Add parallel branch at a node. Apply KCL.</li>
+            <li>Stick to sign convention: "clockwise, add rises, subtract drops."</li>
+            <li>She solves a 2-loop circuit on her own. Sign errors are universal; correct gently.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Sign errors. 90% of KVL mistakes. Emphasise: going <em>through</em> a resistor in the direction of assumed current flow is a voltage <em>drop</em>.</li>
+            <li>Forgetting that KVL works around any loop, not just outer.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>12V source, resistors drop 3V, 5V, 4V &mdash; consistent? <span class="ans">Yes: 3+5+4=12 &#10003;</span></li>
+            <li>Currents into node: 10, 6, &minus;4 mA. Net outflow? <span class="ans">12 mA</span></li>
+            <li>Can KVL be violated in DC? <span class="ans">No, ever. Re-check signs.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.4 ============ -->
+    <div class="topic" id="t1-4">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.4</div><h3>Voltage &amp; Current Dividers</h3></div>
+        <div class="topic-meta">Session 4 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Derive V<sub>out</sub> = V<sub>in</sub>&middot;R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>) from scratch; explain why loading changes output.</div>
+        <div class="concept">
+          <p>Most-used formula in practical electronics. Sensor biasing (LDR, thermistor), level-shifting 5V&rarr;3.3V, reference voltages, op-amp feedback.</p>
+        </div>
+        <div class="diagram">
+          <svg width="420" height="240" viewBox="0 0 420 240">
+            <text x="40" y="30" font-size="13" font-family="Courier New" fill="#0369a1">V_in</text>
+            <line x1="40" y1="40" x2="120" y2="40" stroke="#0f172a" stroke-width="2"/>
+            <line x1="120" y1="40" x2="120" y2="80" stroke="#0f172a" stroke-width="2"/>
+            <polyline points="120,80 128,85 112,95 128,105 112,115 128,125 120,130" stroke="#0f172a" stroke-width="2" fill="none"/>
+            <text x="145" y="108" font-size="13" font-family="Courier New">R&#8321;</text>
+            <line x1="120" y1="130" x2="120" y2="145" stroke="#0f172a" stroke-width="2"/>
+            <circle cx="120" cy="145" r="4" fill="#0f172a"/>
+            <line x1="120" y1="145" x2="230" y2="145" stroke="#0f172a" stroke-width="2"/>
+            <text x="240" y="150" font-size="13" font-family="Courier New" fill="#dc2626">V_out</text>
+            <line x1="120" y1="145" x2="120" y2="160" stroke="#0f172a" stroke-width="2"/>
+            <polyline points="120,160 128,165 112,175 128,185 112,195 128,205 120,210" stroke="#0f172a" stroke-width="2" fill="none"/>
+            <text x="145" y="188" font-size="13" font-family="Courier New">R&#8322;</text>
+            <line x1="120" y1="210" x2="120" y2="225" stroke="#0f172a" stroke-width="2"/>
+            <line x1="100" y1="225" x2="140" y2="225" stroke="#0f172a" stroke-width="2"/>
+            <line x1="108" y1="230" x2="132" y2="230" stroke="#0f172a" stroke-width="1.5"/>
+            <line x1="115" y1="235" x2="125" y2="235" stroke="#0f172a" stroke-width="1"/>
+          </svg>
+          <div class="caption">Classic 2-resistor voltage divider.</div>
+        </div>
+        <div class="formula">
+          <strong>V<sub>out</sub> = V<sub>in</sub> &middot; R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>)</strong><br>
+          <strong>Current divider:</strong> I<sub>1</sub> = I<sub>total</sub> &middot; R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>)
+        </div>
+        <div class="example"><strong>Level-shift:</strong> Sensor 0&ndash;5V &rarr; ESP32 0&ndash;3.3V. R<sub>1</sub>=1.8k, R<sub>2</sub>=3.3k. At 5V: V<sub>out</sub> = 5&times;3.3/5.1 = 3.24V. Safe.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Derive: I = V<sub>in</sub>/(R<sub>1</sub>+R<sub>2</sub>), then V<sub>out</sub> = I&middot;R<sub>2</sub>. She retains better if she derived it.</li>
+            <li>Breadboard: two 10k + 5V. Measure ~2.5V. Works.</li>
+            <li>Attach 1k load across R<sub>2</sub>. V<sub>out</sub> drops significantly. Teaches output impedance / loading.</li>
+            <li>Segues to "why we need a buffer op-amp" (T1.12).</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>R<sub>1</sub> on top vs R<sub>2</sub>. Tip: the resistor output is measured <em>across</em> goes on top.</li>
+            <li>Loading effect forgotten. Load impedance must be &gt; 10 &times; R<sub>2</sub> for accuracy.</li>
+            <li>Using a divider for power (e.g., whole MCU). That's a regulator job, not a divider.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>V<sub>in</sub>=5V, R<sub>1</sub>=4.7k, R<sub>2</sub>=10k. V<sub>out</sub>=? <span class="ans">3.40V</span></li>
+            <li>What happens as R<sub>2</sub>&rarr;0? <span class="ans">V<sub>out</sub>&rarr;0 (short)</span></li>
+            <li>Why won't this supply 50 mA stably? <span class="ans">Load current drops output &mdash; need regulator</span></li>
+          </ol>
+        </div>
+        <div class="resource"><strong>Reference:</strong> <a href="https://learn.sparkfun.com/tutorials/voltage-dividers" target="_blank">SparkFun &mdash; Voltage Dividers</a></div>
+      </div>
+    </div>
+
+    <!-- ============ T1.5 ============ -->
+    <div class="topic" id="t1-5">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.5</div><h3>Resistors &mdash; Everything Practical</h3></div>
+        <div class="topic-meta">Session 5 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Read any 4-band colour code, pick wattage, explain series/parallel.</div>
+        <table class="ref">
+          <tr><th>Colour</th><th>Black</th><th>Brown</th><th>Red</th><th>Orange</th><th>Yellow</th><th>Green</th><th>Blue</th><th>Violet</th><th>Grey</th><th>White</th></tr>
+          <tr><th>Digit</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td></tr>
+        </table>
+        <div class="example"><strong>Example:</strong> Brown-Black-Orange-Gold = 1, 0, &times;10&sup3;, &plusmn;5% = <strong>10 k&Omega;</strong>. Yellow-Violet-Red-Gold = <strong>4.7 k&Omega;</strong>.</div>
+        <div class="formula">
+          <strong>Series:</strong> R = R<sub>1</sub> + R<sub>2</sub>...<br>
+          <strong>Parallel:</strong> 1/R = 1/R<sub>1</sub> + 1/R<sub>2</sub>... &nbsp;(or R<sub>1</sub>R<sub>2</sub>/(R<sub>1</sub>+R<sub>2</sub>) for two)<br>
+          <strong>Power:</strong> P = I&sup2;R (always check)
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Dump a handful on the desk. Read 10. Time her. Drill until sub-10-seconds each.</li>
+            <li><strong>E12 values</strong>: 10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82. Real world only uses these and decade multiples.</li>
+            <li>Tolerance: &plusmn;5% gold, &plusmn;1% brown.</li>
+            <li>Wattage: 1/8, 1/4 (default), 1/2, 1, 2 W.</li>
+            <li>SMD uses numeric codes: "103" = 10 k&Omega;, "4R7" = 4.7 &Omega;.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>4-band vs 5-band. Check bands count <em>first</em>.</li>
+            <li>Reading backward. Tolerance band (gold/silver/brown) should be on right.</li>
+            <li>Missing wattage check.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Red-Red-Brown-Gold? <span class="ans">220 &Omega; &plusmn;5%</span></li>
+            <li>Two 10k in parallel? <span class="ans">5 k&Omega;</span></li>
+            <li>Need 75 &Omega; from E12? <span class="ans">82 &Omega;</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.6 ============ -->
+    <div class="topic" id="t1-6">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.6</div><h3>Capacitors &mdash; Types, Values, Polarity</h3></div>
+        <div class="topic-meta">Session 6 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Pick the right cap type (decoupling, filtering, timing); explain why polarity matters.</div>
+        <table class="ref">
+          <tr><th>Type</th><th>Values</th><th>Polar?</th><th>Use</th></tr>
+          <tr><td>Ceramic (MLCC)</td><td>1 pF &ndash; 10 &mu;F</td><td>No</td><td>Decoupling, filtering</td></tr>
+          <tr><td>Electrolytic</td><td>1 &mu;F &ndash; 10 mF</td><td>Yes</td><td>Bulk power filter</td></tr>
+          <tr><td>Tantalum</td><td>0.1 &mu;F &ndash; 1 mF</td><td>Yes</td><td>Low-noise rails</td></tr>
+          <tr><td>Film</td><td>1 nF &ndash; 10 &mu;F</td><td>No</td><td>Audio, precision timing</td></tr>
+        </table>
+        <div class="formula">
+          <strong>Q = C &middot; V</strong> &nbsp;&nbsp; <strong>X<sub>C</sub> = 1/(2&pi;fC)</strong>
+        </div>
+        <div class="example"><strong>Why 100nF near every IC?</strong> At 100 MHz noise, X<sub>C</sub> of 100nF = 0.016 &Omega;. Effectively a short. Shunts noise to GND. Non-negotiable.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Show 4 real caps side-by-side: ceramic disc, MLCC chip, aluminium electrolytic, tantalum.</li>
+            <li>Marking: ceramic 3-digit code (104 = 100 nF); electrolytics labelled &mu;F + voltage.</li>
+            <li><strong>Polarity:</strong> stripe on electrolytic = negative. Reverse = explosion.</li>
+            <li><strong>Voltage rating:</strong> &ge; 2&times; the expected. 16V cap on 5V, 25V on 12V.</li>
+            <li>Decoupling pattern: 100nF + 10&mu;F parallel on every power pin.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Thinking bigger is always better. Ceramic 100nF for HF; electrolytic 100&mu;F for LF bulk. Use both.</li>
+            <li>Electrolytics backwards &mdash; literal explosions. Verify stripe.</li>
+            <li>Under-voltage cap &mdash; marginal reliability.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Cap marked "104" &mdash; value? <span class="ans">100 nF (0.1 &mu;F)</span></li>
+            <li>Which type closest to IC V<sub>cc</sub> pin? <span class="ans">Ceramic 100 nF &mdash; low impedance at HF</span></li>
+            <li>Minimum voltage rating for 12V rail? <span class="ans">25V (2&times; margin)</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.7 ============ -->
+    <div class="topic" id="t1-7">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.7</div><h3>RC Circuits &amp; Time Constant</h3></div>
+        <div class="topic-meta">Session 7 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Sketch charging/discharging curves, compute &tau;=RC, explain debouncing with RC low-pass.</div>
+        <div class="concept">
+          <p>Charging a cap through a resistor: V rises exponentially. At 1&tau;, V = 63% of V<sub>in</sub>. At 5&tau;, &gt;99%. Shows up in: reset circuits, switch debouncing, audio filters, 555 timers.</p>
+        </div>
+        <div class="formula">
+          <strong>&tau; = R &middot; C</strong> [s, with R in &Omega; and C in F]<br>
+          <strong>Charge:</strong> V(t) = V<sub>in</sub>(1 &minus; e<sup>&minus;t/&tau;</sup>) &nbsp; <strong>Discharge:</strong> V(t) = V<sub>0</sub>e<sup>&minus;t/&tau;</sup>
+        </div>
+        <div class="example"><strong>Reset:</strong> R=10k, C=10nF, &tau;=100&mu;s. 500&mu;s charges &gt;99%. Typical MCU reset.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Breadboard: 9V, switch, 100k, 100&mu;F, GND. &tau;=10s &mdash; visible timing.</li>
+            <li>Toggle switch; measure V<sub>cap</sub> every 2s with DMM. Plot the curve.</li>
+            <li>Verify: at t=10s, V = 9(1&minus;1/e) = 5.7V.</li>
+            <li>Show switch-bounce scope trace. Add 10k + 100nF. Smooth. Explains anti-bounce.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Thinking charge is linear. It's exponential &mdash; draw both for contrast.</li>
+            <li>Unit arithmetic: k&Omega;&times;&mu;F=ms, M&Omega;&times;&mu;F=s.</li>
+            <li>Low-pass (output across cap) vs high-pass (across R). Draw both.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>R=1k, C=10&mu;F. &tau;=? <span class="ans">10 ms</span></li>
+            <li>Time to reach &gt;99%? <span class="ans">5&tau; = 50 ms</span></li>
+            <li>Want 1s reset. Pick R, C. <span class="ans">R=100k, C=10&mu;F</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.8 ============ -->
+    <div class="topic" id="t1-8">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.8</div><h3>Diodes &amp; LEDs</h3></div>
+        <div class="topic-meta">Session 8 &middot; 35 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Explain forward/reverse bias, V<sub>f</sub>, breakdown; size current-limit for any LED.</div>
+        <div class="concept">
+          <p>One-way current valve. Forward bias (anode &gt; cathode by V<sub>f</sub>) conducts. Reverse biased, blocks until breakdown.</p>
+          <p><strong>V<sub>f</sub> to memorise:</strong> Si = 0.7V, Schottky = 0.3V, red LED = 2.0V, green = 2.2V, blue/white = 3.0&ndash;3.4V.</p>
+        </div>
+        <div class="diagram">
+          <svg width="420" height="180" viewBox="0 0 420 180">
+            <line x1="210" y1="20" x2="210" y2="160" stroke="#cbd5e1" stroke-width="1"/>
+            <line x1="40" y1="90" x2="380" y2="90" stroke="#cbd5e1" stroke-width="1"/>
+            <text x="385" y="95" font-size="12">V</text>
+            <text x="215" y="20" font-size="12">I</text>
+            <path d="M 60 92 L 210 92 L 260 90 Q 275 85 285 50" stroke="#0ea5e9" stroke-width="2.5" fill="none"/>
+            <path d="M 45 150 L 50 100 L 60 92" stroke="#0ea5e9" stroke-width="2.5" fill="none"/>
+            <text x="245" y="55" font-size="11" fill="#0ea5e9">Forward</text>
+            <text x="70" y="145" font-size="11" fill="#0ea5e9">Rev. breakdown</text>
+            <text x="215" y="108" font-size="11" fill="#64748b">V_f ~0.7V (Si)</text>
+          </svg>
+          <div class="caption">Diode I-V. Not ohmic &mdash; exponential above V<sub>f</sub>.</div>
+        </div>
+        <div class="formula"><strong>LED current-limit:</strong> R = (V<sub>supply</sub> &minus; V<sub>f</sub>) / I<sub>f</sub></div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Flip LED around in blink circuit. Nothing lights. Polarity matters.</li>
+            <li>Check-valve analogy.</li>
+            <li>Zener: reverse breakdown as voltage ref. Show 5.1V Zener circuit.</li>
+            <li>Schottky: low V<sub>f</sub> for reverse-polarity protection on 3.3V rails.</li>
+            <li>Show a simple reverse-polarity protection schematic snippet.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Applying V=IR across LED.</li>
+            <li>V<sub>f</sub> "constant" &mdash; varies slightly with I, but use typical from datasheet.</li>
+            <li>Cathode marking: LED shorter leg, diode stripe.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Why doesn't 5V backwards light an LED? <span class="ans">Reverse biased &mdash; blocks</span></li>
+            <li>Lower V<sub>f</sub>: Schottky or Si? <span class="ans">Schottky (~0.3V)</span></li>
+            <li>5.1V reference from 12V? <span class="ans">Zener + current-limit R</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.9 ============ -->
+    <div class="topic" id="t1-9">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.9</div><h3>BJT as a Switch</h3></div>
+        <div class="topic-meta">Session 9 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Drive a relay from a 3.3V GPIO with NPN BJT; size base resistor.</div>
+        <div class="concept">
+          <p>Three regions: cutoff (off), active (amplifier, I<sub>C</sub>=&beta;I<sub>B</sub>), saturation (fully on, V<sub>CE</sub>~0.2V). For switching, push hard into saturation.</p>
+          <p>NPN most common. <code class="inline">2N2222</code> (TO-92, 800 mA). For higher current, use MOSFET.</p>
+        </div>
+        <div class="formula">
+          <strong>R<sub>B</sub> = (V<sub>GPIO</sub> &minus; V<sub>BE</sub>) / I<sub>B</sub></strong> &nbsp; where I<sub>B</sub> = I<sub>C</sub>/&beta;<br>
+          Rule of thumb: I<sub>B</sub> = I<sub>C</sub>/10 (over-drive for saturation)
+        </div>
+        <div class="example"><strong>Drive 100mA relay from 3.3V GPIO, &beta;=100.</strong> I<sub>B</sub>=10mA. R<sub>B</sub>=(3.3&minus;0.7)/0.01=260&Omega; &rarr; 220&Omega;.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Build LED + BJT + base R. Drive from Arduino GPIO. MCU controls LED through transistor.</li>
+            <li>For pure LED, GPIO can drive directly. But for <em>motors, relays, heaters</em>, current exceeds GPIO &rarr; need switch.</li>
+            <li><strong>Flyback diode:</strong> inductive loads (relay, motor) need reverse-biased diode across load. Spike kills transistor otherwise.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>NPN/PNP arrow direction. "NPN Never Points iN."</li>
+            <li>Missing base R &mdash; damages GPIO.</li>
+            <li>Missing flyback diode on inductive loads.</li>
+            <li>Exceeding transistor rating (2N2222 is 800mA, not 2A).</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>3.3V GPIO, 50mA load, 2N2222, &beta;=100. R<sub>B</sub>? <span class="ans">I<sub>B</sub>=5mA; R<sub>B</sub>=520&Omega;&rarr;470&Omega;</span></li>
+            <li>Why over-drive base? <span class="ans">Guarantee saturation across variation</span></li>
+            <li>Across relay coil? <span class="ans">Flyback diode, cathode to V+</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.10 ============ -->
+    <div class="topic" id="t1-10">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.10</div><h3>MOSFET as a Switch</h3></div>
+        <div class="topic-meta">Session 10 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Pick BJT vs MOSFET; understand why "logic-level" matters for 3.3V MCUs.</div>
+        <div class="concept">
+          <p>Voltage-controlled (unlike BJT). Three specs matter: V<sub>GS(th)</sub>, R<sub>DS(on)</sub>, I<sub>D</sub> max.</p>
+          <p><strong>N-channel</strong> low-side (source to GND), <strong>P-channel</strong> high-side. For 3.3V GPIO driving ground-referenced load, use logic-level N-MOSFET (e.g., <code class="inline">IRLZ44N</code>, R<sub>DS(on)</sub>~22m&Omega; at V<sub>GS</sub>=5V).</p>
+        </div>
+        <div class="formula">
+          <strong>Gate R:</strong> 100&ndash;1k (damp ringing)<br>
+          <strong>Pull-down:</strong> 10k gate-to-source (off when GPIO tri-state)<br>
+          <strong>P<sub>diss,on</sub> = I<sub>D</sub>&sup2; &middot; R<sub>DS(on)</sub></strong>
+        </div>
+        <div class="example"><strong>Switch 2A motor from 3.3V GPIO.</strong> IRLZ44N: P = 4&times;0.022 = 88mW. No heatsink. BJT couldn't handle this.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Compare 2N2222 (100mA) vs IRLZ44N (47A). Same package, orders-of-magnitude more capable.</li>
+            <li>Draw low-side N-MOSFET switching. Gate R + pull-down.</li>
+            <li>Emphasise <strong>"logic level"</strong>: non-logic needs V<sub>GS</sub>=10V. 3.3V won't fully turn on &rarr; burns up.</li>
+            <li>For high-side, use P-channel with NPN driver.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Missing R<sub>DS(on)</sub> vs V<sub>GS</sub> curve reading. Spec at V<sub>GS</sub>=10V can be 5&times; worse at 3.3V.</li>
+            <li>Forgetting gate pull-down.</li>
+            <li>No flyback on inductive loads.</li>
+            <li>Confusing S/G/D.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>5A LED strip from ESP32. BJT or MOSFET? <span class="ans">Logic-level N-MOSFET</span></li>
+            <li>"Logic level" means? <span class="ans">Fully on at 3.3V or 5V, not 10V</span></li>
+            <li>Why 10k gate-to-source? <span class="ans">Keeps off when GPIO floats</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.11 ============ -->
+    <div class="topic" id="t1-11">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.11</div><h3>Op-Amps &mdash; The Golden Rules</h3></div>
+        <div class="topic-meta">Session 11 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Apply two golden rules to derive any standard config in 30 seconds.</div>
+        <div class="concept">
+          <p><strong>Rule 1:</strong> V+ = V&minus; (because gain is huge, feedback pulls them equal).</p>
+          <p><strong>Rule 2:</strong> I<sub>in,+</sub> = I<sub>in,&minus;</sub> = 0 (input impedance infinite for ideal).</p>
+          <p>With these + NFB, every config drops out in a line.</p>
+        </div>
+        <div class="diagram">
+          <svg width="420" height="180" viewBox="0 0 420 180">
+            <polygon points="180,40 180,140 280,90" fill="white" stroke="#0f172a" stroke-width="2"/>
+            <text x="160" y="65" font-size="12" fill="#0f172a">&minus;</text>
+            <text x="160" y="120" font-size="12" fill="#0f172a">+</text>
+            <line x1="140" y1="60" x2="180" y2="60" stroke="#0f172a" stroke-width="2"/>
+            <line x1="140" y1="120" x2="180" y2="120" stroke="#0f172a" stroke-width="2"/>
+            <line x1="280" y1="90" x2="340" y2="90" stroke="#0f172a" stroke-width="2"/>
+            <text x="115" y="55" font-size="11" fill="#64748b" font-family="Courier New">V&minus;</text>
+            <text x="115" y="115" font-size="11" fill="#64748b" font-family="Courier New">V+</text>
+            <text x="345" y="95" font-size="11" fill="#64748b" font-family="Courier New">V_out</text>
+          </svg>
+          <div class="caption">Op-amp symbol. Power rails usually omitted.</div>
+        </div>
+        <div class="formula">1. V<sub>+</sub> = V<sub>&minus;</sub> &nbsp;&nbsp; 2. I<sub>in</sub> = 0</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Open-loop first: 100,000+ gain. Tiny V difference slams to rail. Only useful as comparator.</li>
+            <li>Close the loop &rarr; op-amp self-adjusts to V+=V&minus;. Magic.</li>
+            <li>LM358: hobbyist op-amp. Cheap, 5V single-supply friendly.</li>
+            <li>Cover practical limits (output swing, bandwidth) lightly &mdash; focus on two rules.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>V+ vs +V<sub>s</sub> (supply) confused. Different pins.</li>
+            <li>Rules need NFB to apply. Comparator doesn't have NFB.</li>
+            <li>Forgetting supplies connected.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>V+=1.5V, NFB active. V&minus;? <span class="ans">1.5V</span></li>
+            <li>Current into V+ pin (ideal)? <span class="ans">Zero</span></li>
+            <li>Can standard op-amp output swing to 0V? <span class="ans">Only if rail-to-rail. Standard can't exactly.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.12 ============ -->
+    <div class="topic" id="t1-12">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.12</div><h3>Op-Amp Configs (Buffer, Inverting, Non-Inverting, Comparator)</h3></div>
+        <div class="topic-meta">Session 12 &middot; 50 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Recognise 4 canonical configs in any schematic and compute gain.</div>
+        <div class="concept">
+          <ul>
+            <li><strong>Buffer (follower):</strong> gain=1. Isolates high-Z source from low-Z load.</li>
+            <li><strong>Non-inverting:</strong> gain = 1 + R<sub>f</sub>/R<sub>g</sub>. Min gain = 1.</li>
+            <li><strong>Inverting:</strong> gain = &minus;R<sub>f</sub>/R<sub>in</sub>. Can attenuate.</li>
+            <li><strong>Comparator:</strong> no NFB. Output slams high or low. Threshold detection.</li>
+          </ul>
+        </div>
+        <div class="formula">
+          <strong>Buffer:</strong> V<sub>out</sub> = V<sub>in</sub><br>
+          <strong>Non-inv:</strong> V<sub>out</sub> = V<sub>in</sub>(1 + R<sub>f</sub>/R<sub>g</sub>)<br>
+          <strong>Inv:</strong> V<sub>out</sub> = &minus;V<sub>in</sub>(R<sub>f</sub>/R<sub>in</sub>)<br>
+          <strong>Comparator:</strong> V<sub>out</sub> = +V<sub>s</sub> if V+&gt;V&minus;, else &minus;V<sub>s</sub>
+        </div>
+        <div class="example"><strong>Sensor scaling:</strong> 0&ndash;1V pressure sensor &rarr; 0&ndash;3.3V ADC. Non-inv gain 3.3. R<sub>f</sub>=23k, R<sub>g</sub>=10k. Use standard R<sub>f</sub>=22k, R<sub>g</sub>=10k &rarr; gain 3.2. Calibrate in software.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>LM358 non-inverting gain=2 on breadboard. Pot input on 5V. Watch output double.</li>
+            <li>Sweep 0&ndash;2V input; output follows. Tangible.</li>
+            <li>Swap to inverting. With single-supply, pivot around mid-rail reference.</li>
+            <li>Buffer: V<sub>out</sub>&rarr;V<sub>&minus;</sub>. Gain=1 but drives loads that crushed divider output.</li>
+            <li>Comparator: no feedback. Threshold-detector LED.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>R<sub>f</sub>/R<sub>g</sub> swapped. R<sub>g</sub> to GND, R<sub>f</sub> to V<sub>out</sub>.</li>
+            <li>Non-inv min gain = 1 (not less).</li>
+            <li>Single-supply needs mid-rail reference for non-inv input.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Non-inv R<sub>f</sub>=47k, R<sub>g</sub>=4.7k. Gain? <span class="ans">11</span></li>
+            <li>Want 1/3 attenuation. Config? <span class="ans">Inverting</span></li>
+            <li>Config with no feedback? <span class="ans">Comparator</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T1.13 ============ -->
+    <div class="topic" id="t1-13">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T1.13</div><h3>Digital Logic &mdash; Gates, Flip-Flops, Counters</h3></div>
+        <div class="topic-meta">Session 13 &middot; 50 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Reproduce truth tables for AND/OR/NOT/NAND/XOR; explain flip-flop and ripple counter.</div>
+        <div class="concept">
+          <p>Boolean operations on binary signals. She has the theory; connect to ICs: 7400 NAND, 7404 inverter, 7474 D-FF, 74HC595 shift register.</p>
+          <p>Modern: most gates are inside MCU/CPLD/FPGA. But recognition of 74xx in older designs matters.</p>
+        </div>
+        <p style="font-size:13.5px;color:var(--muted);margin-top:8px">See <a href="symbols.html#gates">Logic Gates section on Symbols Reference</a> for visuals.</p>
+        <table class="ref">
+          <tr><th>Gate</th><th>Truth (00/01/10/11)</th></tr>
+          <tr><td><strong>AND</strong></td><td>0 / 0 / 0 / 1</td></tr>
+          <tr><td><strong>OR</strong></td><td>0 / 1 / 1 / 1</td></tr>
+          <tr><td><strong>NOT</strong></td><td>inverts</td></tr>
+          <tr><td><strong>NAND</strong></td><td>1 / 1 / 1 / 0</td></tr>
+          <tr><td><strong>NOR</strong></td><td>1 / 0 / 0 / 0</td></tr>
+          <tr><td><strong>XOR</strong></td><td>0 / 1 / 1 / 0</td></tr>
+        </table>
+        <div class="concept">
+          <p><strong>D flip-flop:</strong> on each clock edge, latches D to Q. Basis of registers / counters.</p>
+          <p><strong>Ripple counter:</strong> N flip-flops chained, each divides by 2. 8 bits &rarr; 0&ndash;255.</p>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Fill truth tables blindly after explanation.</li>
+            <li>"NAND is universal": build NOT, AND, OR from only NANDs.</li>
+            <li>Flip-flop: timing diagram, clock edges, D/Q.</li>
+            <li>74HC595 shift register: real-world FF example, drives many LEDs from few pins.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Level vs edge triggered. Modern = edge.</li>
+            <li>Active-low signals (<code class="inline">/RESET</code>).</li>
+            <li>Floating CMOS inputs pick up noise. Tie unused high/low.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>XOR truth? <span class="ans">00,01,10,11 &rarr; 0,1,1,0</span></li>
+            <li>AND from NANDs? <span class="ans">NAND + NOT (another NAND with inputs tied)</span></li>
+            <li>8-bit ripple counter divides 16 MHz to? <span class="ans">16M/256 = 62.5 kHz</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="symbols.html">&larr; Symbols</a> &middot; <a href="index.html">Home</a> &middot; Next: <a href="hardware.html">Part 2 &middot; Hardware &rarr;</a>
+  </div>
+</footer>
+
+</body>
+</html>

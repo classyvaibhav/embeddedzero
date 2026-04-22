@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 5 &mdash; What Is an Embedded System?</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 5</div>
+    <span class="lesson-tag">Lesson 5 of 12</span>
+    <h1>What Is an Embedded System?</h1>
+    <p class="subtitle">Before you write code, understand the machine. Microcontrollers vs microprocessors. Memory. Boot process. The toolchain that turns your code into running firmware.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Define an embedded system and name 5 in your own life</li>
+        <li>Explain microcontroller vs microprocessor and know which fits where</li>
+        <li>Understand the memory map of an MCU (Flash, SRAM, EEPROM)</li>
+        <li>Describe what happens from power-on to your code running</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 5</strong> &middot; Next: Your First Arduino! &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>The Definition</h2>
+    <p>An <strong>embedded system</strong> is a dedicated computer built into a larger product, doing one specific job. Not a general-purpose PC. It usually has:</p>
+    <ul>
+      <li><strong>Fixed function</strong> &mdash; does one thing well (control a motor, read a sensor, drive a display)</li>
+      <li><strong>Real-time behaviour</strong> &mdash; responds in milliseconds or microseconds</li>
+      <li><strong>Limited resources</strong> &mdash; tiny memory compared to a laptop</li>
+      <li><strong>Direct hardware interaction</strong> &mdash; talks to sensors, motors, LEDs, not keyboards</li>
+      <li><strong>Often low-power</strong> &mdash; might run on a battery for months or years</li>
+    </ul>
+
+    <p>You're surrounded by embedded systems right now. Let's count:</p>
+
+    <div class="diagram">
+      <svg width="540" height="200" viewBox="0 0 540 200">
+        <rect x="0" y="0" width="540" height="200" fill="#fafaf9"/>
+        <text x="10" y="25" font-size="15" font-weight="700" fill="#0369a1">Embedded systems around Bahar right now:</text>
+
+        <g transform="translate(20,50)">
+          <rect width="110" height="55" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#128241;</text>
+          <text x="20" y="40" font-size="11" font-weight="700">Your phone</text>
+          <text x="20" y="52" font-size="9" fill="#92400e">ARM SoC + linux</text>
+        </g>
+
+        <g transform="translate(140,50)">
+          <rect width="110" height="55" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#9200;</text>
+          <text x="16" y="40" font-size="11" font-weight="700">Smart watch</text>
+          <text x="20" y="52" font-size="9" fill="#15803d">BLE MCU + OLED</text>
+        </g>
+
+        <g transform="translate(260,50)">
+          <rect width="110" height="55" rx="8" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#128168;</text>
+          <text x="28" y="40" font-size="11" font-weight="700">AC remote</text>
+          <text x="18" y="52" font-size="9" fill="#0c4a6e">IR transmitter MCU</text>
+        </g>
+
+        <g transform="translate(380,50)">
+          <rect width="110" height="55" rx="8" fill="#fae8ff" stroke="#7c3aed" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#128663;</text>
+          <text x="10" y="40" font-size="11" font-weight="700">Aimtron dashcam</text>
+          <text x="15" y="52" font-size="9" fill="#6b21a8">(your internship!)</text>
+        </g>
+
+        <g transform="translate(20,125)">
+          <rect width="110" height="55" rx="8" fill="#fce7f3" stroke="#be185d" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#127789;</text>
+          <text x="13" y="40" font-size="11" font-weight="700">Microwave oven</text>
+          <text x="30" y="52" font-size="9" fill="#9f1239">8-bit MCU</text>
+        </g>
+
+        <g transform="translate(140,125)">
+          <rect width="110" height="55" rx="8" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#128241;</text>
+          <text x="10" y="40" font-size="11" font-weight="700">Wi-Fi router</text>
+          <text x="10" y="52" font-size="9" fill="#854d0e">linux-running ARM</text>
+        </g>
+
+        <g transform="translate(260,125)">
+          <rect width="110" height="55" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#128296;</text>
+          <text x="22" y="40" font-size="11" font-weight="700">Electric bike</text>
+          <text x="22" y="52" font-size="9" fill="#065f46">motor controller</text>
+        </g>
+
+        <g transform="translate(380,125)">
+          <rect width="110" height="55" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+          <text x="38" y="22" font-size="16">&#128269;</text>
+          <text x="25" y="40" font-size="11" font-weight="700">Fitness band</text>
+          <text x="18" y="52" font-size="9" fill="#991b1b">low-power MCU</text>
+        </g>
+      </svg>
+      <div class="caption">Embedded systems are literally everywhere. 10+ billion MCUs ship per year.</div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>Microcontroller vs Microprocessor</h2>
+    <p>This distinction matters because the two categories have very different design rules, cost, and job markets.</p>
+
+    <table>
+      <tr><th></th><th>MCU (Microcontroller)</th><th>MPU / SoC (Microprocessor)</th></tr>
+      <tr><td>Philosophy</td><td>All-in-one chip</td><td>CPU only, needs external RAM</td></tr>
+      <tr><td>Typical RAM</td><td>2 KB &ndash; 512 KB</td><td>256 MB &ndash; 8 GB</td></tr>
+      <tr><td>Typical Flash/Storage</td><td>8 KB &ndash; 4 MB on-chip</td><td>512 MB &ndash; 64 GB external</td></tr>
+      <tr><td>Clock</td><td>8 MHz &ndash; 400 MHz</td><td>500 MHz &ndash; 3 GHz</td></tr>
+      <tr><td>Operating system</td><td>None, or lightweight RTOS</td><td>Linux, Android, iOS</td></tr>
+      <tr><td>Boot time</td><td>Instant (milliseconds)</td><td>Seconds</td></tr>
+      <tr><td>Power consumption</td><td>&mu;A &ndash; mA</td><td>Watts</td></tr>
+      <tr><td>Cost (chip)</td><td>&#8377;30 &ndash; &#8377;500</td><td>&#8377;500 &ndash; &#8377;5000+</td></tr>
+      <tr><td>Example chips</td><td>ATmega328P, STM32F103, ESP32</td><td>NXP i.MX8M+, Broadcom BCM2711</td></tr>
+      <tr><td>Example products</td><td>Microwave, fitness band, simple IoT</td><td>Raspberry Pi, smartphone, Aimtron dashcam</td></tr>
+    </table>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Your Target</strong>
+      For entry-level roles, you're focused on <strong>MCU-world</strong> (Arduino Uno, ESP32, STM32). The bigger MPU / embedded-Linux world (which is where Vaibhav works at Omnidya) is 1&ndash;2 years down the career track. Master the MCU side first, everything else follows.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Memory in an MCU</h2>
+    <p>Inside every MCU are different memory regions, each with a specific purpose. Understand them now &mdash; it'll save you hours of confusion later.</p>
+
+    <table>
+      <tr><th>Memory Type</th><th>Volatile?</th><th>Size (ATmega328P)</th><th>What Lives Here</th></tr>
+      <tr><td><strong>Flash</strong></td><td>No (survives power-off)</td><td>32 KB</td><td>Your compiled firmware, constants</td></tr>
+      <tr><td><strong>SRAM</strong></td><td>Yes (wiped on reset)</td><td>2 KB</td><td>Variables, stack, heap at runtime</td></tr>
+      <tr><td><strong>EEPROM</strong></td><td>No</td><td>1 KB</td><td>User settings, calibration data</td></tr>
+      <tr><td><strong>Registers</strong></td><td>(volatile)</td><td>Tiny</td><td>Peripheral config (GPIO, UART, timers)</td></tr>
+    </table>
+
+    <div class="diagram">
+      <svg width="540" height="240" viewBox="0 0 540 240">
+        <rect x="0" y="0" width="540" height="240" fill="#fafaf9"/>
+        <text x="10" y="25" font-size="14" font-weight="700" fill="#0369a1">MCU Internal Memory Map</text>
+
+        <rect x="60" y="55" width="160" height="50" rx="6" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+        <text x="95" y="78" font-size="13" font-weight="700">Flash</text>
+        <text x="75" y="96" font-size="10" fill="#0c4a6e">firmware + constants</text>
+
+        <rect x="60" y="120" width="160" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="103" y="143" font-size="13" font-weight="700">SRAM</text>
+        <text x="65" y="161" font-size="10" fill="#15803d">variables &amp; stack</text>
+
+        <rect x="60" y="185" width="160" height="40" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+        <text x="90" y="207" font-size="12" font-weight="700">EEPROM</text>
+        <text x="67" y="220" font-size="9" fill="#92400e">saved settings</text>
+
+        <!-- Peripheral registers -->
+        <rect x="270" y="55" width="220" height="170" rx="8" fill="white" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4,4"/>
+        <text x="290" y="75" font-size="12" font-weight="700" fill="#6b21a8">Peripheral Registers</text>
+
+        <g transform="translate(290,85)">
+          <rect width="80" height="25" fill="#fae8ff" stroke="#7c3aed"/>
+          <text x="25" y="17" font-size="11" font-weight="600" fill="#581c87">GPIO</text>
+        </g>
+        <g transform="translate(380,85)">
+          <rect width="90" height="25" fill="#fae8ff" stroke="#7c3aed"/>
+          <text x="23" y="17" font-size="11" font-weight="600" fill="#581c87">Timers</text>
+        </g>
+        <g transform="translate(290,115)">
+          <rect width="80" height="25" fill="#fae8ff" stroke="#7c3aed"/>
+          <text x="25" y="17" font-size="11" font-weight="600" fill="#581c87">UART</text>
+        </g>
+        <g transform="translate(380,115)">
+          <rect width="90" height="25" fill="#fae8ff" stroke="#7c3aed"/>
+          <text x="35" y="17" font-size="11" font-weight="600" fill="#581c87">ADC</text>
+        </g>
+        <g transform="translate(290,145)">
+          <rect width="80" height="25" fill="#fae8ff" stroke="#7c3aed"/>
+          <text x="33" y="17" font-size="11" font-weight="600" fill="#581c87">I2C</text>
+        </g>
+        <g transform="translate(380,145)">
+          <rect width="90" height="25" fill="#fae8ff" stroke="#7c3aed"/>
+          <text x="38" y="17" font-size="11" font-weight="600" fill="#581c87">SPI</text>
+        </g>
+        <text x="290" y="195" font-size="10" fill="#64748b">Your code controls peripherals</text>
+        <text x="290" y="210" font-size="10" fill="#64748b">by reading/writing these registers.</text>
+        <text x="290" y="220" font-size="10" fill="#64748b">Arduino hides this; low-level C exposes it.</text>
+      </svg>
+      <div class="caption">Flash holds your firmware; SRAM holds live variables; registers control the peripherals.</div>
+    </div>
+
+    <pre class="code"><span class="cmt">// Where does each of these variables live?</span>
+
+<span class="kw">const</span> <span class="kw">int</span> ledPin = <span class="num">13</span>;      <span class="cmt">// "const" &rarr; Flash (read-only)</span>
+<span class="kw">int</span> counter = <span class="num">0</span>;              <span class="cmt">// SRAM (variable, runtime)</span>
+<span class="kw">char</span> buffer[<span class="num">32</span>];             <span class="cmt">// SRAM (array)</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(ledPin, OUTPUT);   <span class="cmt">// writes GPIO register</span>
+  EEPROM.write(<span class="num">0</span>, <span class="num">42</span>);       <span class="cmt">// writes EEPROM (survives reset)</span>
+}</pre>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>What Happens on Power-On?</h2>
+    <p>When you plug in your Arduino, a specific sequence happens before your code runs:</p>
+
+    <div class="diagram">
+      <svg width="620" height="170" viewBox="0 0 620 170">
+        <rect x="0" y="0" width="620" height="170" fill="#fafaf9"/>
+        <text x="10" y="22" font-size="14" font-weight="700" fill="#0369a1">Boot Sequence Timeline</text>
+        <line x1="30" y1="95" x2="590" y2="95" stroke="#0f172a" stroke-width="2"/>
+        <polygon points="590,95 580,91 580,99" fill="#0f172a"/>
+
+        <g transform="translate(40,55)">
+          <rect width="80" height="40" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
+          <text x="18" y="18" font-size="11" font-weight="700">1. Power</text>
+          <text x="28" y="32" font-size="10">rises</text>
+        </g>
+        <g transform="translate(135,55)">
+          <rect width="80" height="40" fill="#dcfce7" stroke="#16a34a" stroke-width="2" rx="4"/>
+          <text x="7" y="18" font-size="11" font-weight="700">2. /RESET</text>
+          <text x="15" y="32" font-size="10">released</text>
+        </g>
+        <g transform="translate(230,55)">
+          <rect width="80" height="40" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" rx="4"/>
+          <text x="15" y="18" font-size="11" font-weight="700">3. Clock</text>
+          <text x="25" y="32" font-size="10">stable</text>
+        </g>
+        <g transform="translate(325,55)">
+          <rect width="90" height="40" fill="#fae8ff" stroke="#7c3aed" stroke-width="2" rx="4"/>
+          <text x="5" y="18" font-size="11" font-weight="700">4. Bootloader</text>
+          <text x="27" y="32" font-size="10">runs</text>
+        </g>
+        <g transform="translate(430,55)">
+          <rect width="70" height="40" fill="#fee2e2" stroke="#dc2626" stroke-width="2" rx="4"/>
+          <text x="5" y="18" font-size="11" font-weight="700">5. setup()</text>
+        </g>
+        <g transform="translate(515,55)">
+          <rect width="70" height="40" fill="#0369a1" stroke="#0f172a" stroke-width="2" rx="4"/>
+          <text x="12" y="18" font-size="11" font-weight="700" fill="white">6. loop()</text>
+          <text x="15" y="32" font-size="10" fill="#e0f2fe">forever</text>
+        </g>
+
+        <text x="40" y="130" font-size="11" fill="#64748b">0 ms</text>
+        <text x="142" y="130" font-size="11" fill="#64748b">~10 ms</text>
+        <text x="242" y="130" font-size="11" fill="#64748b">~15 ms</text>
+        <text x="336" y="130" font-size="11" fill="#64748b">~100 ms</text>
+        <text x="440" y="130" font-size="11" fill="#64748b">~1 s</text>
+        <text x="520" y="130" font-size="11" fill="#64748b">&rarr; &infin;</text>
+
+        <text x="40" y="155" font-size="10" fill="#a16207" font-style="italic">Your Arduino goes from off to running in about 1 second.</text>
+      </svg>
+      <div class="caption">A full cold-boot takes ~1 second. Compare to your laptop, which takes 30 seconds to boot Windows.</div>
+    </div>
+
+    <ol>
+      <li><strong>Power stabilises</strong> &mdash; regulator brings V<sub>cc</sub> up cleanly; decoupling caps fill up.</li>
+      <li><strong>Reset released</strong> &mdash; /RESET pin goes HIGH via pull-up; CPU starts executing instructions.</li>
+      <li><strong>Clock starts</strong> &mdash; crystal oscillator stabilises; CPU clock is now valid.</li>
+      <li><strong>Bootloader runs</strong> &mdash; a tiny program in Flash checks if a new firmware upload is pending over USB/UART. If not, it jumps to your firmware.</li>
+      <li><strong>C startup code runs</strong> &mdash; initialises variables, sets up stack.</li>
+      <li><strong>setup() runs</strong> &mdash; your initialisation code.</li>
+      <li><strong>loop() runs forever</strong> &mdash; until you power off or reset.</li>
+    </ol>
+
+    <h2 style="margin-top:40px"><span class="icon">5</span>The Toolchain &mdash; Code to Firmware</h2>
+    <p>When you click "Upload" in Arduino IDE, a whole pipeline runs:</p>
+
+    <div class="diagram">
+      <svg width="620" height="150" viewBox="0 0 620 150">
+        <rect x="0" y="0" width="620" height="150" fill="#fafaf9"/>
+        <text x="10" y="22" font-size="14" font-weight="700" fill="#0369a1">Source Code &rarr; Running Firmware</text>
+
+        <g transform="translate(20,50)">
+          <rect width="90" height="60" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" rx="4"/>
+          <text x="28" y="25" font-size="11" font-weight="700">.ino / .cpp</text>
+          <text x="20" y="45" font-size="10" fill="#0c4a6e">your code</text>
+        </g>
+        <line x1="110" y1="80" x2="140" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arrA)"/>
+        <defs><marker id="arrA" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#0f172a"/></marker></defs>
+
+        <g transform="translate(140,50)">
+          <rect width="90" height="60" fill="#dcfce7" stroke="#16a34a" stroke-width="2" rx="4"/>
+          <text x="30" y="25" font-size="11" font-weight="700">Compile</text>
+          <text x="10" y="42" font-size="9" fill="#15803d">avr-gcc/xtensa</text>
+          <text x="37" y="55" font-size="11" font-weight="700">.o</text>
+        </g>
+        <line x1="230" y1="80" x2="260" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arrA)"/>
+
+        <g transform="translate(260,50)">
+          <rect width="90" height="60" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
+          <text x="33" y="25" font-size="11" font-weight="700">Link</text>
+          <text x="15" y="42" font-size="9" fill="#92400e">+ libraries</text>
+          <text x="35" y="55" font-size="11" font-weight="700">.elf</text>
+        </g>
+        <line x1="350" y1="80" x2="380" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arrA)"/>
+
+        <g transform="translate(380,50)">
+          <rect width="100" height="60" fill="#fae8ff" stroke="#7c3aed" stroke-width="2" rx="4"/>
+          <text x="22" y="25" font-size="11" font-weight="700">.hex / .bin</text>
+          <text x="25" y="45" font-size="10" fill="#6b21a8">binary image</text>
+        </g>
+        <line x1="480" y1="80" x2="510" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arrA)"/>
+
+        <g transform="translate(510,50)">
+          <rect width="100" height="60" fill="#fee2e2" stroke="#dc2626" stroke-width="2" rx="4"/>
+          <text x="28" y="25" font-size="11" font-weight="700">Upload</text>
+          <text x="13" y="43" font-size="10" fill="#991b1b">USB &rarr; Flash</text>
+        </g>
+
+        <text x="20" y="130" font-size="11" fill="#64748b" font-style="italic">Arduino IDE hides these steps. You can see them in the verbose output.</text>
+      </svg>
+      <div class="caption">Cross-compilation: your laptop compiles code for a different CPU (the AVR/Xtensa inside the MCU).</div>
+    </div>
+
+    <p>This is called <strong>cross-compilation</strong>: your laptop is an x86 or ARM machine, but the MCU has a different CPU (AVR for Arduino Uno, Xtensa for ESP32). The compiler produces machine code for the <em>target</em> CPU, not your laptop.</p>
+
+    <div class="callout physics">
+      <strong class="label">&#128161; Why You Can't Run a .exe on Arduino</strong>
+      A <code>.exe</code> file is compiled for an x86 Windows system. Arduino's AVR doesn't speak x86. So you can't just copy a program from your PC to the Arduino &mdash; you need to <em>cross-compile</em> specifically for the AVR target. Arduino IDE does this automatically.
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Name one embedded system in your kitchen.</summary>
+        <div class="answer">Microwave, fridge controller, induction cooker, rice cooker, electric kettle with temp control, gas leak detector &mdash; all embedded!</div>
+      </details>
+
+      <details class="q">
+        <summary>Is ESP32 a microcontroller or microprocessor?</summary>
+        <div class="answer"><strong>Microcontroller</strong> (sometimes called SoC because it has Wi-Fi/BT built in). Everything is on the chip &mdash; CPU, RAM, Flash, peripherals.</div>
+      </details>
+
+      <details class="q">
+        <summary>Where does a <code>const int x = 10;</code> variable live?</summary>
+        <div class="answer"><strong>Flash.</strong> The <code>const</code> keyword tells the compiler the value never changes, so it's stored in read-only Flash memory to save precious SRAM.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why can't a typical MCU run Linux?</summary>
+        <div class="answer">Linux needs at least ~64 MB of RAM. Most MCUs have &lt;512 KB. Also Linux needs an MMU (memory management unit) that most MCUs lack.</div>
+      </details>
+
+      <details class="q">
+        <summary>What happens between power-on and <code>setup()</code>?</summary>
+        <div class="answer">Power stabilises &rarr; reset released &rarr; clock starts &rarr; bootloader runs &rarr; C runtime initialises &rarr; <code>setup()</code>. Total ~1 second.</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>Embedded system = dedicated computer for a specific job, built into a product.</li>
+        <li><strong>MCU</strong> = everything on one chip (Arduino, ESP32). <strong>MPU/SoC</strong> = needs external RAM, runs Linux (Raspberry Pi, phones).</li>
+        <li>MCU memory: <strong>Flash</strong> (your code), <strong>SRAM</strong> (variables), <strong>EEPROM</strong> (settings), <strong>Registers</strong> (peripheral control).</li>
+        <li>Boot sequence: power &rarr; reset &rarr; clock &rarr; bootloader &rarr; setup() &rarr; loop().</li>
+        <li>Arduino uses <strong>cross-compilation</strong>: compile on PC, run on MCU.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-04.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Op-Amps</span>
+      </a>
+      <a class="next" href="lesson-06.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Your First Arduino &mdash; Blink!</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 5 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 9 &mdash; Talking to Things: Serial, I2C, SPI</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 9</div>
+    <span class="lesson-tag">Lesson 9 of 12</span>
+    <h1>Talking to Things &mdash; Serial, I2C, SPI</h1>
+    <p class="subtitle">The three communication protocols that power 99% of embedded systems. Send messages to your PC. Read a pressure sensor. Drive an OLED display.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Use Serial to debug any sketch with printed messages</li>
+        <li>Connect an I2C sensor and read data from it</li>
+        <li>Know when to pick SPI over I2C (faster, more pins)</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 9</strong> &middot; Next: Interrupts &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>UART / Serial &mdash; Your Best Friend</h2>
+    <p>Serial (UART) is the simplest protocol. Two wires: <strong>TX</strong> (transmit) and <strong>RX</strong> (receive), plus a common GND. Both sides agree on a <strong>baud rate</strong> (9600, 115200 bps typical). That's it.</p>
+
+    <p>You already used Serial in Lesson 6 (<code>Serial.println()</code>). Let's go deeper.</p>
+
+    <pre class="code"><span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="num">115200</span>);
+  Serial.println(<span class="str">"Ready!"</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (Serial.available()) {                  <span class="cmt">// PC sent a message?</span>
+    String cmd = Serial.readStringUntil(<span class="str">'\n'</span>);
+    Serial.print(<span class="str">"You sent: "</span>);
+    Serial.println(cmd);
+  }
+  delay(<span class="num">10</span>);
+}</pre>
+
+    <p>Upload, open Serial Monitor, type a message, press Enter. The MCU echoes it back. You've just had a two-way conversation with your microcontroller.</p>
+
+    <div class="callout key">
+      <strong class="label">&#128169; Debug Like a Pro</strong>
+      Whenever something's wrong with your code, sprinkle <code>Serial.println()</code> statements everywhere. Print values, flags, "reached here" markers. This is how every embedded engineer debugs &mdash; even at companies like Omnidya and Tesla.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>I2C &mdash; Many Devices on Two Wires</h2>
+    <p>I2C (pronounced "I-squared-C") lets you connect multiple sensors and chips to just two shared wires: <strong>SDA</strong> (data) and <strong>SCL</strong> (clock). Each device has a unique 7-bit <strong>address</strong> so the master (your MCU) knows who to talk to.</p>
+
+    <div class="diagram">
+      <svg width="540" height="220" viewBox="0 0 540 220">
+        <rect x="0" y="0" width="540" height="220" fill="#fafaf9"/>
+        <text x="10" y="25" font-size="14" font-weight="700" fill="#0369a1">I2C Bus &mdash; One Master, Many Slaves</text>
+
+        <rect x="30" y="60" width="110" height="70" rx="6" fill="#1e40af" stroke="#3b82f6" stroke-width="2"/>
+        <text x="45" y="85" font-size="11" fill="white" font-weight="700">ESP32</text>
+        <text x="52" y="105" font-size="10" fill="#93c5fd">Master</text>
+        <text x="50" y="120" font-size="9" fill="#93c5fd">SDA 21, SCL 22</text>
+
+        <!-- Bus -->
+        <line x1="140" y1="80" x2="510" y2="80" stroke="#fbbf24" stroke-width="2"/>
+        <line x1="140" y1="110" x2="510" y2="110" stroke="#0ea5e9" stroke-width="2"/>
+        <text x="520" y="85" font-size="10" fill="#a16207" font-weight="700">SDA</text>
+        <text x="520" y="115" font-size="10" fill="#0369a1" font-weight="700">SCL</text>
+
+        <!-- Pull-ups -->
+        <line x1="180" y1="80" x2="180" y2="45" stroke="#fbbf24" stroke-width="1.5"/>
+        <polyline points="180,45 186,42 174,39 186,36 174,33 186,30 180,27" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+        <text x="155" y="20" font-size="10" fill="#dc2626">4.7k pullups</text>
+        <line x1="210" y1="110" x2="210" y2="45" stroke="#0ea5e9" stroke-width="1.5"/>
+        <polyline points="210,45 216,42 204,39 216,36 204,33 216,30 210,27" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+        <polygon points="170,20 220,20 195,27" fill="#dc2626" stroke="#dc2626"/>
+        <text x="175" y="14" font-size="10" fill="#dc2626">+3V3</text>
+
+        <!-- BMP280 -->
+        <rect x="250" y="140" width="90" height="50" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+        <text x="265" y="160" font-size="11" font-weight="700">BMP280</text>
+        <text x="261" y="177" font-size="10" fill="#92400e">addr 0x76</text>
+        <line x1="280" y1="140" x2="280" y2="110" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="295" y1="140" x2="295" y2="80" stroke="#fbbf24" stroke-width="2"/>
+
+        <!-- OLED -->
+        <rect x="380" y="140" width="90" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="400" y="160" font-size="11" font-weight="700">OLED</text>
+        <text x="391" y="177" font-size="10" fill="#15803d">addr 0x3C</text>
+        <line x1="410" y1="140" x2="410" y2="110" stroke="#0ea5e9" stroke-width="2"/>
+        <line x1="425" y1="140" x2="425" y2="80" stroke="#fbbf24" stroke-width="2"/>
+      </svg>
+      <div class="caption">Multiple devices share the same two wires. Each has a unique address on the bus.</div>
+    </div>
+
+    <h3>I2C Scanner &mdash; Find Connected Devices</h3>
+    <pre class="code">#include &lt;Wire.h&gt;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="num">115200</span>);
+  Wire.begin();                  <span class="cmt">// default SDA=21, SCL=22 on ESP32</span>
+  Serial.println(<span class="str">"Scanning I2C bus..."</span>);
+
+  <span class="kw">for</span> (<span class="kw">byte</span> addr = <span class="num">1</span>; addr &lt; <span class="num">127</span>; addr++) {
+    Wire.beginTransmission(addr);
+    <span class="kw">if</span> (Wire.endTransmission() == <span class="num">0</span>) {
+      Serial.printf(<span class="str">"Found device at 0x%02X\n"</span>, addr);
+    }
+  }
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {}</pre>
+
+    <!-- ================== WOKWI I2C OLED ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Drive an OLED Display over I2C (Wokwi)</h4>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open <a href="https://wokwi.com/projects/new/esp32" target="_blank">Wokwi &rarr; new ESP32 project</a></li>
+          <li>Add: SSD1306 OLED (128&times;64 I2C version)</li>
+          <li>Wire: OLED SDA &rarr; ESP32 GPIO 21; OLED SCL &rarr; ESP32 GPIO 22; V<sub>cc</sub> &rarr; 3V3; GND &rarr; GND</li>
+          <li>In <strong>libraries</strong> panel, add <code>Adafruit_SSD1306</code></li>
+          <li>Use this code:
+            <pre class="code" style="font-size:12px">#include &lt;Wire.h&gt;
+#include &lt;Adafruit_SSD1306.h&gt;
+Adafruit_SSD1306 d(<span class="num">128</span>, <span class="num">64</span>);
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  d.begin(SSD1306_SWITCHCAPVCC, <span class="num">0x3C</span>);
+  d.setTextColor(WHITE);
+  d.setTextSize(<span class="num">1</span>);
+  d.setCursor(<span class="num">0</span>,<span class="num">0</span>);
+  d.println(<span class="str">"Hello, Bahar!"</span>);
+  d.display();
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {}</pre>
+          </li>
+          <li>Hit Play. The OLED shows your greeting.</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/new/esp32" target="_blank">Open Wokwi ESP32 &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>SPI &mdash; Faster, More Wires</h2>
+    <p>SPI uses <strong>4 wires</strong> per slave: <code>MOSI</code>, <code>MISO</code>, <code>SCK</code>, <code>CS</code>. No addresses &mdash; each slave has its own Chip Select line. Much faster than I2C (tens of MHz vs 1 MHz max).</p>
+
+    <table>
+      <tr><th></th><th>UART</th><th>I2C</th><th>SPI</th></tr>
+      <tr><td>Wires</td><td>TX, RX</td><td>SDA, SCL</td><td>MOSI, MISO, SCK, CS</td></tr>
+      <tr><td>Speed</td><td>up to ~1 Mbps</td><td>100k/400k/1M Hz</td><td>10&ndash;50 MHz</td></tr>
+      <tr><td>Multiple devices?</td><td>Point-to-point</td><td>Yes (addressed)</td><td>Yes (one CS per)</td></tr>
+      <tr><td>Pull-ups needed</td><td>No</td><td>Yes!</td><td>No</td></tr>
+      <tr><td>Use for</td><td>PC debug, GPS</td><td>Sensors, OLEDs</td><td>SD cards, fast sensors, LCDs</td></tr>
+      <tr><td>Arduino library</td><td><code>Serial</code></td><td><code>Wire</code></td><td><code>SPI</code></td></tr>
+    </table>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; When to Pick Which</strong>
+      <ul>
+        <li><strong>UART:</strong> talking to PC, GPS modules, radio modules.</li>
+        <li><strong>I2C:</strong> sensors (DHT22, BMP280, MPU6050), small displays, EEPROMs. Pick when you want many devices on few wires.</li>
+        <li><strong>SPI:</strong> SD cards, fast sensors, big displays. Pick when you need speed.</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>What's the minimum number of wires for an I2C connection?</summary>
+        <div class="answer"><strong>3</strong>: SDA, SCL, and GND. (Plus V<sub>cc</sub> to power the slave, so 4 total typically.)</div>
+      </details>
+
+      <details class="q">
+        <summary>Why does I2C need pull-up resistors?</summary>
+        <div class="answer">I2C lines are "open-drain" &mdash; devices can only pull them low. The pull-ups (typically 4.7k to V<sub>cc</sub>) return lines to HIGH when no one is pulling them down.</div>
+      </details>
+
+      <details class="q">
+        <summary>You need to connect 3 SPI devices. How many CS lines?</summary>
+        <div class="answer"><strong>3</strong> &mdash; one per device. They can share MOSI, MISO, SCK but need separate CS lines.</div>
+      </details>
+
+      <details class="q">
+        <summary>Serial Monitor shows garbage characters. What's wrong?</summary>
+        <div class="answer">Baud rate mismatch between <code>Serial.begin(X)</code> in code and the Serial Monitor's baud dropdown. Set both to same value (usually 115200).</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li><strong>UART / Serial:</strong> 2 wires, simple, slow. Use for PC debug.</li>
+        <li><strong>I2C:</strong> 2 shared wires, up to ~127 devices. Pull-ups required. Slower.</li>
+        <li><strong>SPI:</strong> 4 wires per slave, fast. One CS line per device.</li>
+        <li>Arduino libraries: <code>Serial</code>, <code>Wire</code>, <code>SPI</code>.</li>
+        <li>Sensor libraries wrap all this complexity &mdash; you just call <code>sensor.readTemperature()</code>.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-08.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">ADC &amp; PWM</span>
+      </a>
+      <a class="next" href="lesson-10.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Interrupts &amp; Non-Blocking</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 9 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

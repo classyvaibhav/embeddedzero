@@ -1,0 +1,21 @@
+# macOS / Linux
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Editors
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs and builds (none expected, but just in case)
+*.log
+node_modules/
+dist/
+build/
+
+# Personal / private (never commit)
+*_personal.*
+*.pem
+*.key

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 10 &mdash; Interrupts &amp; Non-Blocking Code</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 10</div>
+    <span class="lesson-tag">Lesson 10 of 12</span>
+    <h1>Interrupts &amp; Non-Blocking Code</h1>
+    <p class="subtitle">Your code can only do one thing at a time &mdash; or can it? Use interrupts for instant response to events, and <code>millis()</code> to do multiple things seemingly at once.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Attach an interrupt to a GPIO pin to detect events instantly</li>
+        <li>Know why you must NEVER put <code>Serial.println()</code> inside an ISR</li>
+        <li>Use <code>millis()</code> instead of <code>delay()</code> to do two tasks simultaneously</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 10</strong> &middot; Next: Real Project &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>The Problem with <code>delay()</code></h2>
+    <p>Look at this sketch. What's wrong with it?</p>
+
+    <pre class="code"><span class="kw">void</span> <span class="fn">loop</span>() {
+  digitalWrite(LED, HIGH);
+  delay(<span class="num">1000</span>);               <span class="cmt">// &#8618; CPU frozen here for 1 second</span>
+  digitalWrite(LED, LOW);
+  delay(<span class="num">1000</span>);               <span class="cmt">// &#8618; CPU frozen here too</span>
+
+  <span class="kw">if</span> (digitalRead(BTN) == LOW) {
+    Serial.println(<span class="str">"Pressed!"</span>);
+  }
+}</pre>
+
+    <p>The button check only runs for a brief moment every 2 seconds. If you press the button <em>during</em> a <code>delay()</code>, it's missed entirely.</p>
+
+    <p><code>delay()</code> is a <strong>blocking</strong> function &mdash; the CPU can literally do nothing else while it waits. For simple sketches it's fine, but as soon as you want to do two things, it falls apart.</p>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>Solution 1: <code>millis()</code> for Non-Blocking Intervals</h2>
+    <p><code>millis()</code> returns the number of milliseconds since the MCU started. It keeps running forever. We can use it to check "has 500 ms passed since I last did X?" without blocking:</p>
+
+    <pre class="code"><span class="kw">const</span> <span class="kw">int</span> LED = <span class="num">13</span>;
+<span class="kw">const</span> <span class="kw">int</span> BTN = <span class="num">4</span>;
+<span class="kw">unsigned</span> <span class="kw">long</span> lastBlink = <span class="num">0</span>;
+<span class="kw">bool</span> ledState = <span class="kw">false</span>;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(LED, OUTPUT);
+  pinMode(BTN, INPUT_PULLUP);
+  Serial.begin(<span class="num">115200</span>);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">unsigned</span> <span class="kw">long</span> now = millis();
+
+  <span class="cmt">// Task 1: blink LED every 500 ms</span>
+  <span class="kw">if</span> (now - lastBlink &gt;= <span class="num">500</span>) {
+    lastBlink = now;
+    ledState = !ledState;
+    digitalWrite(LED, ledState);
+  }
+
+  <span class="cmt">// Task 2: check button as fast as possible</span>
+  <span class="kw">if</span> (digitalRead(BTN) == LOW) {
+    Serial.println(<span class="str">"Button pressed!"</span>);
+    delay(<span class="num">50</span>);  <span class="cmt">// simple debounce</span>
+  }
+}</pre>
+
+    <p>Now the LED blinks every 500 ms AND the button is responsive the whole time. The loop runs thousands of times per second, checking both.</p>
+
+    <div class="callout key">
+      <strong class="label">&#127758; Universal Pattern</strong>
+      <code>if (millis() - lastTime &gt;= interval) { lastTime = millis(); /* do stuff */ }</code> &mdash; memorise this. It's the foundation of all non-blocking code. You'll use it daily.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Solution 2: Interrupts for Instant Response</h2>
+    <p>Interrupts let hardware trigger code the moment an event happens &mdash; no polling needed. Common uses: a button press, a pulse from a sensor, a timer expiring.</p>
+
+    <pre class="code"><span class="kw">const</span> <span class="kw">int</span> BTN = <span class="num">4</span>;
+<span class="kw">volatile</span> <span class="kw">bool</span> pressed = <span class="kw">false</span>;
+
+<span class="kw">void</span> IRAM_ATTR <span class="fn">onButton</span>() {
+  pressed = <span class="kw">true</span>;              <span class="cmt">// just set a flag &mdash; that's all!</span>
+}
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="num">115200</span>);
+  pinMode(BTN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(BTN), onButton, FALLING);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (pressed) {
+    Serial.println(<span class="str">"Button was pressed!"</span>);
+    pressed = <span class="kw">false</span>;
+  }
+}</pre>
+
+    <p>The function <code>onButton()</code> is called an <strong>ISR</strong> (Interrupt Service Routine). It runs the instant the button goes LOW &mdash; even if the main loop is in the middle of something else.</p>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; ISR Rules You Must Follow</strong>
+      <ul>
+        <li><strong>Keep it SHORT.</strong> Set a flag, return. Don't do work inside.</li>
+        <li><strong>No <code>Serial.println()</code></strong> inside. No <code>delay()</code>. No I2C. It'll hang or crash.</li>
+        <li><strong>Shared variables must be <code>volatile</code></strong>. Tells the compiler "this can change unexpectedly".</li>
+        <li><strong>On ESP32, use <code>IRAM_ATTR</code></strong>. Keeps the function in fast RAM.</li>
+      </ul>
+    </div>
+
+    <!-- ================== WOKWI INTERRUPT ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Interrupt Button Counter in Wokwi</h4>
+      </div>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open <a href="https://wokwi.com/projects/new/arduino-uno" target="_blank">Wokwi Arduino Uno</a></li>
+          <li>Add a push button between Pin 2 and GND (Pin 2 is INT0 on Uno)</li>
+          <li>Paste this code:
+            <pre class="code" style="font-size:12px"><span class="kw">volatile</span> <span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">void</span> <span class="fn">onBtn</span>() { count++; }
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(<span class="num">115200</span>);
+  pinMode(<span class="num">2</span>, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(<span class="num">2</span>), onBtn, FALLING);
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">static</span> <span class="kw">int</span> last = <span class="num">0</span>;
+  <span class="kw">if</span> (count != last) {
+    last = count;
+    Serial.print(<span class="str">"Press #"</span>); Serial.println(count);
+  }
+}</pre>
+          </li>
+          <li>Press Play, click the button. Serial Monitor shows "Press #1", "#2", etc.</li>
+          <li>Notice: pressing very fast, you might sometimes get 2 counts &mdash; that's <strong>bounce</strong>. We'll fix that next.</li>
+        </ol>
+        <a class="sim-button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank">Open Wokwi &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>Debouncing &mdash; Why Buttons Misbehave</h2>
+    <p>Physical buttons don't cleanly go from "not pressed" to "pressed". Metal contacts <em>bounce</em> for 1&ndash;10 milliseconds. A single physical press can register as 3&ndash;5 electrical transitions.</p>
+
+    <p>Fix in software: ignore changes that happen within 50 ms of the last change.</p>
+
+    <pre class="code"><span class="kw">volatile</span> <span class="kw">unsigned</span> <span class="kw">long</span> lastTime = <span class="num">0</span>;
+
+<span class="kw">void</span> IRAM_ATTR <span class="fn">onButton</span>() {
+  <span class="kw">unsigned</span> <span class="kw">long</span> now = millis();
+  <span class="kw">if</span> (now - lastTime &gt; <span class="num">50</span>) {     <span class="cmt">// 50 ms since last interrupt?</span>
+    count++;
+    lastTime = now;
+  }
+}</pre>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Why avoid <code>delay()</code> in multi-task code?</summary>
+        <div class="answer">It blocks the CPU. No other code runs during the delay. Use <code>millis()</code> pattern instead.</div>
+      </details>
+
+      <details class="q">
+        <summary>What does <code>volatile</code> mean?</summary>
+        <div class="answer">Tells the compiler: "this variable can change unexpectedly, don't optimise reads away; always re-fetch from memory". Required for variables shared between ISR and main loop.</div>
+      </details>
+
+      <details class="q">
+        <summary>What should you NEVER do inside an ISR?</summary>
+        <div class="answer">Long operations, <code>Serial.print()</code>, <code>delay()</code>, I2C calls, anything slow. The ISR must return quickly so the rest of the system keeps running.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why do buttons sometimes register multiple times per press?</summary>
+        <div class="answer">Mechanical bounce &mdash; metal contacts vibrate briefly on press/release. Fix with software debounce (ignore events within 50 ms).</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li><code>delay()</code> blocks the CPU. Fine for Blink; useless for real multi-tasking.</li>
+        <li><code>millis()</code> gives non-blocking intervals. Pattern: <code>if (now - last &gt;= interval) { last = now; /* work */ }</code></li>
+        <li><strong>Interrupts</strong> trigger code the instant an event happens. Use <code>attachInterrupt(pin, func, mode)</code>.</li>
+        <li>ISR rules: short, no prints, <code>volatile</code> shared vars, <code>IRAM_ATTR</code> on ESP32.</li>
+        <li>Buttons bounce &mdash; always debounce in software (~50 ms threshold).</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-09.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Serial, I2C, SPI</span>
+      </a>
+      <a class="next" href="lesson-11.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">Your First Real Project!</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 10 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

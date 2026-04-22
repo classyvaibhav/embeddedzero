@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Part 2 &middot; Hardware &amp; BOM</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Part 2 &middot; Hardware &amp; BOM</div>
+    <h1>Part 2 &mdash; Hardware: Schematics, Datasheets &amp; BOM</h1>
+    <p class="subtitle">8 topics &middot; Weeks 3&ndash;4 &middot; This is where she earns the Hardware Engineer Trainee tag on her resume.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html">Part 1</a>
+    <a href="hardware.html" class="active">Part 2</a>
+    <a href="embedded.html">Part 3</a>
+    <a href="pcb.html">Part 4</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html">Cheats</a>
+  </div>
+</nav>
+
+<nav class="toc" style="top:46px;background:#f1f5f9">
+  <div class="wrap">
+    <a href="#t2-1">T2.1 Symbols Ref</a>
+    <a href="#t2-2">T2.2 Reading Schematic</a>
+    <a href="#t2-3">T2.3 Power Blocks</a>
+    <a href="#t2-4">T2.4 Datasheets</a>
+    <a href="#t2-5">T2.5 Component Selection</a>
+    <a href="#t2-6">T2.6 BOM Structure</a>
+    <a href="#t2-7">T2.7 Sourcing</a>
+    <a href="#t2-8">T2.8 Reset Circuits</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+
+    <!-- ============ T2.1 ============ -->
+    <div class="topic" id="t2-1">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.1</div><h3>Schematic Symbols &mdash; Using the Reference</h3></div>
+        <div class="topic-meta">Session 14 &middot; 30 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She recognises every symbol in a typical ESP32 reference schematic at a glance.</div>
+        <div class="concept">
+          <p>Before reading real schematics, she needs vocabulary. We've already built the <a href="symbols.html"><strong>Symbols Reference page</strong></a> &mdash; 32 components with inline SVG graphics. Use it for:</p>
+          <ul>
+            <li><strong>Recognition drill:</strong> Open the page, cover the names, show only SVGs. She names them in &lt;2 seconds.</li>
+            <li><strong>Parallel tab during schematic reading:</strong> Whenever an unfamiliar symbol appears, open Symbols page in a side-tab.</li>
+            <li><strong>Quiz review weekly:</strong> 10 random symbols, she names them. Over 6 weeks this becomes muscle memory.</li>
+          </ul>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Open <a href="symbols.html">symbols.html</a> with her. Scroll through each of the 6 sections (Passives, Diodes, Transistors, ICs, Power/Ground, Logic Gates).</li>
+            <li>Then open a real schematic &mdash; <a href="https://docs.arduino.cc/resources/schematics/A000066-schematics.pdf" target="_blank">Arduino Uno schematic</a> is ideal.</li>
+            <li>Point to 5 random symbols. She names them. Do this for 15 minutes.</li>
+            <li>Emphasise <strong>net labels</strong> (<code class="inline">VCC</code>, <code class="inline">GND</code>, <code class="inline">RX</code>) &mdash; signals with same name are connected even without visible wire.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>NPN vs PNP arrow direction &mdash; drill until automatic.</li>
+            <li>Polar vs non-polar cap &mdash; one curved line is the tell.</li>
+            <li>Signal GND vs Chassis GND vs Earth GND &mdash; physically different, look different.</li>
+            <li>Missing net labels: same name = wired together.</li>
+          </ul>
+        </div>
+        <div class="resource"><strong>Reference:</strong> <a href="symbols.html">Internal Symbols Page</a> &middot; <a href="https://learn.sparkfun.com/tutorials/how-to-read-a-schematic" target="_blank">SparkFun &mdash; How to Read a Schematic</a></div>
+      </div>
+    </div>
+
+    <!-- ============ T2.2 ============ -->
+    <div class="topic" id="t2-2">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.2</div><h3>Reading a Full Schematic &mdash; Block by Block</h3></div>
+        <div class="topic-meta">Session 15 &middot; 60 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Given any embedded board schematic, she identifies power block, MCU, reset, crystal, I/O headers, and communication interfaces.</div>
+        <div class="concept">
+          <p>Every embedded schematic has the same building blocks. Teach her to find them in order:</p>
+        </div>
+        <div class="block-diagram">
+          <svg width="620" height="240" viewBox="0 0 620 240">
+            <rect x="10" y="90" width="90" height="60" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="30" y="115" font-size="12" font-weight="700">USB /</text>
+            <text x="30" y="130" font-size="12" font-weight="700">Power In</text>
+            <text x="15" y="170" font-size="10" fill="#92400e">Barrel jack, battery, USB-C</text>
+
+            <line x1="100" y1="120" x2="140" y2="120" stroke="#0f172a" stroke-width="2" marker-end="url(#arr)"/>
+            <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#0f172a"/></marker></defs>
+
+            <rect x="140" y="90" width="110" height="60" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="162" y="115" font-size="12" font-weight="700">Regulator</text>
+            <text x="160" y="130" font-size="12" font-weight="700">(LDO/buck)</text>
+            <text x="145" y="170" font-size="10" fill="#15803d">AMS1117-3.3, MP1584</text>
+
+            <line x1="250" y1="120" x2="290" y2="120" stroke="#0f172a" stroke-width="2" marker-end="url(#arr)"/>
+
+            <rect x="290" y="90" width="120" height="60" rx="6" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+            <text x="325" y="115" font-size="12" font-weight="700">MCU</text>
+            <text x="315" y="130" font-size="12" font-weight="700">(ESP32, etc.)</text>
+            <text x="295" y="170" font-size="10" fill="#0c4a6e">+ decoupling caps 100nF near each V<tspan font-size="7" baseline-shift="-20%">cc</tspan></text>
+
+            <line x1="410" y1="120" x2="450" y2="120" stroke="#0f172a" stroke-width="2" marker-end="url(#arr)"/>
+
+            <rect x="450" y="90" width="110" height="60" rx="6" fill="#fae8ff" stroke="#7c3aed" stroke-width="2"/>
+            <text x="465" y="115" font-size="12" font-weight="700">I/O Headers</text>
+            <text x="470" y="130" font-size="12" font-weight="700">Sensors</text>
+            <text x="455" y="170" font-size="10" fill="#6b21a8">Leds, buttons, displays</text>
+
+            <rect x="260" y="190" width="120" height="40" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="290" y="215" font-size="12" font-weight="700">Reset / Boot</text>
+            <line x1="320" y1="190" x2="340" y2="150" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+            <rect x="420" y="190" width="120" height="40" rx="6" fill="#fae8ff" stroke="#7c3aed" stroke-width="2"/>
+            <text x="450" y="215" font-size="12" font-weight="700">Program / Debug</text>
+            <line x1="455" y1="190" x2="440" y2="150" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+            <text x="10" y="15" font-size="13" font-weight="700">Embedded Board &mdash; Standard Block Diagram</text>
+          </svg>
+          <div class="caption">Every embedded schematic maps to this pattern.</div>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Download ESP32 DevKit v1 schematic (Espressif publishes it).</li>
+            <li>Give her 5 minutes to try identifying blocks &mdash; silently.</li>
+            <li>Then walk through block-by-block. Show USB &rarr; CP2102 &rarr; UART &rarr; ESP32 signal chain.</li>
+            <li>Ask: "What happens when EN is pressed?" &rarr; trace the reset.</li>
+            <li>Next session, repeat with Arduino Uno schematic. Same structure, different parts.</li>
+            <li>Eventually, show her an Aimtron-style dashcam schematic. Connects her internship to real design.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Missing where a signal starts / ends. Follow net labels, not just wires.</li>
+            <li>Not noticing decoupling caps. Emphasise: no decoupling &rarr; broken board.</li>
+            <li>Confusing "3V3" / "V3" / other shorthand.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>What regulates USB 5V to 3.3V on ESP32 DevKit? <span class="ans">AMS1117-3.3 LDO</span></li>
+            <li>How does PC talk to ESP32? <span class="ans">CP2102 USB-to-UART bridge &rarr; ESP32 UART0</span></li>
+            <li>What does pressing EN do? <span class="ans">Pulls EN low &rarr; ESP32 resets</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T2.3 ============ -->
+    <div class="topic" id="t2-3">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.3</div><h3>Power Supply Blocks &mdash; LDO vs Buck</h3></div>
+        <div class="topic-meta">Session 16 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Pick between LDO and switching regulator; read "typical application circuit" from datasheet.</div>
+        <div class="concept">
+          <p><strong>LDO (linear):</strong> Simple, quiet, cheap, low parts count. But wastes P = (V<sub>in</sub>&minus;V<sub>out</sub>) &times; I as heat. Only good for small drops. <code class="inline">AMS1117-3.3</code>, <code class="inline">LM7805</code>.</p>
+          <p><strong>Switching regulator (buck):</strong> ~90% efficient, handles big drops. More parts (inductor, switching noise). <code class="inline">MP1584</code>, <code class="inline">LM2596</code>, <code class="inline">TPS54xx</code>.</p>
+          <p>Rule of thumb: if V<sub>drop</sub> &times; I &gt; 1 W, use buck.</p>
+        </div>
+        <div class="formula">
+          <strong>LDO P<sub>diss</sub>:</strong> (V<sub>in</sub> &minus; V<sub>out</sub>) &middot; I<sub>load</sub><br>
+          <strong>Buck efficiency:</strong> 85&ndash;95% typical
+        </div>
+        <div class="example"><strong>7.4V Li-Ion &rarr; 3.3V at 200mA.</strong> LDO: 0.82W hot. Buck: 0.07W loss. Buck wins for battery life.</div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Open AMS1117-3.3 datasheet. Find "typical application" page. 10&mu;F in + 10&mu;F out. Done.</li>
+            <li>Then MP1584: inductor, feedback divider, Schottky, caps. Explain each.</li>
+            <li><strong>Dropout:</strong> AMS1117 needs V<sub>in</sub> &ge; V<sub>out</sub> + 1.2V. 4V min for 3.3V.</li>
+            <li>Thermal: &gt;100&deg;C &rarr; add heatsink or switch topology.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Using LDO for big drops &mdash; cooks. Calculate P first.</li>
+            <li>Missing output cap &mdash; LDO oscillates.</li>
+            <li>Buck inductor far from IC &mdash; EMI. Keep loop tight.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>12V in, 5V out, 1A. LDO or buck? <span class="ans">Buck (LDO dissipates 7W)</span></li>
+            <li>What does "low dropout" mean? <span class="ans">V<sub>in</sub>&ndash;V<sub>out</sub> can be small before regulation fails</span></li>
+            <li>Why is inductor placement critical? <span class="ans">Small loop = lower EMI</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T2.4 ============ -->
+    <div class="topic" id="t2-4">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.4</div><h3>How to Read a Datasheet</h3></div>
+        <div class="topic-meta">Session 17 &middot; 50 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Given an unfamiliar datasheet, find pinout, abs max, operating conditions, and application circuit in &lt;2 min.</div>
+        <div class="concept">
+          <p>Datasheets look intimidating (100+ pages) but 90% of what she needs is pages 1&ndash;5. Systematic approach:</p>
+          <ol>
+            <li><strong>Front page:</strong> part number, description, features, packages. Confirms right part.</li>
+            <li><strong>Pinout:</strong> usually page 2. Memorise V<sub>cc</sub>, GND, data lines.</li>
+            <li><strong>Absolute max ratings:</strong> destruction limits. Never exceed.</li>
+            <li><strong>Recommended operating conditions:</strong> normal ranges.</li>
+            <li><strong>Electrical characteristics:</strong> V<sub>OH</sub>/V<sub>OL</sub>, I<sub>OH</sub>/I<sub>OL</sub>, current, frequency.</li>
+            <li><strong>Typical application circuit:</strong> free reference schematic. Copy it exactly.</li>
+            <li><strong>Timing diagrams:</strong> for I2C/SPI chips, shows setup/hold.</li>
+          </ol>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Pick an unfamiliar sensor (BMP280). Don't prep. Open datasheet.</li>
+            <li>5 min: she finds pinout, V<sub>cc</sub> range, I2C address, typical circuit. Watch silently.</li>
+            <li>Walk through together, discuss what she got right/wrong.</li>
+            <li>Next session: repeat with STM32F103, AMS1117, LM358. Each has slightly different structure.</li>
+            <li><strong>"Typical application circuit" is free engineering.</strong> Start from datasheet ref, modify.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Absolute max read as nominal. Abs max = destruction, not normal.</li>
+            <li>Package-specific pinouts. DIP vs SOIC different.</li>
+            <li>Conditional specs. "At V<sub>cc</sub>=5V, T=25&deg;C" &mdash; changes elsewhere.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>BMP280 V<sub>cc</sub> range? I2C address options? <span class="ans">1.71&ndash;3.6V; 0x76 or 0x77</span></li>
+            <li>Is absolute max the safe ceiling? <span class="ans">No &mdash; destruction threshold</span></li>
+            <li>Always on page 1? <span class="ans">Part number, features, packages</span></li>
+          </ol>
+        </div>
+        <div class="resource"><strong>Reference:</strong> <a href="https://www.youtube.com/watch?v=HQ47fiFecCM" target="_blank">Phil's Lab &mdash; How to Read a Datasheet</a></div>
+      </div>
+    </div>
+
+    <!-- ============ T2.5 ============ -->
+    <div class="topic" id="t2-5">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.5</div><h3>Component Selection Process</h3></div>
+        <div class="topic-meta">Session 18 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Given "I need X", she finds 3 candidates on DigiKey, compares, picks one with justification.</div>
+        <div class="concept">
+          <p>Real selection isn't finding <em>a</em> part &mdash; it's tradeoffs: price vs availability vs performance vs footprint vs lifecycle.</p>
+          <ol>
+            <li><strong>Translate to specs:</strong> "LDO" &rarr; V<sub>in</sub>, V<sub>out</sub>, I<sub>out</sub>, dropout, package.</li>
+            <li><strong>Filter search</strong> on DigiKey. Narrow to &lt;20 candidates.</li>
+            <li><strong>Sort by stock.</strong> 16-week lead-time part is useless.</li>
+            <li><strong>Lifecycle:</strong> Active / NRND / Obsolete.</li>
+            <li><strong>Compare top 3</strong> side-by-side.</li>
+            <li><strong>Always alternate MPN</strong> &mdash; drop-in if primary out.</li>
+          </ol>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Assign: "Find 3 candidates for 3.3V 500mA LDO, SOT-223, &lt;&#8377;20, in stock."</li>
+            <li>Watch her search. Note filter choices.</li>
+            <li>Walk comparison: dropout, quiescent, thermal, price, alternates.</li>
+            <li>Show Octopart for cross-vendor compare.</li>
+            <li>Show Robu.in for India-local sourcing.</li>
+            <li>Practice weekly &mdash; 15 min exercise per week.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Cheapest without checking stock/lifecycle.</li>
+            <li>Wrong package (SOT-223 vs SOT-89).</li>
+            <li>Ignoring temp range (commercial vs industrial vs automotive).</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>NRND on Mouser &mdash; use for new design? <span class="ans">No</span></li>
+            <li>Alternate for AMS1117-3.3? <span class="ans">LM1117-3.3, LD1117-3.3</span></li>
+            <li>Why industrial grade for Gujarat factory? <span class="ans">45&deg;C+ ambient; commercial marginal above 70&deg;C</span></li>
+          </ol>
+        </div>
+        <div class="resource"><strong>Tools:</strong> <a href="https://www.digikey.in/" target="_blank">DigiKey India</a> &middot; <a href="https://octopart.com/" target="_blank">Octopart</a> &middot; <a href="https://robu.in/" target="_blank">Robu.in</a></div>
+      </div>
+    </div>
+
+    <!-- ============ T2.6 ============ -->
+    <div class="topic" id="t2-6">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.6</div><h3>BOM Structure &amp; Best Practices</h3></div>
+        <div class="topic-meta">Session 19 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Build a production-ready BOM from a schematic: designators, MPNs, alternates, prices, notes.</div>
+        <div class="concept">
+          <p>BOM is the shopping list <em>and</em> the single source of truth for manufacturing, costing, supply chain, quality. Good hygiene saves projects.</p>
+        </div>
+        <table class="ref">
+          <tr><th>Column</th><th>Example</th><th>Why</th></tr>
+          <tr><td>Item #</td><td>1, 2, 3...</td><td>Order reference</td></tr>
+          <tr><td>Designator</td><td>R1, C5, U3</td><td>Schematic + silkscreen match</td></tr>
+          <tr><td>Value</td><td>10 k&Omega; 1% 0603</td><td>Human-readable</td></tr>
+          <tr><td>Manufacturer</td><td>Yageo</td><td>Supply tracking</td></tr>
+          <tr><td>MPN</td><td>RC0603FR-0710KL</td><td>Exact identifier</td></tr>
+          <tr><td>Alternate MPN</td><td>ERJ-3EKF1002V</td><td>Drop-in backup</td></tr>
+          <tr><td>Supplier</td><td>DigiKey / Robu</td><td>Where to buy</td></tr>
+          <tr><td>Supplier Part #</td><td>311-10.0KHRCT-ND</td><td>Direct order</td></tr>
+          <tr><td>Qty / Board</td><td>12</td><td>Math</td></tr>
+          <tr><td>Unit Price</td><td>&#8377;0.50</td><td>Costing</td></tr>
+          <tr><td>Ext. Price</td><td>Qty &times; Unit</td><td>Line total</td></tr>
+          <tr><td>Footprint</td><td>R_0603</td><td>PCB library</td></tr>
+          <tr><td>Notes</td><td>"Power path"</td><td>Context</td></tr>
+        </table>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Give her ESP32 DevKit schematic + blank template. ~30 rows.</li>
+            <li>First pass: 90 min. Review.</li>
+            <li>Catch: missing alternates, wrong footprints, missing notes.</li>
+            <li>Show a real Aimtron BOM if you can access.</li>
+            <li>Grouping: 12 same resistors &rarr; one row with "R1,R5,R7..." in Designator.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Generic descriptions without MPN.</li>
+            <li>Forgetting footprint.</li>
+            <li>Missing DNP (Do Not Populate) marker.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Three reasons for alternate MPN column? <span class="ans">Stock, cost, lifecycle</span></li>
+            <li>Is one-row grouping OK? <span class="ans">Yes, list all designators</span></li>
+            <li>Why mark DNP? <span class="ans">Prevents assembly placing unused parts</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T2.7 ============ -->
+    <div class="topic" id="t2-7">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.7</div><h3>Sourcing &amp; Supply Chain Basics</h3></div>
+        <div class="topic-meta">Session 20 &middot; 30 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Know major distributors, understand MOQ / lead time, cross-reference prices.</div>
+        <table class="ref">
+          <tr><th>Distributor</th><th>Strength</th><th>Lead time</th><th>When to use</th></tr>
+          <tr><td>DigiKey</td><td>Largest catalogue</td><td>3&ndash;5 days from US</td><td>Prototype, any part</td></tr>
+          <tr><td>Mouser</td><td>Similar, different pricing</td><td>3&ndash;5 days</td><td>Cross-check pricing</td></tr>
+          <tr><td>LCSC</td><td>Cheap, Chinese</td><td>10&ndash;15 days</td><td>Production, price-sensitive</td></tr>
+          <tr><td>Robu.in</td><td>Indian local, maker-friendly</td><td>2&ndash;4 days</td><td>Prototype, quick need</td></tr>
+          <tr><td>Element14 India</td><td>Mid-range, local stock</td><td>2&ndash;5 days</td><td>Technical parts in India</td></tr>
+          <tr><td>Arrow India</td><td>Good for ICs, volume</td><td>Varies</td><td>Mid-volume production</td></tr>
+          <tr><td>Octopart</td><td>Aggregator</td><td>&mdash;</td><td>Price compare only</td></tr>
+        </table>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Assign: "Source this BOM for &lt;&#8377;2000 for 1 prototype, 5 days delivery."</li>
+            <li>She'll need to mix Robu (local) + DigiKey (specialty). Decision is the lesson.</li>
+            <li>Introduce <strong>MOQ</strong>: some parts sold only in 5000-reels.</li>
+            <li>Introduce <strong>lead time</strong>: 16-week part &rarr; find alternate.</li>
+          </ol>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>5 ESP32 in 3 days? <span class="ans">Robu / Amazon India</span></li>
+            <li>500 units of specialty IC cheapest? <span class="ans">LCSC or manufacturer volume</span></li>
+            <li>"In Stock: 10" but need 5000 &mdash; problem? <span class="ans">Next order depends on restock</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T2.8 ============ -->
+    <div class="topic" id="t2-8">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T2.8</div><h3>Reset &amp; Boot Circuits</h3></div>
+        <div class="topic-meta">Session 21 &middot; 30 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Draw an MCU reset circuit; explain ESP32 EN vs BOOT; debug a board that won't reset.</div>
+        <div class="concept">
+          <p>Every MCU needs a clean reset pulse on power-up. Simplest: pull-up (~10k) on /RESET + button to GND. Sometimes 100nF cap for POR delay.</p>
+          <p>ESP32: <strong>EN</strong> = enable/reset; <strong>BOOT</strong> = held low while EN pulsed to enter bootloader. CP2102 on dev kit automates this.</p>
+        </div>
+        <div class="diagram">
+          <svg width="400" height="180" viewBox="0 0 400 180">
+            <text x="50" y="25" font-size="12" fill="#0369a1">+3V3</text>
+            <line x1="60" y1="30" x2="60" y2="60" stroke="#0f172a" stroke-width="2"/>
+            <polyline points="60,60 68,65 52,75 68,85 52,95 60,100" stroke="#0f172a" stroke-width="2" fill="none"/>
+            <text x="80" y="85" font-size="11" font-family="Courier New">R 10k</text>
+            <line x1="60" y1="100" x2="60" y2="120" stroke="#0f172a" stroke-width="2"/>
+            <circle cx="60" cy="120" r="4" fill="#0f172a"/>
+            <line x1="60" y1="120" x2="200" y2="120" stroke="#0f172a" stroke-width="2"/>
+            <text x="210" y="124" font-size="12" font-family="Courier New" fill="#dc2626">/RESET</text>
+            <line x1="60" y1="120" x2="60" y2="140" stroke="#0f172a" stroke-width="2"/>
+            <line x1="50" y1="140" x2="70" y2="140" stroke="#0f172a" stroke-width="2"/>
+            <line x1="60" y1="140" x2="60" y2="155" stroke="#0f172a" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <line x1="50" y1="155" x2="70" y2="155" stroke="#0f172a" stroke-width="2"/>
+            <line x1="60" y1="155" x2="60" y2="170" stroke="#0f172a" stroke-width="2"/>
+            <line x1="50" y1="170" x2="70" y2="170" stroke="#0f172a" stroke-width="2"/>
+            <line x1="54" y1="174" x2="66" y2="174" stroke="#0f172a" stroke-width="1.5"/>
+            <text x="78" y="148" font-size="11" fill="#64748b">button</text>
+          </svg>
+          <div class="caption">Minimal reset circuit: pull-up + button to GND.</div>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Draw simple reset on whiteboard.</li>
+            <li>Explain EN vs BOOT on ESP32 schematic. See the two transistors from DTR/RTS.</li>
+            <li>Common failure: no pull-up on /RESET &rarr; floats &rarr; random resets.</li>
+            <li>Mention brown-out detection (BOD) on ESP32.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>No pull-up. /RESET must have defined state.</li>
+            <li>Too-large cap &mdash; delays reset beyond first clock cycles.</li>
+            <li>Active-low vs high. Most are active-low (bar over /RESET).</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Bar over /RESET? <span class="ans">Active-low</span></li>
+            <li>Why ESP32 needs both EN and BOOT? <span class="ans">EN=reset; BOOT state at reset selects bootloader</span></li>
+            <li>Board won't reset &mdash; 3 things to check? <span class="ans">Pull-up, button, V<sub>cc</sub></span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="electronics.html">&larr; Part 1</a> &middot; <a href="index.html">Home</a> &middot; Next: <a href="embedded.html">Part 3 &middot; Embedded Systems &rarr;</a>
+  </div>
+</footer>
+
+</body>
+</html>

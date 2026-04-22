@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Part 3 &middot; Embedded Systems</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Part 3 &middot; Embedded Systems</div>
+    <h1>Part 3 &mdash; Embedded Systems (Hardware + Software)</h1>
+    <p class="subtitle">15 topics &middot; Weeks 5&ndash;7 &middot; Starts from "what is an embedded system?" and builds up to Arduino/ESP32 programming with sensor interfacing.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html">Part 1</a>
+    <a href="hardware.html">Part 2</a>
+    <a href="embedded.html" class="active">Part 3</a>
+    <a href="pcb.html">Part 4</a>
+    <a href="labs.html">Labs</a>
+    <a href="cheats.html">Cheats</a>
+  </div>
+</nav>
+
+<nav class="toc" style="top:46px;background:#f1f5f9">
+  <div class="wrap">
+    <a href="#t3-0">T3.0 What Is Embedded</a>
+    <a href="#t3-1">T3.1 MCU vs MPU</a>
+    <a href="#t3-2">T3.2 Memory</a>
+    <a href="#t3-3">T3.3 Boot Process</a>
+    <a href="#t3-4">T3.4 Toolchain</a>
+    <a href="#t3-5">T3.5 Arduino Setup</a>
+    <a href="#t3-6">T3.6 GPIO</a>
+    <a href="#t3-7">T3.7 ADC</a>
+    <a href="#t3-8">T3.8 PWM</a>
+    <a href="#t3-9">T3.9 UART</a>
+    <a href="#t3-10">T3.10 I2C</a>
+    <a href="#t3-11">T3.11 SPI</a>
+    <a href="#t3-12">T3.12 Interrupts</a>
+    <a href="#t3-13">T3.13 Timing</a>
+    <a href="#t3-14">T3.14 New Sensor</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+
+    <!-- ============ T3.0 ============ -->
+    <div class="topic" id="t3-0">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.0</div><h3>What Is an Embedded System?</h3></div>
+        <div class="topic-meta">Session 22 &middot; 45 min &middot; <strong>Foundational</strong></div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She can define an embedded system, give 5 examples, and explain why it's different from a general-purpose computer.</div>
+        <div class="concept">
+          <p>An <strong>embedded system</strong> is a dedicated computer built into a larger device to perform a specific task &mdash; not a general-purpose PC. It usually has:</p>
+          <ul>
+            <li><strong>Fixed function:</strong> does one thing well (regulate motor speed, read a sensor, drive a display).</li>
+            <li><strong>Real-time constraints:</strong> responds within milliseconds or microseconds.</li>
+            <li><strong>Limited resources:</strong> tiny RAM (kilobytes), tiny flash, often no OS or a lightweight RTOS.</li>
+            <li><strong>Direct hardware interaction:</strong> talks to GPIOs, sensors, motors, not a user via keyboard.</li>
+            <li><strong>Often battery-powered</strong> or low-power.</li>
+          </ul>
+          <p>She's already surrounded by embedded systems &mdash; she just hasn't labelled them that way.</p>
+        </div>
+
+        <div class="block-diagram">
+          <svg width="620" height="260" viewBox="0 0 620 260">
+            <text x="10" y="20" font-size="14" font-weight="700">Anatomy of an Embedded System</text>
+
+            <rect x="240" y="90" width="140" height="80" rx="8" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+            <text x="275" y="120" font-size="13" font-weight="700">MCU / MPU</text>
+            <text x="268" y="138" font-size="11" fill="#0c4a6e">(brain of system)</text>
+            <text x="258" y="155" font-size="11" fill="#0c4a6e">CPU + RAM + Flash</text>
+
+            <rect x="40" y="40" width="120" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="65" y="60" font-size="12" font-weight="700">Sensors</text>
+            <text x="50" y="75" font-size="10" fill="#92400e">Temp, accel, camera</text>
+            <line x1="160" y1="75" x2="240" y2="110" stroke="#0f172a" stroke-width="2" marker-end="url(#arr2)"/>
+            <defs><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#0f172a"/></marker></defs>
+
+            <rect x="40" y="170" width="120" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="65" y="190" font-size="12" font-weight="700">Buttons</text>
+            <text x="50" y="205" font-size="10" fill="#92400e">User input, switches</text>
+            <line x1="160" y1="195" x2="240" y2="150" stroke="#0f172a" stroke-width="2" marker-end="url(#arr2)"/>
+
+            <rect x="460" y="40" width="120" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="485" y="60" font-size="12" font-weight="700">Display / LEDs</text>
+            <text x="475" y="75" font-size="10" fill="#15803d">OLED, 7-segment</text>
+            <line x1="380" y1="110" x2="460" y2="75" stroke="#0f172a" stroke-width="2" marker-end="url(#arr2)"/>
+
+            <rect x="460" y="170" width="120" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="485" y="190" font-size="12" font-weight="700">Actuators</text>
+            <text x="475" y="205" font-size="10" fill="#15803d">Motor, relay, servo</text>
+            <line x1="380" y1="150" x2="460" y2="195" stroke="#0f172a" stroke-width="2" marker-end="url(#arr2)"/>
+
+            <rect x="240" y="210" width="140" height="40" rx="6" fill="#fae8ff" stroke="#7c3aed" stroke-width="2"/>
+            <text x="272" y="235" font-size="12" font-weight="700">Power Supply</text>
+            <line x1="310" y1="210" x2="310" y2="170" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3,3"/>
+          </svg>
+          <div class="caption">Standard architecture: sensors (input) &rarr; MCU (process) &rarr; actuators (output), all on a power supply.</div>
+        </div>
+
+        <table class="ref">
+          <tr><th>Example</th><th>What it does</th><th>Typical MCU</th></tr>
+          <tr><td><strong>Aimtron dashcam</strong> (she knows this!)</td><td>Records, detects driver events, streams data</td><td>ARM Cortex-A (SoC)</td></tr>
+          <tr><td>Washing machine controller</td><td>Runs cycle, senses water, drives motor</td><td>8-bit MCU (PIC, AVR)</td></tr>
+          <tr><td>Smart plug</td><td>Wi-Fi-controlled mains switching</td><td>ESP32 / ESP8266</td></tr>
+          <tr><td>Digital thermometer</td><td>Reads sensor, shows on LCD</td><td>STM32, PIC</td></tr>
+          <tr><td>Drone flight controller</td><td>Real-time attitude control via IMU + motors</td><td>STM32F4</td></tr>
+          <tr><td>Car ECU (Engine Control)</td><td>Fuel injection timing, ignition, emissions</td><td>Automotive-grade ARM / PowerPC</td></tr>
+        </table>
+
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Ask her to list 5 devices around her that might have an embedded system inside. She'll list her phone, smart TV, AC, microwave, fitness band. All correct.</li>
+            <li>Draw the block diagram on whiteboard: sensors &rarr; MCU &rarr; actuators.</li>
+            <li>Discuss her Aimtron dashcam specifically. What are the inputs? (camera, GPS, accelerometer). What's the MCU doing? (video processing, event detection, cloud comms). What are the outputs? (flash LED, beep, upload video).</li>
+            <li>Contrast with a laptop: general-purpose, runs many applications, has OS, keyboard/screen. Embedded runs <em>one dedicated function</em>.</li>
+            <li>Explain why embedded matters: it's everywhere; 10 billion MCUs ship per year. Jobs are plentiful if you know the basics.</li>
+          </ol>
+        </div>
+
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Confusing embedded with "the cloud" or "IoT". IoT is a <em>subset</em> of embedded &mdash; internet-connected embedded.</li>
+            <li>Thinking embedded = just the MCU chip. Embedded = the whole system: MCU + peripherals + sensors + actuators + power + firmware.</li>
+            <li>Assuming embedded always needs an OS. Most tiny MCUs run bare-metal "super-loop" code (like Arduino). Big embedded (her Aimtron) runs embedded Linux.</li>
+          </ul>
+        </div>
+
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Name one embedded system in her kitchen. <span class="ans">Microwave, fridge controller, induction cooker, rice cooker, etc.</span></li>
+            <li>3 differences between embedded and a laptop? <span class="ans">Fixed function, limited resources, direct hardware interaction</span></li>
+            <li>Is IoT = embedded? <span class="ans">IoT is a subset &mdash; specifically networked embedded systems</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.1 ============ -->
+    <div class="topic" id="t3-1">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.1</div><h3>Microcontroller vs Microprocessor</h3></div>
+        <div class="topic-meta">Session 23 &middot; 40 min &middot; <strong>Foundational</strong></div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She can distinguish MCU vs MPU, give an example of each, and explain when to choose which.</div>
+        <div class="concept">
+          <p><strong>Microcontroller (MCU):</strong> Everything on one chip &mdash; CPU core, RAM, Flash (program memory), peripherals (UART, I2C, ADC, timers). Cheap, low-power, boots instantly, programmed with a single binary. Examples: <code class="inline">ATmega328P</code> (Arduino Uno), <code class="inline">STM32F103</code>, <code class="inline">ESP32</code>.</p>
+          <p><strong>Microprocessor (MPU):</strong> Just the CPU core. Needs external RAM, Flash / disk, sometimes external peripheral chips. Runs a full OS (Linux, Android). More powerful, higher power draw. Examples: <code class="inline">NXP i.MX8M Plus</code> (Vaibhav's work), <code class="inline">Raspberry Pi BCM2711</code>, any laptop/phone SoC.</p>
+        </div>
+
+        <table class="ref">
+          <tr><th></th><th>MCU</th><th>MPU (SoC)</th></tr>
+          <tr><td>All-in-one chip</td><td>Yes</td><td>No (needs DDR, eMMC, etc.)</td></tr>
+          <tr><td>Typical RAM</td><td>2 KB &ndash; 512 KB</td><td>256 MB &ndash; 8 GB</td></tr>
+          <tr><td>Typical Flash</td><td>8 KB &ndash; 4 MB</td><td>512 MB &ndash; 64 GB</td></tr>
+          <tr><td>Clock speed</td><td>8 MHz &ndash; 400 MHz</td><td>500 MHz &ndash; 3 GHz</td></tr>
+          <tr><td>OS</td><td>None or RTOS</td><td>Linux, Android</td></tr>
+          <tr><td>Boot time</td><td>Instant (ms)</td><td>Seconds</td></tr>
+          <tr><td>Power draw</td><td>&mu;A &ndash; mA</td><td>Watts</td></tr>
+          <tr><td>Cost (chip only)</td><td>&#8377;30 &ndash; &#8377;500</td><td>&#8377;500 &ndash; &#8377;5000+</td></tr>
+          <tr><td>Use case</td><td>Sensors, motor control, simple IoT</td><td>Video, ML, full Linux apps</td></tr>
+          <tr><td>Example</td><td>Arduino Uno, ESP32</td><td>Raspberry Pi, Aimtron dashcam core</td></tr>
+        </table>
+
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Pull out the ESP32 DevKit. Point to the ESP32 chip &mdash; that's an MCU.</li>
+            <li>If you have a Raspberry Pi around, pull that out. Show the BCM2711 chip <em>and</em> the separate DDR RAM chip + SD card slot. That's an MPU-based system.</li>
+            <li>Tie to her world: <strong>Aimtron dashcam uses an MPU/SoC</strong> (your NXP i.MX8M Plus). Why? Because it runs video decode, AI inference, Linux &mdash; far more than an MCU can do.</li>
+            <li>Tie to her target job: <strong>she's aiming at MCU-level roles</strong> (ESP32, STM32). The MPU / Yocto / embedded-Linux world is 1&ndash;2 years down the track.</li>
+            <li>Edge case: <strong>ESP32 is weird</strong> &mdash; technically an MCU (everything on-chip) but has Wi-Fi + Bluetooth + dual CPU. Sometimes called an "SoC" (System-on-Chip). SoC is a fuzzy term.</li>
+          </ol>
+        </div>
+
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Thinking Raspberry Pi is a microcontroller. It isn't &mdash; it's a Linux single-board computer.</li>
+            <li>Arduino being called a "processor". The Arduino <em>Uno</em> has an MCU (ATmega328P). The board is a dev platform.</li>
+            <li>Not realising that running Linux requires external RAM, which MCUs don't have.</li>
+          </ul>
+        </div>
+
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Is ESP32 an MCU or MPU? <span class="ans">MCU (sometimes called SoC); everything on-chip</span></li>
+            <li>Why can't a typical MCU run Linux? <span class="ans">Not enough RAM (typically &lt;512 KB vs Linux needing ~64 MB+)</span></li>
+            <li>Which to use for a washing machine controller? Drone video processing? <span class="ans">MCU for washing machine, MPU for drone video</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.2 ============ -->
+    <div class="topic" id="t3-2">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.2</div><h3>Memory Types &mdash; Flash, RAM, EEPROM, Registers</h3></div>
+        <div class="topic-meta">Session 24 &middot; 40 min &middot; <strong>Foundational</strong></div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She can explain the 4 memory regions in an MCU and where code, variables, and saved settings live.</div>
+
+        <div class="concept">
+          <p>Inside an MCU are several kinds of memory with different purposes:</p>
+          <ul>
+            <li><strong>Flash (program memory):</strong> Non-volatile. Holds the compiled firmware. ~KB to MB. Survives power-off. Only rewritten during programming (10,000+ erase cycles typical).</li>
+            <li><strong>SRAM (working memory):</strong> Volatile. Holds variables, stack, heap at runtime. KB range. Wiped on reset.</li>
+            <li><strong>EEPROM / Data Flash:</strong> Non-volatile, byte-writable. For user settings, calibration data. Lasts ~100,000 writes. (ESP32 emulates EEPROM in flash.)</li>
+            <li><strong>Registers:</strong> Tiny but fast hardware registers inside the CPU and peripherals. Used directly for GPIO states, peripheral config. Arduino hides these; bare-metal C writes them directly.</li>
+          </ul>
+        </div>
+
+        <div class="block-diagram">
+          <svg width="620" height="270" viewBox="0 0 620 270">
+            <text x="10" y="20" font-size="14" font-weight="700">Memory Map of a Typical MCU (simplified)</text>
+
+            <rect x="60" y="50" width="160" height="50" rx="6" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+            <text x="95" y="72" font-size="13" font-weight="700">Flash (Program)</text>
+            <text x="78" y="90" font-size="10" fill="#0c4a6e">Non-volatile, holds firmware</text>
+
+            <rect x="60" y="115" width="160" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="105" y="137" font-size="13" font-weight="700">SRAM</text>
+            <text x="65" y="155" font-size="10" fill="#15803d">Volatile, variables/stack</text>
+
+            <rect x="60" y="180" width="160" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="90" y="202" font-size="13" font-weight="700">EEPROM</text>
+            <text x="75" y="220" font-size="10" fill="#92400e">Non-vol, user settings</text>
+
+            <rect x="340" y="50" width="220" height="180" rx="8" fill="white" stroke="#0f172a" stroke-width="2" stroke-dasharray="4,4"/>
+            <text x="360" y="72" font-size="13" font-weight="700">CPU + Peripheral Registers</text>
+            <rect x="360" y="85" width="80" height="30" fill="#fae8ff" stroke="#7c3aed"/>
+            <text x="385" y="104" font-size="11" font-weight="600">GPIO</text>
+            <rect x="450" y="85" width="90" height="30" fill="#fae8ff" stroke="#7c3aed"/>
+            <text x="480" y="104" font-size="11" font-weight="600">Timers</text>
+            <rect x="360" y="125" width="80" height="30" fill="#fae8ff" stroke="#7c3aed"/>
+            <text x="388" y="144" font-size="11" font-weight="600">UART</text>
+            <rect x="450" y="125" width="90" height="30" fill="#fae8ff" stroke="#7c3aed"/>
+            <text x="485" y="144" font-size="11" font-weight="600">ADC</text>
+            <rect x="360" y="165" width="80" height="30" fill="#fae8ff" stroke="#7c3aed"/>
+            <text x="395" y="184" font-size="11" font-weight="600">I2C</text>
+            <rect x="450" y="165" width="90" height="30" fill="#fae8ff" stroke="#7c3aed"/>
+            <text x="485" y="184" font-size="11" font-weight="600">SPI</text>
+
+            <text x="70" y="260" font-size="11" fill="#64748b">Firmware lives here &#8594;</text>
+            <text x="340" y="260" font-size="11" fill="#64748b">&#8592; Code controls peripherals by writing these registers</text>
+          </svg>
+          <div class="caption">Flash stores the firmware; SRAM holds live variables; registers control peripherals.</div>
+        </div>
+
+        <pre class="code"><span class="cmt">// Where do these variables live on an Arduino/ESP32?</span>
+
+<span class="kw">const</span> <span class="kw">int</span> ledPin = 13;      <span class="cmt">// "const" &rarr; Flash (read-only)</span>
+<span class="kw">int</span> counter = 0;             <span class="cmt">// SRAM (runtime variable)</span>
+<span class="kw">char</span> name[32];              <span class="cmt">// SRAM (array buffer)</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(ledPin, OUTPUT);  <span class="cmt">// writes GPIO peripheral register</span>
+  EEPROM.write(0, 42);      <span class="cmt">// writes EEPROM (emulated on ESP32)</span>
+}</pre>
+
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>ATmega328P (Arduino Uno) spec: 32 KB Flash, 2 KB SRAM, 1 KB EEPROM. Read it off the datasheet. Concrete numbers.</li>
+            <li>ESP32 spec: 4 MB Flash, 520 KB SRAM. No real EEPROM (emulated).</li>
+            <li>Walk through the code above. Ask: "Where does each variable live?"</li>
+            <li>Explain what happens on reset: SRAM clears, Flash keeps firmware, EEPROM keeps settings.</li>
+            <li>Demonstrate: run a sketch that counts, store the count in EEPROM, power-cycle, count resumes.</li>
+          </ol>
+        </div>
+
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Declaring big arrays / strings in RAM that don't fit. On Arduino Uno with 2 KB SRAM, a 1500-byte array leaves almost nothing for the stack &rarr; crash.</li>
+            <li>Expecting variables to survive reset. They don't &mdash; use EEPROM for that.</li>
+            <li>Excessive EEPROM writes &mdash; wear it out. Don't write every loop iteration; write on state change only.</li>
+          </ul>
+        </div>
+
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Where does compiled firmware sit? <span class="ans">Flash</span></li>
+            <li>Where does a global <code class="inline">int x = 5;</code> live? <span class="ans">SRAM</span></li>
+            <li>ATmega328P has 2 KB SRAM. Can you declare <code class="inline">char big[3000];</code>? <span class="ans">No &mdash; exceeds RAM</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.3 ============ -->
+    <div class="topic" id="t3-3">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.3</div><h3>The Boot Process &mdash; What Happens on Power-On</h3></div>
+        <div class="topic-meta">Session 25 &middot; 35 min &middot; <strong>Foundational</strong></div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She can describe, in order, what happens from power-on to <code class="inline">loop()</code> running.</div>
+        <div class="concept">
+          <p>Every embedded system powers up in the same general sequence:</p>
+          <ol>
+            <li><strong>Power stabilises.</strong> Regulator brings V<sub>cc</sub> up cleanly. Decoupling caps fill.</li>
+            <li><strong>Reset released.</strong> Reset pin pulled high (via RC delay or external circuit). CPU starts executing.</li>
+            <li><strong>Clock starts.</strong> Crystal oscillator (or internal RC) stabilises. CPU clock valid.</li>
+            <li><strong>Bootloader runs (optional).</strong> On Arduino/ESP32, a small bootloader in Flash checks if a new firmware upload is pending (over UART/USB). If not, it jumps to user firmware.</li>
+            <li><strong>User firmware starts.</strong> C startup code initialises .bss (zero-fill), copies .data (initialised variables) from Flash to RAM, sets up stack pointer.</li>
+            <li><strong>main() / setup() runs.</strong> Your code finally begins.</li>
+            <li><strong>Main loop runs forever.</strong> On Arduino, <code class="inline">loop()</code> called repeatedly.</li>
+          </ol>
+          <p>On an <strong>MPU running Linux</strong> (your Aimtron dashcam world): add U-Boot, kernel, init system, user apps &mdash; much longer chain. But for Arduino/ESP32, steps 1&ndash;7 is all.</p>
+        </div>
+
+        <div class="block-diagram">
+          <svg width="620" height="180" viewBox="0 0 620 180">
+            <text x="10" y="20" font-size="14" font-weight="700">Boot Sequence Timeline (Arduino / ESP32)</text>
+            <line x1="30" y1="100" x2="590" y2="100" stroke="#0f172a" stroke-width="2"/>
+            <polygon points="590,100 580,96 580,104" fill="#0f172a"/>
+
+            <g transform="translate(40,60)">
+              <rect width="80" height="40" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
+              <text x="10" y="15" font-size="10" font-weight="700">Power</text>
+              <text x="10" y="28" font-size="10">rises</text>
+            </g>
+
+            <g transform="translate(135,60)">
+              <rect width="80" height="40" fill="#dcfce7" stroke="#16a34a" stroke-width="2" rx="4"/>
+              <text x="10" y="15" font-size="10" font-weight="700">/RESET</text>
+              <text x="10" y="28" font-size="10">released</text>
+            </g>
+
+            <g transform="translate(230,60)">
+              <rect width="80" height="40" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" rx="4"/>
+              <text x="10" y="15" font-size="10" font-weight="700">Clock</text>
+              <text x="10" y="28" font-size="10">stable</text>
+            </g>
+
+            <g transform="translate(325,60)">
+              <rect width="80" height="40" fill="#fae8ff" stroke="#7c3aed" stroke-width="2" rx="4"/>
+              <text x="10" y="15" font-size="10" font-weight="700">Bootloader</text>
+              <text x="10" y="28" font-size="10">runs</text>
+            </g>
+
+            <g transform="translate(420,60)">
+              <rect width="80" height="40" fill="#fee2e2" stroke="#dc2626" stroke-width="2" rx="4"/>
+              <text x="10" y="15" font-size="10" font-weight="700">setup()</text>
+            </g>
+
+            <g transform="translate(515,60)">
+              <rect width="70" height="40" fill="#0369a1" stroke="#0f172a" stroke-width="2" rx="4"/>
+              <text x="10" y="15" font-size="10" font-weight="700" fill="white">loop()</text>
+              <text x="10" y="28" font-size="10" fill="#e0f2fe">forever</text>
+            </g>
+
+            <text x="40" y="135" font-size="11" fill="#64748b">0 ms</text>
+            <text x="142" y="135" font-size="11" fill="#64748b">~10 ms</text>
+            <text x="242" y="135" font-size="11" fill="#64748b">~15 ms</text>
+            <text x="330" y="135" font-size="11" fill="#64748b">~100 ms</text>
+            <text x="428" y="135" font-size="11" fill="#64748b">~1 s</text>
+            <text x="515" y="135" font-size="11" fill="#64748b">&rarr; &infin;</text>
+          </svg>
+          <div class="caption">Typical boot timeline for an Arduino/ESP32 &mdash; total ~1 second cold-start.</div>
+        </div>
+
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Draw the timeline on whiteboard.</li>
+            <li>Contrast with laptop boot: "Your laptop takes 30 seconds because it loads a full OS. This runs in a second because it's dedicated."</li>
+            <li>Show the ESP32 programming dance: RTS/DTR signals from CP2102 pulse EN low and BOOT low simultaneously to enter the UART bootloader.</li>
+            <li>Talk about <strong>fail-safe boot</strong>: if user firmware is corrupted, the bootloader often remains recoverable. Critical for field-upgradable devices.</li>
+            <li>Tie to her world: Aimtron dashcam boots U-Boot &rarr; kernel &rarr; init &rarr; apps. Your domain.</li>
+          </ol>
+        </div>
+
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Confusing "bootloader" with "firmware". Bootloader = small helper that can load firmware. Firmware = your code.</li>
+            <li>Assuming setup() runs instantly. There's ~1s of reset + clock + bootloader before setup() on a typical board.</li>
+            <li>Forgetting Flash &rarr; RAM copy of initialised variables. That's the reason your variables have the values you assigned at declaration time.</li>
+          </ul>
+        </div>
+
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>What's the first thing after power-on? <span class="ans">Power rail stabilises, then /RESET released</span></li>
+            <li>What runs before setup()? <span class="ans">Bootloader + C runtime init</span></li>
+            <li>Where does the bootloader live? <span class="ans">Reserved area in Flash</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.4 ============ -->
+    <div class="topic" id="t3-4">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.4</div><h3>Toolchain &mdash; Compiler, Linker, Upload</h3></div>
+        <div class="topic-meta">Session 26 &middot; 35 min &middot; <strong>Foundational</strong></div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> She can explain what happens when she clicks "Upload" in Arduino IDE &mdash; source code to running firmware.</div>
+        <div class="concept">
+          <p>From her C code to a running LED blink, several steps happen:</p>
+          <ol>
+            <li><strong>Preprocessor:</strong> expands <code class="inline">#include</code>, <code class="inline">#define</code>. Produces plain C.</li>
+            <li><strong>Compiler:</strong> converts C / C++ to machine instructions for the target CPU (e.g., Xtensa for ESP32, AVR for Arduino Uno, ARM for STM32). Output: object file (.o).</li>
+            <li><strong>Linker:</strong> stitches together object files + libraries, resolves addresses, produces a single binary (.elf / .bin / .hex).</li>
+            <li><strong>Uploader:</strong> sends the binary over USB/serial to the MCU's bootloader, which writes it to Flash.</li>
+            <li><strong>Reset:</strong> MCU restarts, now running the new firmware.</li>
+          </ol>
+          <p>This is <strong>cross-compilation</strong>: the compiler runs on her laptop (x86/ARM) but produces code for a different CPU (AVR/Xtensa). That's why you can't just run a <code class="inline">.exe</code> on Arduino &mdash; the instruction set is different.</p>
+        </div>
+
+        <div class="block-diagram">
+          <svg width="620" height="160" viewBox="0 0 620 160">
+            <text x="10" y="20" font-size="14" font-weight="700">From Source to Running Firmware</text>
+            <g transform="translate(20,50)">
+              <rect width="90" height="60" fill="#e0f2fe" stroke="#0369a1" stroke-width="2" rx="4"/>
+              <text x="30" y="25" font-size="11" font-weight="700">.c / .cpp</text>
+              <text x="22" y="45" font-size="10" fill="#0c4a6e">your code</text>
+            </g>
+            <line x1="110" y1="80" x2="140" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arr3)"/>
+            <defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#0f172a"/></marker></defs>
+
+            <g transform="translate(140,50)">
+              <rect width="90" height="60" fill="#dcfce7" stroke="#16a34a" stroke-width="2" rx="4"/>
+              <text x="32" y="22" font-size="11" font-weight="700">Compile</text>
+              <text x="12" y="38" font-size="9" fill="#15803d">avr-gcc / xtensa-gcc</text>
+              <text x="37" y="52" font-size="11" font-weight="700">.o</text>
+            </g>
+            <line x1="230" y1="80" x2="260" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arr3)"/>
+
+            <g transform="translate(260,50)">
+              <rect width="90" height="60" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
+              <text x="33" y="22" font-size="11" font-weight="700">Link</text>
+              <text x="15" y="38" font-size="9" fill="#92400e">libraries, addr map</text>
+              <text x="37" y="52" font-size="11" font-weight="700">.elf</text>
+            </g>
+            <line x1="350" y1="80" x2="380" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arr3)"/>
+
+            <g transform="translate(380,50)">
+              <rect width="100" height="60" fill="#fae8ff" stroke="#7c3aed" stroke-width="2" rx="4"/>
+              <text x="22" y="22" font-size="11" font-weight="700">.hex / .bin</text>
+              <text x="22" y="38" font-size="10" fill="#6b21a8">binary image</text>
+            </g>
+            <line x1="480" y1="80" x2="510" y2="80" stroke="#0f172a" stroke-width="2" marker-end="url(#arr3)"/>
+
+            <g transform="translate(510,50)">
+              <rect width="100" height="60" fill="#fee2e2" stroke="#dc2626" stroke-width="2" rx="4"/>
+              <text x="28" y="22" font-size="11" font-weight="700">Upload</text>
+              <text x="15" y="40" font-size="10" fill="#991b1b">USB &rarr; Flash</text>
+            </g>
+
+            <text x="20" y="135" font-size="11" fill="#64748b">Arduino IDE does all this when you hit Upload.</text>
+          </svg>
+          <div class="caption">Arduino IDE hides these steps. You can see them in verbose output.</div>
+        </div>
+
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Turn on verbose output in Arduino IDE (File &rarr; Preferences &rarr; Show verbose output).</li>
+            <li>Upload Blink. Show her the avr-gcc / xtensa-gcc calls scrolling by.</li>
+            <li>Point out: compile first, link second, upload third. Each step produces a file.</li>
+            <li>Explain <strong>cross-compilation</strong>: her laptop is x86; MCU is AVR/Xtensa/ARM. Different CPU ISAs. Compiler has to target the MCU.</li>
+            <li>Find the <code class="inline">.hex</code> file on disk (temporary folder); open in a hex editor. She sees the actual bytes that go into Flash.</li>
+            <li>Tie to your world: on NXP i.MX8M Plus you run an <em>ARM64 cross-compiler</em> producing Linux executables. Same idea, bigger scale.</li>
+          </ol>
+        </div>
+
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Thinking you can run a PC <code class="inline">.exe</code> on an MCU. Different CPU, different instruction set, no OS.</li>
+            <li>Conflating compile errors and link errors. Compile = "syntax wrong in your file". Link = "function called but not defined anywhere".</li>
+            <li>"It compiled but nothing happens on the board" &mdash; usually an <em>upload</em> problem (wrong port, wrong board, COM driver). Check each step.</li>
+          </ul>
+        </div>
+
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>What's cross-compilation? <span class="ans">Compiling on one CPU for a different CPU</span></li>
+            <li>What's the linker's job? <span class="ans">Combine object files, resolve addresses, produce final binary</span></li>
+            <li>What physical medium receives the uploaded binary? <span class="ans">MCU's Flash</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.5 (was T3.1) ============ -->
+    <div class="topic" id="t3-5">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.5</div><h3>Arduino Sketch Structure &mdash; setup() &amp; loop()</h3></div>
+        <div class="topic-meta">Session 27 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Install Arduino IDE + ESP32 support, upload Blink, explain <code class="inline">setup()</code> and <code class="inline">loop()</code>.</div>
+        <div class="concept">
+          <p>Arduino IDE is the lowest-friction entry to embedded. Underneath, it's C++ with a thin framework. Every sketch has exactly two functions:</p>
+        </div>
+        <pre class="code"><span class="cmt">// runs once on power-up / reset</span>
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(115200);
+}
+
+<span class="cmt">// runs forever after setup() returns</span>
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(500);
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Install Arduino IDE 2.x together. Add ESP32 via Board Manager URL in Preferences.</li>
+            <li>Plug in ESP32. Select Board + COM port.</li>
+            <li>Examples &rarr; Basics &rarr; Blink. Upload. LED blinks.</li>
+            <li>Change <code class="inline">delay(1000)</code> to <code class="inline">delay(200)</code>. Upload. Direct cause-effect.</li>
+            <li>Open Serial Monitor. Add <code class="inline">Serial.println("Hello");</code>. Magic moment.</li>
+            <li>Save sketches in Git from day 1. Push Blink to GitHub now.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Wrong board selected &rarr; upload fails.</li>
+            <li>Wrong COM port. Windows may need CP210x driver.</li>
+            <li>Some ESP32 boards need BOOT held during upload. CP2102 DevKits usually auto-bootload.</li>
+            <li>Missing <code class="inline">Serial.begin()</code> &rarr; Serial Monitor shows nothing.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>What runs first, setup() or loop()? <span class="ans">setup()</span></li>
+            <li>How many times does loop() run? <span class="ans">Forever</span></li>
+            <li>LED blink every 100 ms &mdash; what value? <span class="ans">delay(100)</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.6 GPIO ============ -->
+    <div class="topic" id="t3-6">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.6</div><h3>GPIO &mdash; digitalRead / digitalWrite / pinMode</h3></div>
+        <div class="topic-meta">Session 28 &middot; 45 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Read a button, drive an LED, explain INPUT_PULLUP.</div>
+        <div class="concept">
+          <p>GPIO = General Purpose Input/Output. Three modes: <code class="inline">OUTPUT</code>, <code class="inline">INPUT</code>, <code class="inline">INPUT_PULLUP</code>.</p>
+          <p>INPUT_PULLUP enables an internal ~50k pull-up. Button wired between pin and GND: unpressed = HIGH, pressed = LOW (active-low).</p>
+        </div>
+        <pre class="code"><span class="kw">const</span> <span class="kw">int</span> BTN = 4;
+<span class="kw">const</span> <span class="kw">int</span> LED = 2;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  pinMode(BTN, INPUT_PULLUP);
+  pinMode(LED, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (digitalRead(BTN) == LOW) digitalWrite(LED, HIGH);
+  <span class="kw">else</span> digitalWrite(LED, LOW);
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Wire: LED on GPIO 2 + 330&Omega;; button between GPIO 4 and GND.</li>
+            <li>Upload. Press button &rarr; LED on.</li>
+            <li>Change to <code class="inline">pinMode(BTN, INPUT)</code> (no pull-up). Random behaviour &mdash; reinforces need.</li>
+            <li>Toggle on press (not hold) &rarr; need debouncing + edge detection (later topic).</li>
+            <li>ESP32 strapping pins: 0, 2, 12, 15 have boot functions. Warn.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Floating inputs. Tie somewhere always.</li>
+            <li>INPUT_PULLUP + button-to-GND &rarr; <em>pressed = LOW</em>. Counterintuitive.</li>
+            <li>GPIO current limit ~20 mA. Heavy loads need transistor.</li>
+            <li>Strapping pins as button inputs &rarr; board may not boot.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Mode for button-to-GND without external R? <span class="ans">INPUT_PULLUP</span></li>
+            <li>digitalRead on pressed INPUT_PULLUP pin? <span class="ans">LOW</span></li>
+            <li>Why avoid GPIO 12 on ESP32? <span class="ans">Strapping pin &mdash; affects boot</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.7 ADC ============ -->
+    <div class="topic" id="t3-7">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.7</div><h3>ADC &mdash; analogRead, Resolution, Reference</h3></div>
+        <div class="topic-meta">Session 29 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Read a pot; convert raw counts to volts with V = raw &middot; V<sub>ref</sub> / 2<sup>N</sup>.</div>
+        <div class="concept">
+          <p>ADC converts analog voltage to digital number. Two specs:</p>
+          <ul>
+            <li><strong>Resolution:</strong> Arduino Uno = 10-bit (0&ndash;1023), ESP32 = 12-bit (0&ndash;4095).</li>
+            <li><strong>Reference:</strong> Uno = 5 V (V<sub>cc</sub>), ESP32 = ~3.3 V (configurable attenuation).</li>
+          </ul>
+        </div>
+        <div class="formula"><strong>V = raw &middot; V<sub>ref</sub> / (2<sup>N</sup> &minus; 1)</strong></div>
+        <pre class="code"><span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(115200);
+  analogReadResolution(12);
+  analogSetAttenuation(ADC_11db);  <span class="cmt">// ~3.3V range on ESP32</span>
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">int</span> raw = analogRead(34);
+  <span class="kw">float</span> v = raw * 3.3f / 4095.0f;
+  Serial.printf(<span class="str">"raw=%d V=%.2f\n"</span>, raw, v);
+  delay(200);
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Wire 10k pot: outer legs 3.3V/GND, wiper to GPIO 34.</li>
+            <li>Upload. Turn pot, watch raw values 0&rarr;4095.</li>
+            <li>She derives the formula: "3.3V full-scale, raw=2048, volts?" ~1.65V.</li>
+            <li>ESP32 ADC quirks: nonlinear near rails, noisy (average 10 reads), ADC2 disabled during Wi-Fi.</li>
+            <li>Demonstrate averaging: noise drops visibly.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>10-bit vs 12-bit resolution confusion.</li>
+            <li>Reading V &gt; V<sub>ref</sub> &rarr; ADC clips. Use divider.</li>
+            <li>ADC2 during Wi-Fi &rarr; reads zero. Use ADC1 (GPIO 32&ndash;39).</li>
+            <li>Single reads: ~10&ndash;20 counts noise. Average.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>12-bit, V<sub>ref</sub>=3.3V. Raw=3000. V=? <span class="ans">2.42V</span></li>
+            <li>Can ESP32 read 5V directly? <span class="ans">No &mdash; use divider</span></li>
+            <li>Why ADC2 fails during Wi-Fi? <span class="ans">Shared hardware with RF</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.8 PWM ============ -->
+    <div class="topic" id="t3-8">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.8</div><h3>PWM &mdash; Duty Cycle, Frequency, LEDC</h3></div>
+        <div class="topic-meta">Session 30 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Dim an LED, drive motor speed with PWM; know LEDC on ESP32.</div>
+        <div class="concept">
+          <p>PWM = fast HIGH/LOW switching. Duty cycle = fraction HIGH. Average V = V<sub>cc</sub> &times; duty. Frequency: &gt;20 kHz for motors (no whine), &gt;1 kHz for LEDs (no flicker).</p>
+          <p>Arduino: <code class="inline">analogWrite(pin, 0&ndash;255)</code>. ESP32: use <code class="inline">ledcSetup()</code> + <code class="inline">ledcWrite()</code>.</p>
+        </div>
+        <pre class="code"><span class="kw">void</span> <span class="fn">setup</span>() {
+  ledcSetup(0, 5000, 8);        <span class="cmt">// ch 0, 5 kHz, 8-bit</span>
+  ledcAttachPin(2, 0);
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">for</span> (<span class="kw">int</span> d=0; d&lt;=255; d++) { ledcWrite(0, d); delay(8); }
+  <span class="kw">for</span> (<span class="kw">int</span> d=255; d&gt;=0; d--) { ledcWrite(0, d); delay(8); }
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Wire LED with R on GPIO 2.</li>
+            <li>Upload LEDC fade sketch. LED breathes.</li>
+            <li>Scope the pin &mdash; show varying duty cycle.</li>
+            <li>Change freq to 50 Hz &rarr; visible flicker. Back to 5k &rarr; smooth.</li>
+            <li>Then drive MOSFET gate with PWM, motor on drain &rarr; variable speed.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>PWM freq vs loop rate &mdash; different. PWM is hardware-timer.</li>
+            <li>Too-low freq &rarr; LED flicker, motor whine.</li>
+            <li>Duty 256 on 8-bit &rarr; overflow to 0.</li>
+            <li>PWM on pin conflicting with UART.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Duty=64 on 8-bit, 3.3V output. Avg V? <span class="ans">0.83V</span></li>
+            <li>Why high freq for motors? <span class="ans">Above audible, no whine</span></li>
+            <li>Why PWM vs resistor for dimming LED? <span class="ans">Efficient, wide range</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.9 UART ============ -->
+    <div class="topic" id="t3-9">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.9</div><h3>UART / Serial Communication</h3></div>
+        <div class="topic-meta">Session 31 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Send text/binary between ESP32 and PC; debug silent-output.</div>
+        <div class="concept">
+          <p>Two wires (TX, RX) + GND. No shared clock. Both sides agree on baud rate (9600, 115200), 8N1.</p>
+          <p>ESP32 has 3 UARTs. UART0 is USB bridge + Serial Monitor.</p>
+        </div>
+        <pre class="code"><span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(115200);
+  Serial.println(<span class="str">"Ready!"</span>);
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (Serial.available()) {
+    String cmd = Serial.readStringUntil(<span class="str">'\n'</span>);
+    Serial.printf(<span class="str">"You said: %s\n"</span>, cmd.c_str());
+  }
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Upload echo. Serial Monitor at 115200, newline ending. Type, press Enter, echoed.</li>
+            <li>Change Monitor to 9600 &rarr; gibberish. Baud matters.</li>
+            <li>Wire ESP32 UART1 (17/16) to Arduino Uno UART (cross TX/RX, shared GND). Two MCUs talk.</li>
+            <li>Show <code class="inline">Serial2</code> usage on ESP32.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Baud mismatch.</li>
+            <li>Not crossing TX/RX.</li>
+            <li>Missing common GND.</li>
+            <li>5V Arduino TX &rarr; 3.3V ESP32 RX (technically needs level shift or divider).</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Different baud rates &mdash; what happens? <span class="ans">Garbled / nothing</span></li>
+            <li>Min wires between UART devices? <span class="ans">3 (TX, RX, GND)</span></li>
+            <li>"8N1"? <span class="ans">8 data, No parity, 1 stop</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.10 I2C ============ -->
+    <div class="topic" id="t3-10">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.10</div><h3>I2C &mdash; Wire Library, Addresses, Scanner</h3></div>
+        <div class="topic-meta">Session 32 &middot; 50 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Wire an I2C sensor (BMP280/OLED), scan for address, read data.</div>
+        <div class="concept">
+          <p>Two wires (SDA, SCL) + GND. Multiple devices share bus; each has a 7-bit address. Speeds: 100k/400k/1M Hz.</p>
+          <p>Pull-ups (4.7k to V<sub>cc</sub>) required on SDA + SCL. Breakout boards usually include them.</p>
+        </div>
+        <pre class="code">#include &lt;Wire.h&gt;
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(115200); Wire.begin();
+  <span class="kw">for</span> (<span class="kw">byte</span> a=1; a&lt;127; a++) {
+    Wire.beginTransmission(a);
+    <span class="kw">if</span> (Wire.endTransmission()==0) Serial.printf(<span class="str">"0x%02X\n"</span>, a);
+  }
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Wire BMP280: V<sub>cc</sub>&rarr;3.3V, GND, SDA&rarr;GPIO 21, SCL&rarr;22.</li>
+            <li>Run scanner. "Found: 0x76" &mdash; first sensor talk.</li>
+            <li>Install Adafruit BMP280 library. Example &rarr; pressure/temp readings.</li>
+            <li>Add OLED (0x3C). Scanner finds both. Shared-bus concept concrete.</li>
+            <li>Scope SDA/SCL. Show bit patterns.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Missing pull-ups &rarr; no comms.</li>
+            <li>3.3V / 5V mixing &rarr; need level shifter.</li>
+            <li>Address conflict &rarr; use ADDR pin.</li>
+            <li>Long wires &gt;30cm &rarr; bus cap grows, comms fail.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Wires for I2C? <span class="ans">3: SDA, SCL, GND</span></li>
+            <li>Two OLEDs same address? <span class="ans">Conflict; use ADDR pin</span></li>
+            <li>Pull-up value? <span class="ans">4.7k typ; 2.2k at higher speed</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.11 SPI ============ -->
+    <div class="topic" id="t3-11">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.11</div><h3>SPI &mdash; Faster, More Wires, No Addresses</h3></div>
+        <div class="topic-meta">Session 33 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Wire SPI device, know 4 lines, know when to pick SPI vs I2C.</div>
+        <table class="ref">
+          <tr><th>Signal</th><th>Direction</th><th>Purpose</th></tr>
+          <tr><td>MOSI</td><td>Master &rarr; Slave</td><td>Data out from MCU</td></tr>
+          <tr><td>MISO</td><td>Slave &rarr; Master</td><td>Data in to MCU</td></tr>
+          <tr><td>SCK</td><td>Master &rarr; Slave</td><td>Clock</td></tr>
+          <tr><td>CS / SS</td><td>Master &rarr; Slave</td><td>Chip select, active low</td></tr>
+        </table>
+        <pre class="code">#include &lt;SPI.h&gt;
+<span class="kw">const</span> <span class="kw">int</span> CS = 5;
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  SPI.begin();
+  pinMode(CS, OUTPUT);
+  digitalWrite(CS, HIGH);
+}
+<span class="kw">byte</span> <span class="fn">readReg</span>(<span class="kw">byte</span> r) {
+  digitalWrite(CS, LOW);
+  SPI.transfer(r | 0x80);
+  <span class="kw">byte</span> v = SPI.transfer(0x00);
+  digitalWrite(CS, HIGH);
+  <span class="kw">return</span> v;
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Wire SPI OLED or SD card. 4 data + CS + V<sub>cc</sub>/GND.</li>
+            <li>Adafruit library example. File listing / display output.</li>
+            <li>Scope SCK, MOSI &mdash; see clocked data. Compare to I2C last session.</li>
+            <li>Tradeoff: SPI faster but more pins, one slave per CS line.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Wrong SPI mode (CPOL/CPHA) &rarr; shifted data.</li>
+            <li>Forgetting CS toggle.</li>
+            <li>Exceeding max SCK.</li>
+            <li>MOSI/MISO swap. "Master Out Slave In".</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Wires for 1 SPI slave? <span class="ans">4 data + GND = 5</span></li>
+            <li>3 slaves, how many CS lines? <span class="ans">3</span></li>
+            <li>Faster: SPI or I2C? <span class="ans">SPI (tens of MHz vs ~1 MHz)</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.12 INTERRUPTS ============ -->
+    <div class="topic" id="t3-12">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.12</div><h3>Interrupts &mdash; attachInterrupt &amp; ISR Rules</h3></div>
+        <div class="topic-meta">Session 34 &middot; 40 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Wire button to ISR; understand why ISRs stay short.</div>
+        <div class="concept">
+          <p>Interrupts let hardware fire code immediately. Modes: RISING, FALLING, CHANGE, LOW, HIGH.</p>
+          <p><strong>ISR rules:</strong> Short (set flag, return); shared vars <code class="inline">volatile</code>; on ESP32 use <code class="inline">IRAM_ATTR</code>; debounce mechanical buttons.</p>
+        </div>
+        <pre class="code"><span class="kw">volatile</span> <span class="kw">bool</span> pressed = <span class="kw">false</span>;
+<span class="kw">void</span> IRAM_ATTR <span class="fn">onBtn</span>() { pressed = <span class="kw">true</span>; }
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.begin(115200);
+  pinMode(4, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(4), onBtn, FALLING);
+}
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (pressed) { Serial.println(<span class="str">"!"</span>); pressed = <span class="kw">false</span>; }
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Walk "set flag, handle in loop" pattern. Everyone wants to Serial.print in ISR and it breaks.</li>
+            <li>Break rule: put Serial.println in ISR. Watch crash.</li>
+            <li>Remove <code class="inline">volatile</code> &mdash; compiler may optimise out reads.</li>
+            <li>Mechanical bounce &rarr; multiple triggers per press.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Long ops in ISR &rarr; hangs or watchdog.</li>
+            <li>Missing volatile &rarr; loop doesn't see changes.</li>
+            <li>Missing IRAM_ATTR on ESP32.</li>
+            <li>Button bounce not handled.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Why volatile for ISR vars? <span class="ans">Don't cache; re-read every access</span></li>
+            <li>What to NOT do in ISR? <span class="ans">Serial prints, delays, I2C, long ops</span></li>
+            <li>Mode for INPUT_PULLUP button press? <span class="ans">FALLING</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.13 TIMING ============ -->
+    <div class="topic" id="t3-13">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.13</div><h3>Timing &mdash; delay(), millis(), Non-Blocking</h3></div>
+        <div class="topic-meta">Session 35 &middot; 35 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Write non-blocking multi-task loop using <code class="inline">millis()</code>.</div>
+        <div class="concept">
+          <p><code class="inline">delay()</code> blocks CPU. Fine for Blink alone; unusable for real code. Use <code class="inline">millis()</code> for non-blocking intervals.</p>
+        </div>
+        <pre class="code"><span class="kw">unsigned</span> <span class="kw">long</span> last = 0;
+<span class="kw">bool</span> led = <span class="kw">false</span>;
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">unsigned</span> <span class="kw">long</span> now = millis();
+  <span class="kw">if</span> (now - last &gt;= 500) {   <span class="cmt">// non-blocking 500ms</span>
+    last = now; led = !led;
+    digitalWrite(LED_BUILTIN, led);
+  }
+  <span class="kw">if</span> (digitalRead(4) == LOW) Serial.println(<span class="str">"btn"</span>);
+}</pre>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Blocking version with delay(500) + button reads. Button presses missed during delay.</li>
+            <li>Rewrite with millis() pattern. Button responsive.</li>
+            <li><strong>Rollover:</strong> millis rolls over ~49 days. <code class="inline">(now - last &gt;= interval)</code> handles it in unsigned.</li>
+            <li>Mention <code class="inline">micros()</code> for &mu;s precision.</li>
+            <li>Briefly mention FreeRTOS tasks on ESP32 &mdash; real answer for real multi-tasking. Not needed yet.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Signed int for millis &rarr; rollover breaks.</li>
+            <li><code class="inline">&gt;</code> vs <code class="inline">&gt;=</code> &mdash; off-by-one.</li>
+            <li>Still using delay() for debouncing &mdash; OK for simple but use millis-based.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>Why avoid delay() in multi-task? <span class="ans">Blocks CPU &mdash; other tasks halt</span></li>
+            <li>Why unsigned long? <span class="ans">Correct rollover arithmetic</span></li>
+            <li>&mu;s-precision function? <span class="ans">micros()</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ T3.14 NEW SENSOR WORKFLOW ============ -->
+    <div class="topic" id="t3-14">
+      <div class="topic-header">
+        <div style="display:flex;align-items:center"><div class="topic-num">T3.14</div><h3>Interfacing a New Sensor &mdash; Meta-Workflow</h3></div>
+        <div class="topic-meta">Session 36 &middot; 60 min</div>
+      </div>
+      <div class="topic-body">
+        <div class="goal"><strong>Goal:</strong> Unfamiliar sensor + datasheet &rarr; wire + find library + read data in 30 min.</div>
+        <div class="concept">
+          <p>This is the meta-skill. Workflow:</p>
+          <ol>
+            <li><strong>Datasheet scan:</strong> interface (I2C/SPI/analog)? V<sub>cc</sub>? power? temp range?</li>
+            <li><strong>Pinout &amp; wiring.</strong> V<sub>cc</sub>, GND, data lines. Pull-ups on breakout?</li>
+            <li><strong>Find library.</strong> Adafruit/SparkFun/community typically have one.</li>
+            <li><strong>Use library example.</strong> Change pins, compile, upload.</li>
+            <li><strong>Verify Serial Monitor.</strong> Sane values? Calibration?</li>
+            <li><strong>Integrate:</strong> wrap in a helper function in your project.</li>
+          </ol>
+        </div>
+        <div class="teach">
+          <strong>Teach this way</strong>
+          <ol>
+            <li>Give unfamiliar sensor (DS18B20 1-Wire temp, MPU6050 IMU).</li>
+            <li>Don't help. Watch. Time her.</li>
+            <li>She succeeds in 20 min or gets stuck. If stuck: diagnose the specific block.</li>
+            <li>After success, she writes 3-line GitHub README: sensor, wiring, readings.</li>
+            <li>Repeat weekly with new sensor. This muscle differentiates hardware engineers.</li>
+          </ol>
+        </div>
+        <div class="gotcha">
+          <strong>Common confusion</strong>
+          <ul>
+            <li>Wrong library choice &mdash; pick most-starred GitHub.</li>
+            <li>Missing I2C pull-ups if breakout omits them.</li>
+            <li>Unit confusion: &deg;C vs &deg;F, Pa vs hPa.</li>
+            <li>Too-fast sampling &mdash; MEMS need ms between reads.</li>
+          </ul>
+        </div>
+        <div class="check">
+          <strong>Verify understanding</strong>
+          <ol>
+            <li>First thing on new datasheet? <span class="ans">Interface, V<sub>cc</sub>, pinout</span></li>
+            <li>1013.25 hPa in kPa? <span class="ans">101.325 kPa</span></li>
+            <li>Where to find Arduino library? <span class="ans">GitHub, Library Manager, Adafruit</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="hardware.html">&larr; Part 2</a> &middot; <a href="index.html">Home</a> &middot; Next: <a href="pcb.html">Part 4 &middot; PCB &amp; Closing &rarr;</a>
+  </div>
+</footer>
+
+</body>
+</html>

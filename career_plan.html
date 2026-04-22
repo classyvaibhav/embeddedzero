@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bahar Jindani — Electronics &amp; Embedded Career Roadmap</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --accent: #059669;
+    --accent-light: #d1fae5;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --ink: #0f172a;
+    --ink-soft: #334155;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  header.hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
+    color: white;
+    padding: 56px 0 48px;
+  }
+  header.hero h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; }
+  header.hero .subtitle { font-size: 17px; opacity: 0.92; margin-top: 6px; font-weight: 500; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 32px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.14);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.82; font-weight: 600; }
+  .stat .value { font-size: 22px; font-weight: 700; margin-top: 4px; }
+
+  /* Nav */
+  nav.toc {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 50;
+    padding: 12px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  nav.toc .wrap { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.toc a {
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  nav.toc a:hover { background: var(--primary-light); color: var(--primary); }
+
+  /* Sections */
+  section { padding: 56px 0; }
+  section:nth-child(even) { background: white; }
+  h2 { font-size: 28px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
+  h2 .num { color: var(--primary); margin-right: 10px; }
+  .section-sub { color: var(--muted); font-size: 15px; margin-bottom: 28px; max-width: 800px; }
+  h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  section:nth-child(even) .card { background: var(--bg); }
+
+  /* Assessment grid */
+  .assess-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .tag-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .pill.strength { background: var(--accent-light); color: var(--accent); }
+  .pill.gap { background: var(--danger-light); color: var(--danger); }
+  .pill.leverage { background: var(--warning-light); color: var(--warning); }
+  .assess-grid ul { margin-top: 4px; padding-left: 18px; }
+  .assess-grid li { margin: 4px 0; color: var(--ink-soft); font-size: 14px; }
+
+  /* Roles table */
+  .roles-table { width: 100%; border-collapse: collapse; margin-top: 8px; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .roles-table th { text-align: left; background: var(--primary-light); color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 14px; font-weight: 700; }
+  .roles-table td { padding: 14px; border-top: 1px solid var(--border); font-size: 14px; vertical-align: top; }
+  .roles-table tr:first-child td { border-top: none; }
+  .roles-table tr:hover { background: var(--bg); }
+  .prob { font-weight: 700; }
+  .prob.high { color: var(--accent); }
+  .prob.mid  { color: var(--warning); }
+  .prob.low  { color: var(--danger); }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .phase {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  section:nth-child(even) .phase { background: var(--bg); }
+  .phase-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    background: linear-gradient(90deg, var(--primary) 0%, #6366f1 100%);
+    color: white;
+  }
+  .phase-head .title { font-size: 17px; font-weight: 700; }
+  .phase-head .weeks { background: rgba(255,255,255,0.22); padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.4px; }
+  .phase-body {
+    padding: 20px 24px 22px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .phase-col h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .phase-col ul { padding-left: 18px; }
+  .phase-col li { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
+  .phase-col code {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+
+  /* Projects */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 18px;
+  }
+  .project {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  section:nth-child(even) .project { background: var(--bg); }
+  .project:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,0.07); }
+  .project .num {
+    display: inline-flex;
+    width: 28px; height: 28px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    font-weight: 800;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .project h3 { margin-bottom: 6px; font-size: 16px; }
+  .project .desc { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 12px; }
+  .tech { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .tech span { background: var(--primary-light); color: var(--primary); padding: 3px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 600; }
+  .project .why { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); font-size: 12.5px; color: var(--muted); }
+  .project .why strong { color: var(--accent); }
+
+  /* Certifications */
+  .cert-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+  .cert {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    border-left: 4px solid var(--primary);
+  }
+  section:nth-child(even) .cert { background: var(--bg); }
+  .cert.skip { border-left-color: var(--danger); opacity: 0.75; }
+  .cert h3 { font-size: 15px; margin-bottom: 4px; }
+  .cert .meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .cert .meta span { margin-right: 10px; }
+  .cert p { font-size: 13px; color: var(--ink-soft); }
+  .roi { font-weight: 700; font-size: 11px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
+  .roi.high { background: var(--accent-light); color: var(--accent); }
+  .roi.med  { background: var(--warning-light); color: var(--warning); }
+  .roi.low  { background: var(--danger-light); color: var(--danger); }
+
+  /* Companies */
+  .company-group { margin-bottom: 26px; }
+  .company-group h3 { color: var(--primary); font-size: 15px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+  .companies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .company {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+  section:nth-child(even) .company { background: var(--bg); }
+  .company strong { display: block; color: var(--ink); font-weight: 700; font-size: 14px; }
+  .company .role-hint { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+  /* Interview */
+  .iview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .iview-grid > div {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+  section:nth-child(even) .iview-grid > div { background: var(--bg); }
+  .iview-grid h3 { color: var(--primary); font-size: 15px; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .iview-grid ul { padding-left: 20px; }
+  .iview-grid li { font-size: 13.5px; color: var(--ink-soft); margin: 6px 0; }
+  @media (max-width: 720px) { .iview-grid { grid-template-columns: 1fr; } }
+
+  /* Action items */
+  .actions {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 28px 32px;
+  }
+  .actions h3 { color: white; font-size: 20px; margin-bottom: 14px; }
+  .actions ol { padding-left: 24px; }
+  .actions li { margin: 10px 0; font-size: 14.5px; }
+  .actions li strong { background: rgba(255,255,255,0.18); padding: 2px 8px; border-radius: 5px; }
+
+  /* Salary bars */
+  .salary-grid { display: grid; gap: 8px; }
+  .bar-row { display: grid; grid-template-columns: 220px 1fr 90px; align-items: center; gap: 12px; font-size: 13.5px; }
+  .bar-wrap { background: var(--border); height: 22px; border-radius: 6px; overflow: hidden; position: relative; }
+  .bar { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); border-radius: 6px; display: flex; align-items: center; padding: 0 8px; font-size: 11px; color: white; font-weight: 600; }
+  @media (max-width: 720px) {
+    .bar-row { grid-template-columns: 1fr; gap: 4px; }
+    header.hero h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+  }
+
+  footer { padding: 28px 0 40px; text-align: center; color: var(--muted); font-size: 13px; }
+  footer strong { color: var(--ink); }
+
+  .note-box {
+    background: var(--warning-light);
+    border-left: 4px solid var(--warning);
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .note-box strong { color: var(--warning); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Bahar Jindani</h1>
+    <p class="subtitle">Embedded Systems (Hardware + Software) — 10-Week Career Roadmap</p>
+    <div class="stats">
+      <div class="stat"><div class="label">Target Salary</div><div class="value">&#8377;25,000+ / month</div></div>
+      <div class="stat"><div class="label">Timeline</div><div class="value">10 Weeks to Offer</div></div>
+      <div class="stat"><div class="label">Primary Role</div><div class="value">Embedded Systems Trainee</div></div>
+      <div class="stat"><div class="label">Focus</div><div class="value">Electronics &middot; HW &middot; SW (balanced)</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#assessment">Profile Assessment</a>
+    <a href="#roles">Target Roles</a>
+    <a href="#timeline">12-Week Plan</a>
+    <a href="#projects">Portfolio Projects</a>
+    <a href="#certs">Certifications</a>
+    <a href="#companies">Target Companies</a>
+    <a href="#interview">Interview Prep</a>
+    <a href="#actions">This Week</a>
+  </div>
+</nav>
+
+<!-- =============== ASSESSMENT =============== -->
+<section id="assessment">
+  <div class="wrap">
+    <h2><span class="num">01</span>Profile Assessment</h2>
+    <p class="section-sub">Honest read on where she stands for an Electronics/Embedded career. No sugarcoating — these are the levers to pull and the gaps to close.</p>
+
+    <div class="assess-grid">
+      <div class="card">
+        <div class="tag-row"><span class="pill strength">Strengths</span></div>
+        <ul>
+          <li><strong>MSc Applied Physics</strong> — strong fundamentals in Semiconductor Devices, Electronics I/II/III, Instrumentation</li>
+          <li><strong>Aimtron Electronics internship</strong> — real production-floor testing, PCB inspection, camera calibration</li>
+          <li><strong>Python base</strong> — transitions well to MicroPython / data acquisition / test automation</li>
+          <li><strong>Vadodara location</strong> — one of India's strongest electronics &amp; EMS hiring belts (Aimtron, Kaynes, Reliance, Siemens, ABB)</li>
+          <li><strong>Instrumentation lab hours</strong> — oscilloscope, DMM, function generator already in muscle memory</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="tag-row"><span class="pill leverage">Leverage Points</span></div>
+        <ul>
+          <li><strong>Aimtron connection</strong> — apply for GET/Trainee role at same company; highest-probability offer</li>
+          <li><strong>Laplacian/Sobel calibration experience</strong> — unusual for a fresher; usable in computer-vision + testing roles</li>
+          <li><strong>Dashcam/automotive context</strong> — hot Indian segment; positions her for Omnidya, Aimtron, Minda, Bosch</li>
+          <li><strong>MSc (not BE)</strong> — at EMS/testing firms, MSc Physics is actually <em>preferred</em> for R&amp;D test engineering</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="tag-row"><span class="pill gap">Gaps to Close</span></div>
+        <ul>
+          <li><strong>No C programming</strong> — every embedded role asks. 2 weeks to fix.</li>
+          <li><strong>No microcontroller hands-on</strong> — ESP32 or Arduino project needed urgently</li>
+          <li><strong>Zero GitHub presence</strong> — recruiters filter on this; must build</li>
+          <li><strong>No LinkedIn custom URL</strong> — default slug looks like a ghost profile</li>
+          <li><strong>Embedded protocols (UART/I2C/SPI)</strong> — coursework-only, no project demonstration</li>
+          <li><strong>PCB design tool</strong> — KiCad/EasyEDA not touched yet</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Scope clarity:</strong> The target is <strong>Embedded Systems Trainee</strong> &#8212; a balanced role covering both <em>hardware</em> (schematic reading, BOM, component selection, basic circuit analysis) and <em>software</em> (Arduino/ESP32 C++ using libraries, sensor interfacing). <strong>Basic electronics fundamentals come first</strong> &#8212; her MSc coursework was exam-focused and electronics was an elective, so Ohm's law, op-amps, voltage dividers, and digital logic need hands-on reinforcement. Not deep firmware, not pure hardware design &#8212; the practical middle ground that Indian EMS and product companies actually hire for.
+    </div>
+  </div>
+</section>
+
+<!-- =============== ROLES =============== -->
+<section id="roles">
+  <div class="wrap">
+    <h2><span class="num">02</span>Target Roles &amp; Salary Bands</h2>
+    <p class="section-sub">Six realistic role categories in Indian electronics/embedded entry-level hiring. Focus 60% of applications on the top two, 30% on the middle two, 10% on the stretch roles.</p>
+
+    <table class="roles-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>Salary (Fresher)</th>
+          <th>Conversion Odds</th>
+          <th>Why It Fits</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Embedded Systems Trainee</strong><br><span style="color:var(--muted);font-size:12px">HW + SW balanced, Arduino/ESP32-level</span></td>
+          <td>&#8377;22k &#8211; &#8377;35k</td>
+          <td><span class="prob high">HIGH</span></td>
+          <td>Standard entry role at EMS &amp; product companies. Covers schematic + BOM + component selection + basic embedded code &#8212; exactly her scope.</td>
+        </tr>
+        <tr>
+          <td><strong>Hardware Engineer Trainee</strong><br><span style="color:var(--muted);font-size:12px">Schematic, BOM, component selection</span></td>
+          <td>&#8377;20k &#8211; &#8377;32k</td>
+          <td><span class="prob high">HIGH</span></td>
+          <td>Hardware-weighted variant of the above. Aimtron-style roles fall here.</td>
+        </tr>
+        <tr>
+          <td><strong>Electronics Test Engineer / Trainee</strong><br><span style="color:var(--muted);font-size:12px">EMS companies, manufacturing QA</span></td>
+          <td>&#8377;18k &#8211; &#8377;30k</td>
+          <td><span class="prob high">HIGH</span></td>
+          <td>Aimtron experience already matches. Vadodara has dense EMS cluster.</td>
+        </tr>
+        <tr>
+          <td><strong>Graduate Engineer Trainee (GET) &#8212; Electronics</strong><br><span style="color:var(--muted);font-size:12px">Large EMS + OEMs</span></td>
+          <td>&#8377;22k &#8211; &#8377;35k</td>
+          <td><span class="prob high">HIGH</span></td>
+          <td>Structured 6&#8211;12 mo training at Kaynes, Dixon, Syrma SGS, eInfochips.</td>
+        </tr>
+        <tr>
+          <td><strong>Product / Design Engineer (Jr.)</strong><br><span style="color:var(--muted);font-size:12px">Product companies, IoT startups</span></td>
+          <td>&#8377;22k &#8211; &#8377;38k</td>
+          <td><span class="prob mid">MEDIUM</span></td>
+          <td>Component selection + basic embedded code is the core ask. Build 2&#8211;3 projects and this opens up.</td>
+        </tr>
+        <tr>
+          <td><strong>Application / Field Engineer</strong><br><span style="color:var(--muted);font-size:12px">Semiconductor distributors</span></td>
+          <td>&#8377;22k &#8211; &#8377;38k</td>
+          <td><span class="prob mid">MEDIUM</span></td>
+          <td>Schematic + datasheet reading is 80% of the job. Element14, Arrow, Mouser India hire MSc Physics freshers.</td>
+        </tr>
+        <tr>
+          <td><strong>PCB Design Trainee</strong><br><span style="color:var(--muted);font-size:12px">Hardware design houses</span></td>
+          <td>&#8377;20k &#8211; &#8377;35k</td>
+          <td><span class="prob mid">MEDIUM</span></td>
+          <td>KiCad/EasyEDA portfolio required &#8212; 1 project design gets her in the door.</td>
+        </tr>
+        <tr>
+          <td><strong>Embedded Firmware Developer (deep)</strong><br><span style="color:var(--muted);font-size:12px">RTOS, bare-metal C, driver dev</span></td>
+          <td>&#8377;30k+</td>
+          <td><span class="prob low">SKIP (for now)</span></td>
+          <td>Out of scope &#8212; needs 6&#8211;12 months focused C/RTOS. Revisit after 1&#8211;2 years on the hardware track.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:32px;margin-bottom:14px;">Salary Benchmarks in Gujarat (2026)</h3>
+    <div class="salary-grid">
+      <div class="bar-row"><span>Hardware Engineer Trainee</span><div class="bar-wrap"><div class="bar" style="width:58%">20k &#8211; 32k</div></div><span style="text-align:right">Top 65%</span></div>
+      <div class="bar-row"><span>Electronics Test Trainee</span><div class="bar-wrap"><div class="bar" style="width:50%">18k &#8211; 28k</div></div><span style="text-align:right">Top 75%</span></div>
+      <div class="bar-row"><span>GET Electronics</span><div class="bar-wrap"><div class="bar" style="width:62%">22k &#8211; 35k</div></div><span style="text-align:right">Top 60%</span></div>
+      <div class="bar-row"><span>Product / Design Engineer (Jr.)</span><div class="bar-wrap"><div class="bar" style="width:68%">22k &#8211; 38k</div></div><span style="text-align:right">Top 55%</span></div>
+      <div class="bar-row"><span>Application Engineer</span><div class="bar-wrap"><div class="bar" style="width:62%">22k &#8211; 38k</div></div><span style="text-align:right">Top 55%</span></div>
+      <div class="bar-row"><span>PCB Design Trainee</span><div class="bar-wrap"><div class="bar" style="width:60%">20k &#8211; 35k</div></div><span style="text-align:right">Top 60%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== TIMELINE =============== -->
+<section id="timeline">
+  <div class="wrap">
+    <h2><span class="num">03</span>10-Week Learning Plan</h2>
+    <p class="section-sub">Four phases balancing <strong>basic electronics &middot; embedded hardware &middot; embedded software</strong>. Study 4&#8211;5 hrs/day weekdays + 6 hrs Saturday. Sunday off. No bare-metal firmware rabbit holes &#8212; everything stays at the <em>application</em> level for an entry-level embedded role.</p>
+
+    <div class="timeline">
+
+      <div class="phase">
+        <div class="phase-head"><div class="title">Phase 1 &#8212; Basic Electronics Fundamentals</div><div class="weeks">Weeks 1&#8211;2</div></div>
+        <div class="phase-body">
+          <div class="phase-col">
+            <h4>Core Concepts (rebuild intuition)</h4>
+            <ul>
+              <li><strong>Ohm's law + Kirchhoff's laws</strong> &#8212; solve 20 numerical problems</li>
+              <li><strong>Voltage &amp; current dividers</strong> &#8212; when to use them (sensor biasing, level shifting)</li>
+              <li><strong>RC &amp; RL circuits</strong> &#8212; charging / discharging, time constant intuition</li>
+              <li><strong>Diodes &amp; LEDs</strong> &#8212; forward drop, current-limit resistor calculation</li>
+              <li><strong>Transistor as a switch</strong> (BJT &amp; MOSFET) &#8212; driving a relay / motor</li>
+              <li>Resources: <strong>ALL ABOUT CIRCUITS</strong> free textbook + <strong>Ben Eater YouTube</strong></li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Op-Amps &amp; Digital Logic</h4>
+            <ul>
+              <li>Op-amp basics: <strong>inverting, non-inverting, buffer, comparator</strong></li>
+              <li>Why op-amps matter: sensor signal conditioning</li>
+              <li>Digital logic: <strong>AND / OR / NOT / NAND / XOR</strong>, flip-flops, counters</li>
+              <li>Simulate in <strong>Tinkercad Circuits</strong> (free, browser) or <strong>Falstad</strong></li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Profile Setup + Apply-Back</h4>
+            <ul>
+              <li>Customise LinkedIn URL to <code>bahar-jindani</code></li>
+              <li>Create <strong>GitHub</strong> with profile README</li>
+              <li>LinkedIn headline: <em>"MSc Applied Physics | Embedded Systems (HW + SW) &amp; Electronics Testing"</em></li>
+              <li><strong>Apply to Aimtron full-time</strong> &#8212; this week, while the cert ink is fresh</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head"><div class="title">Phase 2 &#8212; Schematic, Datasheets, Components &amp; BOM</div><div class="weeks">Weeks 3&#8211;4</div></div>
+        <div class="phase-body">
+          <div class="phase-col">
+            <h4>Schematic Reading</h4>
+            <ul>
+              <li>Read 15&#8211;20 open-source schematics (Arduino Uno, ESP32 DevKit, SparkFun/Adafruit boards)</li>
+              <li>Identify blocks: <strong>power, MCU, reset, crystal, sensors, I/O, connectors</strong></li>
+              <li>Symbol library: R, C, L, diode, MOSFET, BJT, op-amp, regulator</li>
+              <li>Resource: <strong>SparkFun</strong> "How to Read a Schematic" + <strong>EEVblog #170</strong></li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Datasheet Reading &amp; Component Selection</h4>
+            <ul>
+              <li>Navigate a datasheet: pinout, absolute max ratings, electrical characteristics</li>
+              <li>Read 10 datasheets across: MCU, sensor, regulator, op-amp, MOSFET</li>
+              <li>Given a requirement (e.g., "LDO 5V&#8594;3.3V, 500mA"), pick a real part</li>
+              <li>Sources: <strong>DigiKey, Mouser, Robu.in, Octopart</strong> for cross-referencing</li>
+              <li>Resource: <strong>Phil's Lab YouTube</strong>, <strong>DigiKey Learning Center</strong></li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>BOM Creation</h4>
+            <ul>
+              <li>Standard BOM columns: <em>Designator, Part, Value, Footprint, Manufacturer, MPN, Alt. MPN, Qty, Price</em></li>
+              <li>Create BOM for a real design (Arduino clone, ESP32 sensor node)</li>
+              <li>Use <strong>Excel / Google Sheets</strong>, export as CSV</li>
+              <li><strong>This becomes Project 1</strong> (see Projects section)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head"><div class="title">Phase 3 &#8212; Embedded Software + Hands-On Build</div><div class="weeks">Weeks 5&#8211;7</div></div>
+        <div class="phase-body">
+          <div class="phase-col">
+            <h4>Arduino / ESP32 Coding</h4>
+            <ul>
+              <li>Buy <strong>ESP32 DevKit</strong> (&#8377;400&#8211;600) + Arduino Uno (&#8377;500) + breadboard kit</li>
+              <li><strong>Arduino IDE + C/C++ basics</strong> (variables, arrays, functions, structs &#8212; enough to read &amp; modify code)</li>
+              <li><strong>GPIO, ADC, PWM, timers, interrupts</strong> via standard libraries</li>
+              <li>Writing code: read an example &#8594; modify &#8594; combine features. That's 90% of entry-level embedded work.</li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Protocols via Libraries</h4>
+            <ul>
+              <li><strong>UART</strong> with <code>Serial</code>; <strong>I2C</strong> with <code>Wire.h</code>; <strong>SPI</strong> with <code>SPI.h</code></li>
+              <li>Interface real sensors: DHT11 (temp/humidity), BMP280 (pressure), 0.96" OLED (I2C)</li>
+              <li>Goal: <em>talk to a new sensor by reading its datasheet + library docs</em></li>
+              <li>Simulator fallback: <strong>Wokwi</strong> (free, browser-based)</li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Circuit Build + Debug</h4>
+            <ul>
+              <li>Build 2 real breadboard circuits (Projects 2 + 3)</li>
+              <li>Debug with <strong>multimeter + oscilloscope</strong> (she has lab access)</li>
+              <li>Common bugs: wrong pin, floating inputs, missing pull-ups, wrong logic levels</li>
+              <li>Document debugging process in GitHub README &#8212; recruiters love this</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-head"><div class="title">Phase 4 &#8212; Light PCB + Apply &amp; Interview</div><div class="weeks">Weeks 8&#8211;10+</div></div>
+        <div class="phase-body">
+          <div class="phase-col">
+            <h4>PCB Basics (read &amp; modify, not design from scratch)</h4>
+            <ul>
+              <li><strong>KiCad</strong> free &#8212; open any ESP32 reference design, understand schematic + layout</li>
+              <li>Do a small modification (swap a component, add a header) &#8212; that's enough for entry-level</li>
+              <li>Export <strong>Gerber</strong> files once as an exercise</li>
+              <li>Optional: <strong>Altium Viewer</strong> (free) &#8212; most Indian EMS use Altium; familiarity helps</li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Application Blitz</h4>
+            <ul>
+              <li>15 applications/day on <strong>Naukri, LinkedIn, foundit</strong></li>
+              <li>Company-direct portals (see Target Companies)</li>
+              <li>10 cold LinkedIn DMs/day to hiring managers</li>
+              <li><strong>MSU Baroda alumni referral outreach</strong> &#8212; highest conversion channel</li>
+            </ul>
+          </div>
+          <div class="phase-col">
+            <h4>Interview + Backup</h4>
+            <ul>
+              <li>2 technical + 1 HR mock per week; record on phone</li>
+              <li>Practise: "walk me through this schematic", "pick a resistor for this LED", "what's in your BOM?"</li>
+              <li>Backup channels: <strong>TCS NQT, Infosys, Wipro</strong> fresher drives</li>
+              <li><strong>Eduskills-AICTE</strong> virtual internship &#8212; certified + placement assistance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =============== PROJECTS =============== -->
+<section id="projects">
+  <div class="wrap">
+    <h2><span class="num">04</span>Portfolio Projects</h2>
+    <p class="section-sub">Four projects that tell a <strong>hardware engineer</strong> story: schematic reading, BOM-building, component selection, and Arduino-level embedded glue code. No deep firmware. Each ships on GitHub with a clean README.</p>
+
+    <div class="projects">
+
+      <div class="project">
+        <div class="num">1</div>
+        <h3>BOM &amp; Schematic Walkthrough &#8212; ESP32 Sensor Node</h3>
+        <p class="desc">Take an existing open-source ESP32 reference design. Write a full <strong>BOM in Excel/CSV</strong> with designators, MPNs, alternates, and sourcing. Produce a <strong>schematic walkthrough document</strong> explaining every block (power, MCU, I/O, protection).</p>
+        <div class="tech"><span>Schematic Reading</span><span>Datasheet Analysis</span><span>BOM</span><span>DigiKey</span><span>Octopart</span><span>Excel</span></div>
+        <div class="why"><strong>Why:</strong> This is literally the day-one task at Hardware Engineer Trainee roles. Walks directly into "show me a BOM you've built" interview questions.</div>
+      </div>
+
+      <div class="project">
+        <div class="num">2</div>
+        <h3>Sensor Hub on Breadboard (3-Sensor Integration)</h3>
+        <p class="desc"><strong>ESP32 + DHT11 + BMP280 + 0.96" OLED</strong> on breadboard. Reads temperature, humidity, pressure; displays on OLED. Uses <strong>I2C for OLED + BMP280</strong>, one-wire for DHT11. Full <strong>BOM</strong> with component choices justified.</p>
+        <div class="tech"><span>ESP32</span><span>Arduino IDE</span><span>I2C</span><span>Libraries</span><span>Breadboard</span><span>BOM</span></div>
+        <div class="why"><strong>Why:</strong> Shows component selection + basic embedded code + protocol use (I2C). Can be demoed in a 2-min video. Exactly what recruiters want to see for entry-level HW.</div>
+      </div>
+
+      <div class="project">
+        <div class="num">3</div>
+        <h3>Dashcam QC Script (ties to Aimtron)</h3>
+        <p class="desc">Python + OpenCV script that computes <strong>Laplacian variance</strong> and <strong>Sobel gradient</strong> on camera images for sharpness QC. Lets her own the Aimtron internship story in interviews.</p>
+        <div class="tech"><span>Python</span><span>OpenCV</span><span>NumPy</span><span>Matplotlib</span></div>
+        <div class="why"><strong>Why:</strong> Unique angle. Turns her 1-week internship into a technical asset. No other fresher will have this.</div>
+      </div>
+
+      <div class="project">
+        <div class="num">4</div>
+        <h3>Component Trade-Off Study (written analysis)</h3>
+        <p class="desc">Pick a common block (e.g., "3.3V 500mA regulator"). Choose <strong>3 candidate parts</strong> across LDO and buck topologies. Compare on efficiency, cost, noise, package, availability. Write a 2-page PDF with your recommendation.</p>
+        <div class="tech"><span>Datasheet Reading</span><span>Component Selection</span><span>Technical Writing</span><span>DigiKey</span></div>
+        <div class="why"><strong>Why:</strong> Demonstrates the exact decision-making a Hardware Engineer does every week. A written PDF shows communication skill too &#8212; undervalued differentiator.</div>
+      </div>
+
+    </div>
+
+    <div class="note-box" style="margin-top:28px">
+      <strong>Project execution order:</strong> <strong>Project 3 first</strong> (week 2 &#8212; easy, uses existing Python skills, immediate portfolio win). Then <strong>Project 1</strong> during weeks 3&#8211;4 (BOM is the highest-ROI artefact). Then <strong>Project 2</strong> during weeks 5&#8211;7 (hands-on build). Then <strong>Project 4</strong> during weeks 7&#8211;8 (written analysis). <strong>Do not batch</strong> &#8212; ship each with a README before starting the next.
+    </div>
+  </div>
+</section>
+
+<!-- =============== CERTIFICATIONS =============== -->
+<section id="certs">
+  <div class="wrap">
+    <h2><span class="num">05</span>Certifications — ROI Ranked</h2>
+    <p class="section-sub">Indian recruiters actually check: NPTEL (respected), Eduskills-AICTE (respected), Coursera (medium). Generic Udemy certificates alone are weak, but useful when paired with a GitHub project built from them.</p>
+
+    <div class="cert-grid">
+      <div class="cert">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>Eduskills-AICTE Embedded Systems Virtual Internship</h3><span class="roi high">HIGH</span>
+        </div>
+        <div class="meta"><span>8&#8211;12 weeks</span><span>Free</span><span>Microchip / NXP partnership</span></div>
+        <p>Counts as a formal "internship" on resume. Basic-to-medium embedded content (not deep firmware), matches her scope exactly. Placement assistance at the end. Apply in the next intake window.</p>
+      </div>
+
+      <div class="cert">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>NPTEL: Introduction to Internet of Things</h3><span class="roi high">HIGH</span>
+        </div>
+        <div class="meta"><span>12 weeks</span><span>Free</span><span>Prof. Sudip Misra, IIT KGP</span></div>
+        <p>India's most-recognised IoT cert. Elite grade (75%+) gets printed certificate. High signal on any Indian fresher resume.</p>
+      </div>
+
+      <div class="cert">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>ESP32 / Arduino &#8212; Udemy</h3><span class="roi high">HIGH</span>
+        </div>
+        <div class="meta"><span>20&#8211;30 hrs</span><span>&#8377;500 (sale)</span><span>Shawn Hymel / Rui Santos</span></div>
+        <p>Pair with GitHub projects. Application-level embedded (library-based, not bare-metal). Cert alone is weak, but skill + portfolio combo is the win.</p>
+      </div>
+
+      <div class="cert">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>DigiKey / Mouser Learning Center</h3><span class="roi high">HIGH</span>
+        </div>
+        <div class="meta"><span>Self-paced</span><span>Free</span><span>Component-selection focused</span></div>
+        <p>Short modules on datasheet reading, component selection, BOM best practices. Not certified, but directly relevant to interview Q&amp;A. Top-of-funnel resource.</p>
+      </div>
+
+      <div class="cert">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>PCB Design with KiCad</h3><span class="roi med">MEDIUM</span>
+        </div>
+        <div class="meta"><span>15&#8211;20 hrs</span><span>&#8377;500</span><span>Phil's Lab / Digi-Key</span></div>
+        <p>Do <em>only if</em> she commits to a full PCB project. Otherwise reading/modifying PCBs is enough &#8212; skip the cert.</p>
+      </div>
+
+      <div class="cert">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>MATLAB Onramp + Simulink Onramp</h3><span class="roi med">MEDIUM</span>
+        </div>
+        <div class="meta"><span>2 hrs each</span><span>Free</span><span>MathWorks</span></div>
+        <p>Fast, free, keyword-friendly on Indian resumes. Low cost, meaningful uplift.</p>
+      </div>
+
+      <div class="cert skip">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>Deep RTOS / Bare-Metal C courses</h3><span class="roi low">SKIP (for now)</span>
+        </div>
+        <div class="meta"><span>Months</span><span>&#8377;&#8377;</span><span>Out of scope</span></div>
+        <p>Mastering RTOS / STM32 HAL / bare-metal is for senior embedded firmware roles. Revisit after 1&#8211;2 years on the hardware side.</p>
+      </div>
+
+      <div class="cert skip">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <h3>Expensive ₹30k+ bootcamps</h3><span class="roi low">SKIP</span>
+        </div>
+        <div class="meta"><span>Months</span><span>Expensive</span><span>Various</span></div>
+        <p>Negative ROI. Same outcome via free/cheap resources + GitHub + discipline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== COMPANIES =============== -->
+<section id="companies">
+  <div class="wrap">
+    <h2><span class="num">06</span>Target Companies</h2>
+    <p class="section-sub">Three tiers. Apply heaviest to tier 1 (proximity + fit), medium to tier 2 (volume), low to tier 3 (stretch). Most freshers fail here by spraying equally — don't.</p>
+
+    <div class="company-group">
+      <h3>Tier 1 &#8212; Gujarat Electronics / EMS (apply first, highest conversion)</h3>
+      <div class="companies">
+        <div class="company"><strong>Aimtron Electronics</strong><div class="role-hint">Already interned &#8212; apply for full-time</div></div>
+        <div class="company"><strong>Kaynes Technology (Ahmedabad)</strong><div class="role-hint">GET Electronics, Test Engineer</div></div>
+        <div class="company"><strong>Omnidya Tech LLP</strong><div class="role-hint">Dashcam/fleet tech, Vadodara-linked</div></div>
+        <div class="company"><strong>Reliance Industries R&amp;D</strong><div class="role-hint">Instrumentation, test engineer</div></div>
+        <div class="company"><strong>Siemens Vadodara</strong><div class="role-hint">Electrical &amp; electronics test</div></div>
+        <div class="company"><strong>ABB Vadodara</strong><div class="role-hint">Power electronics QA</div></div>
+        <div class="company"><strong>L&amp;T Electrical &amp; Automation</strong><div class="role-hint">Electronics manufacturing</div></div>
+        <div class="company"><strong>GE India (Vadodara)</strong><div class="role-hint">Control systems, test</div></div>
+        <div class="company"><strong>Schneider Electric</strong><div class="role-hint">Electronics test roles</div></div>
+        <div class="company"><strong>Linde India</strong><div class="role-hint">Instrumentation fresher</div></div>
+      </div>
+    </div>
+
+    <div class="company-group">
+      <h3>Tier 2 &#8212; Pan-India EMS + IoT Product (volume channel)</h3>
+      <div class="companies">
+        <div class="company"><strong>Syrma SGS (Chennai/Pune)</strong><div class="role-hint">Test engineer, GET</div></div>
+        <div class="company"><strong>Dixon Technologies (Noida)</strong><div class="role-hint">Electronics manufacturing</div></div>
+        <div class="company"><strong>Tata Elxsi (Bangalore)</strong><div class="role-hint">Embedded &amp; automotive</div></div>
+        <div class="company"><strong>Sasken Technologies</strong><div class="role-hint">Embedded firmware, IoT</div></div>
+        <div class="company"><strong>Tessolve</strong><div class="role-hint">Semiconductor test</div></div>
+        <div class="company"><strong>Cyient</strong><div class="role-hint">Hardware &amp; embedded</div></div>
+        <div class="company"><strong>Quest Global</strong><div class="role-hint">Embedded engineering services</div></div>
+        <div class="company"><strong>L&amp;T Technology Services</strong><div class="role-hint">Embedded, IoT</div></div>
+        <div class="company"><strong>HCL Technologies</strong><div class="role-hint">ERS division (embedded)</div></div>
+        <div class="company"><strong>Wipro Embedded</strong><div class="role-hint">Embedded vertical fresher</div></div>
+        <div class="company"><strong>Mistral Solutions</strong><div class="role-hint">Embedded design</div></div>
+        <div class="company"><strong>eInfochips</strong><div class="role-hint">Ahmedabad-HQ, embedded!</div></div>
+      </div>
+    </div>
+
+    <div class="company-group">
+      <h3>Tier 3 &#8212; Startups / Product Companies (high upside, low base rate)</h3>
+      <div class="companies">
+        <div class="company"><strong>Ather Energy</strong><div class="role-hint">EV embedded</div></div>
+        <div class="company"><strong>Ola Electric</strong><div class="role-hint">EV systems</div></div>
+        <div class="company"><strong>Ultraviolette</strong><div class="role-hint">EV R&amp;D</div></div>
+        <div class="company"><strong>ioCrest / Zebu</strong><div class="role-hint">IoT hardware startups</div></div>
+        <div class="company"><strong>Log9 Materials</strong><div class="role-hint">Battery tech</div></div>
+        <div class="company"><strong>Detect Technologies</strong><div class="role-hint">Industrial IoT</div></div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>Special mention — eInfochips (Ahmedabad):</strong> This is a strong hit for her. Ahmedabad-HQ, embedded/IoT services, actively hires MSc Physics + fresh BTechs. Apply directly via their career page and seek MSU Baroda alumni referrals on LinkedIn.
+    </div>
+  </div>
+</section>
+
+<!-- =============== INTERVIEW =============== -->
+<section id="interview">
+  <div class="wrap">
+    <h2><span class="num">07</span>Interview Preparation</h2>
+    <p class="section-sub">Hardware Engineer Trainee interviews stay within a predictable scope: circuit reading, components, datasheets, BOM, Arduino-level embedded. Master these and she clears 80% of entry-level screens &#8212; no deep-firmware rabbit holes needed.</p>
+
+    <div class="iview-grid">
+      <div>
+        <h3>Technical &#8212; Must-Know (HW + SW + Basic Electronics)</h3>
+        <ul>
+          <li><strong>Basic electronics:</strong> Ohm's law, voltage divider formula, RC time constant &#8212; derive on paper</li>
+          <li>Read a <strong>resistor colour code</strong> on the spot</li>
+          <li>Pick <strong>current-limit resistor</strong> for an LED given V<sub>f</sub> and I<sub>f</sub></li>
+          <li><strong>Op-amp</strong>: explain inverting, non-inverting, buffer, comparator</li>
+          <li>Difference between <strong>BJT and MOSFET</strong>; when to use which as a switch</li>
+          <li>Explain a <strong>PN junction</strong> &#8212; forward &amp; reverse bias (physics MSc wins here)</li>
+          <li>How do you pick a <strong>pull-up / pull-down resistor</strong> value? Why 10k?</li>
+          <li>How do you pick a <strong>decoupling capacitor</strong>? Why 100nF ceramic near every IC power pin?</li>
+          <li><strong>LDO vs switching regulator</strong> &#8212; when to pick each</li>
+          <li>Walk through this <strong>schematic</strong> &#8212; name each block (interviewer will show one)</li>
+          <li>How do you approach a <strong>datasheet</strong>? Which sections matter most?</li>
+          <li>Walk me through a <strong>BOM</strong> you created &#8212; why these parts, why these alternates?</li>
+          <li>How do you source components via <strong>DigiKey / Mouser / Octopart</strong>?</li>
+          <li><strong>UART vs I2C vs SPI</strong> &#8212; wiring, speed, addressing, when to pick each</li>
+          <li>How does <strong>ADC</strong> work? Resolution vs sampling rate</li>
+          <li>What is <strong>PWM</strong>? How is duty cycle controlled?</li>
+          <li>Read this <strong>Arduino code snippet</strong> and explain what it does (interviewer will show)</li>
+          <li>How would you <strong>interface a new sensor</strong> you've never used? Walk through your process</li>
+          <li>Explain your <strong>Aimtron work</strong> &#8212; 90-second walkthrough</li>
+          <li>Explain <strong>Laplacian and Sobel</strong> image-sharpness detection (Aimtron calibration)</li>
+          <li>Walk through one <strong>GitHub project</strong> &#8212; architecture, components, code, decisions</li>
+        </ul>
+      </div>
+      <div>
+        <h3>HR — Must-Answer Smoothly</h3>
+        <ul>
+          <li>Walk me through your resume (90 sec, rehearsed)</li>
+          <li>Why Electronics/Embedded for a Physics MSc?</li>
+          <li>Why should we hire you over a BTech ECE candidate?<br><em>&#8594; Answer: physics depth for root-cause analysis + Aimtron industry exposure</em></li>
+          <li>What did you learn at Aimtron? (Have 3 specific stories)</li>
+          <li>Are you open to <strong>relocation</strong>? (Bangalore/Pune/Chennai)</li>
+          <li>Are you open to <strong>shift work</strong>? (EMS production lines run 24x7)</li>
+          <li>Salary expectation: <em>"Based on entry-level market rates &#8377;25&#8211;32k aligns; open to full-package discussion"</em></li>
+          <li>5-year plan: <em>"Grow into a senior test engineer / embedded architect role"</em> (avoid "PhD")</li>
+          <li>Weakness: pick a real one with a fix (e.g., "first-time job interviews — practising mocks")</li>
+          <li>Why this company specifically? (Research 3 facts before each interview)</li>
+          <li>Do you have any questions? (Always have 2 ready)</li>
+          <li>Conflict / teamwork story — prepare a STAR-format answer</li>
+          <li>When can you join? (Know the answer precisely)</li>
+          <li>Any other offers in hand? (Be honest, create healthy tension)</li>
+          <li>Ask about: mentorship, training program structure, team size</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== ACTIONS =============== -->
+<section id="actions">
+  <div class="wrap">
+    <div class="actions">
+      <h3>This Week's Non-Negotiables</h3>
+      <ol>
+        <li><strong>Apply to Aimtron</strong> for a full-time Hardware/Test Trainee role &#8212; email her supervisor + HR before the cert ink fades</li>
+        <li><strong>Customise LinkedIn URL</strong> to <code>linkedin.com/in/bahar-jindani</code> &amp; rewrite headline: <em>"MSc Applied Physics | Hardware Engineering &amp; Electronics Testing"</em></li>
+        <li><strong>Create GitHub account</strong> with profile README. Username: <code>bahar-jindani</code></li>
+        <li><strong>Start schematic-reading drill</strong> &#8212; 15&#8211;20 open-source schematics over 2 weeks (SparkFun, Adafruit repos)</li>
+        <li><strong>Order ESP32 DevKit + breadboard kit</strong> (&#8377;1200&#8211;1800 from Robu.in or Amazon)</li>
+        <li><strong>Enrol in Eduskills-AICTE</strong> Embedded Systems Virtual Internship (next intake)</li>
+        <li><strong>Bookmark DigiKey Learning Center</strong> &mdash; read 3 modules this week (datasheet, BOM, component selection)</li>
+        <li><strong>Update resume</strong> with the new hardware focus (done &#8212; see <code>Bahar_Jindani_Resume.zip</code>)</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Prepared for <strong>Bahar Jindani</strong> &middot; Electronics &amp; Embedded Systems track &middot; April 2026 &middot; Revise quarterly as the market &amp; her skill-set evolve.
+  </div>
+</footer>
+
+</body>
+</html>

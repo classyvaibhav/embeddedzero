@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4 &mdash; Op-Amps: The Golden Rules</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 4</div>
+    <span class="lesson-tag">Lesson 4 of 12</span>
+    <h1>Op-Amps &mdash; The Golden Rules</h1>
+    <p class="subtitle">The Swiss Army knife of analog electronics. Two rules solve 80% of circuits. Amplify small signals, buffer high-impedance sources, compare voltages.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Apply the "Golden Rules" to analyse any op-amp circuit</li>
+        <li>Recognise inverting, non-inverting, buffer, and comparator configurations</li>
+        <li>Calculate gain for any of them in 10 seconds</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 4</strong> &middot; Next: What Is an Embedded System? &rarr;</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">1</span>What's an Op-Amp?</h2>
+    <p>An <strong>operational amplifier</strong> is an integrated circuit (IC) with a single purpose: amplify the <em>difference</em> between two input voltages by a huge amount (100,000+ times).</p>
+
+    <p>It has three pins that matter:</p>
+    <ul>
+      <li><strong>V+</strong> (non-inverting input)</li>
+      <li><strong>V&minus;</strong> (inverting input)</li>
+      <li><strong>V<sub>out</sub></strong> (output)</li>
+    </ul>
+
+    <p>Plus two supply pins (+V<sub>s</sub>, &minus;V<sub>s</sub>) that you connect to power. Those are usually omitted from schematics to keep them clean &mdash; but they're always needed in real circuits.</p>
+
+    <div class="diagram">
+      <svg width="420" height="180" viewBox="0 0 420 180">
+        <rect x="0" y="0" width="420" height="180" fill="#fafaf9"/>
+        <polygon points="180,40 180,140 280,90" fill="white" stroke="#0f172a" stroke-width="2"/>
+        <text x="160" y="65" font-size="18" fill="#0f172a" font-weight="700">&minus;</text>
+        <text x="160" y="125" font-size="18" fill="#0f172a" font-weight="700">+</text>
+        <line x1="110" y1="60" x2="180" y2="60" stroke="#0f172a" stroke-width="2"/>
+        <line x1="110" y1="120" x2="180" y2="120" stroke="#0f172a" stroke-width="2"/>
+        <line x1="280" y1="90" x2="350" y2="90" stroke="#0f172a" stroke-width="2"/>
+        <text x="70" y="55" font-size="12" fill="#0369a1" font-weight="700">V<tspan font-size="9" baseline-shift="-20%">&minus;</tspan></text>
+        <text x="70" y="125" font-size="12" fill="#0369a1" font-weight="700">V<tspan font-size="9" baseline-shift="-20%">+</tspan></text>
+        <text x="355" y="95" font-size="12" fill="#dc2626" font-weight="700">V<tspan font-size="9" baseline-shift="-20%">out</tspan></text>
+        <line x1="225" y1="40" x2="225" y2="25" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="230" y="22" font-size="11" fill="#64748b">+V<tspan font-size="8" baseline-shift="-20%">s</tspan></text>
+        <line x1="225" y1="140" x2="225" y2="155" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="230" y="165" font-size="11" fill="#64748b">&minus;V<tspan font-size="8" baseline-shift="-20%">s</tspan></text>
+      </svg>
+      <div class="caption">Standard op-amp symbol. The triangle points in the direction of signal flow. LM358 is a popular beginner op-amp.</div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>The Two Golden Rules</h2>
+    <p>When an op-amp is used with <strong>negative feedback</strong> (output connected back to V&minus;), these two rules are always true:</p>
+
+    <div class="callout key">
+      <strong class="label">&#127941; Golden Rule 1</strong>
+      <strong>V<sub>+</sub> = V<sub>&minus;</sub></strong> &mdash; the two input voltages are equal. The op-amp <em>self-adjusts</em> its output until this is true.
+    </div>
+
+    <div class="callout key">
+      <strong class="label">&#127941; Golden Rule 2</strong>
+      <strong>No current flows into either input pin.</strong> The input impedance is essentially infinite.
+    </div>
+
+    <p>That's it! These two rules let you solve any op-amp circuit in 30 seconds on paper. Let's see them in action.</p>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>The Four Configurations You'll Meet</h2>
+
+    <h3>1. The Voltage Follower (Buffer)</h3>
+    <p>Gain = 1. Seems useless, right? But it's magical: it takes a weak signal (high output impedance, like from a voltage divider) and outputs the same voltage with <em>very</em> low output impedance. Now you can drive a real load without crashing the source voltage.</p>
+
+    <div class="formula">V<sub>out</sub> = V<sub>in</sub></div>
+
+    <h3>2. The Non-Inverting Amplifier</h3>
+    <p>Amplifies the input. Minimum gain is 1 (so always &ge;1).</p>
+
+    <div class="formula">V<sub>out</sub> = V<sub>in</sub> &times; (1 + R<sub>f</sub> / R<sub>g</sub>)</div>
+
+    <p><strong>Example:</strong> R<sub>f</sub>=10k, R<sub>g</sub>=10k &rarr; gain = 2. Input 1V &rarr; output 2V.</p>
+
+    <h3>3. The Inverting Amplifier</h3>
+    <p>Amplifies AND inverts (flips sign). Can have gain less than 1 (attenuates).</p>
+
+    <div class="formula">V<sub>out</sub> = &minus;V<sub>in</sub> &times; (R<sub>f</sub> / R<sub>in</sub>)</div>
+
+    <p><strong>Example:</strong> R<sub>f</sub>=10k, R<sub>in</sub>=1k &rarr; gain = &minus;10. Input +0.5V &rarr; output &minus;5V.</p>
+
+    <h3>4. The Comparator</h3>
+    <p>Not used with feedback. Output slams to the positive or negative rail depending on which input is higher. Useful for threshold detection.</p>
+
+    <div class="formula">
+      If V<sub>+</sub> &gt; V<sub>&minus;</sub>: V<sub>out</sub> = +V<sub>s</sub><br>
+      If V<sub>+</sub> &lt; V<sub>&minus;</sub>: V<sub>out</sub> = &minus;V<sub>s</sub> (or 0V)
+    </div>
+
+    <div class="diagram">
+      <svg width="540" height="220" viewBox="0 0 540 220">
+        <rect x="0" y="0" width="540" height="220" fill="#fafaf9"/>
+
+        <!-- Buffer -->
+        <text x="40" y="20" font-size="12" font-weight="700" fill="#0369a1">Buffer (Gain=1)</text>
+        <polygon points="50,40 50,80 90,60" fill="white" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="30" y1="48" x2="50" y2="48" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="30" y1="72" x2="50" y2="72" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="90" y1="60" x2="110" y2="60" stroke="#0f172a" stroke-width="1.5"/>
+        <path d="M 110 60 L 110 90 L 30 90 L 30 72" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+        <text x="55" y="54" font-size="10">&minus;</text>
+        <text x="55" y="78" font-size="10">+</text>
+        <text x="15" y="45" font-size="10" fill="#0369a1">V<tspan font-size="7">in</tspan></text>
+        <text x="115" y="63" font-size="10" fill="#dc2626">V<tspan font-size="7">out</tspan></text>
+
+        <!-- Non-inverting -->
+        <text x="160" y="20" font-size="12" font-weight="700" fill="#0369a1">Non-inverting (G=1+Rf/Rg)</text>
+        <polygon points="200,40 200,80 240,60" fill="white" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="180" y1="48" x2="200" y2="48" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="150" y1="72" x2="200" y2="72" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="240" y1="60" x2="280" y2="60" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="205" y="54" font-size="10">&minus;</text>
+        <text x="205" y="78" font-size="10">+</text>
+        <path d="M 260 60 L 260 100 L 180 100 L 180 48" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+        <rect x="200" y="95" width="20" height="10" fill="#f59e0b" stroke="#000"/>
+        <text x="223" y="104" font-size="9">R_f</text>
+        <path d="M 180 100 L 180 120" stroke="#0f172a" stroke-width="1.5"/>
+        <rect x="170" y="120" width="20" height="10" fill="#f59e0b" stroke="#000"/>
+        <text x="193" y="128" font-size="9">R_g</text>
+        <line x1="180" y1="130" x2="180" y2="145" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="170" y1="145" x2="190" y2="145" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="135" y="75" font-size="10" fill="#0369a1">V<tspan font-size="7">in</tspan></text>
+
+        <!-- Inverting -->
+        <text x="310" y="20" font-size="12" font-weight="700" fill="#0369a1">Inverting (G=&minus;Rf/Rin)</text>
+        <polygon points="370,40 370,80 410,60" fill="white" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="330" y1="48" x2="370" y2="48" stroke="#0f172a" stroke-width="1.5"/>
+        <rect x="335" y="43" width="20" height="10" fill="#f59e0b" stroke="#000"/>
+        <text x="340" y="37" font-size="9">R_in</text>
+        <line x1="360" y1="72" x2="370" y2="72" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="360" y1="72" x2="360" y2="85" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="350" y1="85" x2="370" y2="85" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="410" y1="60" x2="450" y2="60" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="375" y="54" font-size="10">&minus;</text>
+        <text x="375" y="78" font-size="10">+</text>
+        <path d="M 430 60 L 430 25 L 335 25 L 335 43" stroke="#0f172a" stroke-width="1.5" fill="none"/>
+        <rect x="360" y="22" width="20" height="6" fill="#f59e0b" stroke="#000"/>
+        <text x="383" y="28" font-size="9">R_f</text>
+        <text x="315" y="52" font-size="10" fill="#0369a1">V<tspan font-size="7">in</tspan></text>
+        <text x="455" y="63" font-size="10" fill="#dc2626">V<tspan font-size="7">out</tspan></text>
+
+        <!-- Comparator -->
+        <text x="40" y="165" font-size="12" font-weight="700" fill="#0369a1">Comparator (no feedback)</text>
+        <polygon points="50,180 50,210 90,195" fill="white" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="20" y1="185" x2="50" y2="185" stroke="#0f172a" stroke-width="1.5"/>
+        <line x1="20" y1="205" x2="50" y2="205" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="55" y="190" font-size="10">&minus;</text>
+        <text x="55" y="210" font-size="10">+</text>
+        <text x="5" y="183" font-size="9" fill="#dc2626">V_ref</text>
+        <text x="5" y="207" font-size="9" fill="#0369a1">V_in</text>
+        <line x1="90" y1="195" x2="130" y2="195" stroke="#0f172a" stroke-width="1.5"/>
+        <text x="135" y="198" font-size="10" fill="#dc2626">HIGH or LOW</text>
+
+        <text x="260" y="165" font-size="12" font-weight="700" fill="#16a34a">&#128161; All four use the same triangle!</text>
+        <text x="260" y="185" font-size="11" fill="#475569">The feedback network + which input is used</text>
+        <text x="260" y="200" font-size="11" fill="#475569">determines what the circuit does.</text>
+      </svg>
+      <div class="caption">The same op-amp symbol in four different circuits. Feedback network determines behaviour.</div>
+    </div>
+
+    <!-- ================== TINKERCAD NON-INVERTING ================== -->
+    <div class="sim-card">
+      <div class="sim-header">
+        <span class="sim-badge">&#128187; Try It Live</span>
+        <h4>Build a Non-Inverting Amp (Gain=2) in Tinkercad</h4>
+      </div>
+      <p style="font-size:14px">Let's physically see what "gain of 2" means. Feed in 1.5V, watch the output be 3V.</p>
+
+      <div class="sim-steps">
+        <strong>Build it:</strong>
+        <ol>
+          <li>Open Tinkercad Circuits</li>
+          <li>Add: 9V battery (for op-amp power), 1.5V battery (signal source), LM358 op-amp IC</li>
+          <li>Wire LM358 pin 8 (V<sub>cc</sub>) to +9V, pin 4 (GND) to ground</li>
+          <li>Non-inverting input (pin 3) &rarr; 1.5V source</li>
+          <li>Output (pin 1) &rarr; 10k R &rarr; inverting input (pin 2) &rarr; another 10k &rarr; GND (this is R<sub>g</sub>)</li>
+          <li>Attach a multimeter between output and ground</li>
+          <li>Start simulation &mdash; meter should read 3V (double the input)</li>
+          <li><strong>Experiment:</strong> change R<sub>f</sub> to 20k. What's the new gain? (Answer: 1 + 20k/10k = 3, so output = 4.5V)</li>
+        </ol>
+        <a class="sim-button" href="https://www.tinkercad.com/circuits" target="_blank">Open Tinkercad &rarr;</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>Why Op-Amps Matter for Embedded Work</h2>
+    <p>In an embedded system you'll use op-amps for:</p>
+    <ul>
+      <li><strong>Signal conditioning:</strong> Scale a 0&ndash;1V sensor up to 0&ndash;3.3V so your ADC sees a full range.</li>
+      <li><strong>Buffering:</strong> Drive a long cable or capacitive load from a high-impedance source.</li>
+      <li><strong>Threshold detection:</strong> A comparator turns on an LED when light drops below a level (with an LDR voltage divider).</li>
+      <li><strong>Active filters:</strong> Low-pass, high-pass, band-pass audio/sensor filters (advanced).</li>
+    </ul>
+
+    <div class="callout tip">
+      <strong class="label">&#128161; Which Op-Amp to Buy?</strong>
+      For beginners, the <strong>LM358</strong> is perfect: dual op-amp (two in one chip), runs on single 5V or 3.3V supply, cheap (~&#8377;15), handles most hobby tasks. When you need higher performance, move to TL072 or MCP6002.
+    </div>
+
+    <div class="quiz">
+      <h3>&#128269; Check Yourself</h3>
+
+      <details class="q">
+        <summary>Non-inverting amp with R<sub>f</sub>=47k and R<sub>g</sub>=4.7k. Gain?</summary>
+        <div class="answer">Gain = 1 + R<sub>f</sub>/R<sub>g</sub> = 1 + 47/4.7 = <strong>11</strong>.</div>
+      </details>
+
+      <details class="q">
+        <summary>You want to attenuate a signal to 1/3. Inverting or non-inverting?</summary>
+        <div class="answer"><strong>Inverting.</strong> Non-inverting can only amplify (minimum gain = 1). Inverting can go below 1 (R<sub>f</sub>/R<sub>in</sub> &lt; 1 means attenuation).</div>
+      </details>
+
+      <details class="q">
+        <summary>What's a voltage follower useful for?</summary>
+        <div class="answer">Converting a high-impedance source into a low-impedance source. Example: a voltage divider's output can't drive a load (loading effect), but pass it through a buffer first and now you can drive a real load without crashing the divider.</div>
+      </details>
+
+      <details class="q">
+        <summary>Can V<sub>out</sub> exceed V<sub>+supply</sub>?</summary>
+        <div class="answer"><strong>No.</strong> Op-amp output is limited by its supply rails. If you power with +9V, output maxes at about 8V (standard op-amp). Rail-to-rail op-amps can get within ~0.1V of the rails.</div>
+      </details>
+    </div>
+
+    <div class="takeaways">
+      <h3>Key Takeaways</h3>
+      <ul>
+        <li>Op-amps amplify the difference between V<sub>+</sub> and V<sub>&minus;</sub> by a huge factor.</li>
+        <li><strong>Golden Rule 1:</strong> with negative feedback, V<sub>+</sub> = V<sub>&minus;</sub>.</li>
+        <li><strong>Golden Rule 2:</strong> no current flows into inputs.</li>
+        <li>Four common configs: buffer (G=1), non-inverting (G&ge;1), inverting (G can be anything), comparator.</li>
+        <li>LM358 is the beginner's op-amp &mdash; cheap, single-supply, dual package.</li>
+        <li>Op-amp output can't exceed supply rails. Pick a supply that allows the swing you need.</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-03.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Diodes &amp; Transistors</span>
+      </a>
+      <a class="next" href="lesson-05.html">
+        <span class="direction">Next &rarr;</span>
+        <span class="title">What Is an Embedded System?</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer><div class="wrap">Lesson 4 of 12 &middot; Made with &#9829; for Bahar</div></footer>
+
+</body>
+</html>

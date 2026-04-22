@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 12 &mdash; Where to Go Next</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; Home</a> &nbsp;/&nbsp; Lesson 12</div>
+    <span class="lesson-tag">Lesson 12 of 12 &middot; Final!</span>
+    <h1>Where to Go Next</h1>
+    <p class="subtitle">You've come from "what's a resistor?" to "I built an IoT sensor station." What's next: applying for jobs, interview prep, and the career path ahead.</p>
+    <div class="objectives">
+      <strong>By the end of this lesson, you will:</strong>
+      <ul>
+        <li>Have a clear action plan for the next 4 weeks</li>
+        <li>Know which certifications are worth earning</li>
+        <li>Be able to walk into an interview with confidence</li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="index.html">&#8962; Home</a>
+    <div class="progress"><strong>Lesson 12</strong> &middot; &#127881; Course Complete!</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+
+    <h2><span class="icon">&#127942;</span>Congratulations!</h2>
+    <p>You just finished a complete entry-level Embedded Systems curriculum. Let's recap what you now know:</p>
+    <ul>
+      <li>Basic electronics &mdash; Ohm's law, voltage dividers, RC circuits</li>
+      <li>Semiconductors &mdash; diodes, LEDs, BJT/MOSFET switches, op-amps</li>
+      <li>What an embedded system is &mdash; MCU vs MPU, memory, boot process</li>
+      <li>Arduino programming &mdash; GPIO, ADC, PWM, Serial, I2C, SPI, interrupts</li>
+      <li>A real project &mdash; multi-sensor hub with OLED display</li>
+    </ul>
+
+    <p>This is the exact skill set an <strong>Embedded Systems Trainee</strong> needs. Now let's turn it into a job.</p>
+
+    <h2 style="margin-top:40px"><span class="icon">1</span>Your 4-Week Action Plan</h2>
+
+    <div class="pedagogy" style="background:var(--primary-soft);border:1px solid var(--primary-light);padding:24px;border-radius:12px;margin:20px 0">
+      <h3 style="color:var(--primary-dark);margin-top:0">Week 1: Polish Your Portfolio</h3>
+      <ul style="margin-top:10px">
+        <li>Push all simulator projects + the sensor hub to GitHub</li>
+        <li>Write good READMEs with photos/screenshots for each</li>
+        <li>Pin your top 3 projects on your GitHub profile</li>
+        <li>Update your LinkedIn: new headline, pin projects in Featured section</li>
+      </ul>
+    </div>
+
+    <div class="pedagogy" style="background:var(--primary-soft);border:1px solid var(--primary-light);padding:24px;border-radius:12px;margin:20px 0">
+      <h3 style="color:var(--primary-dark);margin-top:0">Week 2: Apply to Aimtron Full-Time</h3>
+      <ul>
+        <li>Email your Aimtron supervisor directly: "I completed my internship in March, I've been learning embedded systems deeply since, I'd love to discuss a full-time trainee role"</li>
+        <li>Attach your GitHub link + updated resume</li>
+        <li>Follow up after 3 days if no response</li>
+        <li>In parallel: apply to Kaynes Technology (Ahmedabad), eInfochips (Ahmedabad), GSFC, Siemens Vadodara</li>
+      </ul>
+    </div>
+
+    <div class="pedagogy" style="background:var(--primary-soft);border:1px solid var(--primary-light);padding:24px;border-radius:12px;margin:20px 0">
+      <h3 style="color:var(--primary-dark);margin-top:0">Week 3: Mock Interviews</h3>
+      <ul>
+        <li>Ask Vaibhav to do 2 mock interviews this week. Record both.</li>
+        <li>Practise walking through your sensor hub project out loud &mdash; 90-second version and 3-minute version</li>
+        <li>Practise common questions (below in next section)</li>
+        <li>Attend any virtual job fairs (Naukri, LinkedIn)</li>
+      </ul>
+    </div>
+
+    <div class="pedagogy" style="background:var(--primary-soft);border:1px solid var(--primary-light);padding:24px;border-radius:12px;margin:20px 0">
+      <h3 style="color:var(--primary-dark);margin-top:0">Week 4: Closing &amp; Negotiation</h3>
+      <ul>
+        <li>Respond to callbacks. Do 3-5 interviews.</li>
+        <li>If you get an offer, try to negotiate 10&ndash;15% higher &mdash; companies expect this</li>
+        <li>If multiple offers come in, pick based on: learning opportunity &gt; salary, for the first job</li>
+      </ul>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">2</span>Interview Questions You'll Definitely Get</h2>
+
+    <div class="quiz">
+      <h3>&#128269; Common Technical Questions &mdash; Practice Answering Out Loud</h3>
+
+      <details class="q">
+        <summary>What's the difference between I2C and SPI?</summary>
+        <div class="answer">I2C uses 2 wires (SDA/SCL) shared by all devices, each with a unique address. Slower (100k&ndash;1M Hz) but uses less pins. SPI uses 4 wires per slave (MOSI/MISO/SCK/CS), much faster (10&ndash;50 MHz) but needs more pins. Pick I2C for sensors, SPI for SD cards and fast peripherals.</div>
+      </details>
+
+      <details class="q">
+        <summary>What's <code>volatile</code> and when do you use it?</summary>
+        <div class="answer">It tells the compiler "this variable can change unexpectedly, always re-read from memory". Used for variables shared between an ISR and the main loop. Without it, the compiler might cache the value and miss changes from the ISR.</div>
+      </details>
+
+      <details class="q">
+        <summary>How do you pick a current-limiting resistor for an LED?</summary>
+        <div class="answer">R = (V<sub>supply</sub> &minus; V<sub>f</sub>) / I<sub>f</sub>. For a red LED (V<sub>f</sub>=2V) on 5V supply at 20 mA: R = (5&minus;2)/0.02 = 150 &Omega;. Then check power P = V<sub>R</sub>&times;I = 60 mW, so 1/4 W resistor is fine.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why can't you power an MCU through a voltage divider?</summary>
+        <div class="answer">Voltage dividers only work for signal inputs (tiny current). MCUs draw real current, which causes the output voltage to drop dramatically under load. Use a regulator chip instead (LDO or buck).</div>
+      </details>
+
+      <details class="q">
+        <summary>Walk me through the boot process of an Arduino.</summary>
+        <div class="answer">Power stabilises &rarr; /RESET released &rarr; clock crystal starts &rarr; bootloader in Flash runs (checks for new firmware via USB) &rarr; if none, jumps to user code &rarr; C runtime initialises variables &rarr; <code>setup()</code> runs once &rarr; <code>loop()</code> runs forever.</div>
+      </details>
+
+      <details class="q">
+        <summary>Can you explain a project you built?</summary>
+        <div class="answer">YOUR ANSWER (practise this!): "I built a multi-sensor environmental monitor using an ESP32. It reads temperature and humidity from a DHT22, and pressure from a BMP280 sensor &mdash; all via I2C. The data displays on a 0.96-inch OLED. A button lets me cycle between summary and detailed views, and I used an interrupt with debouncing for the button handling. The full BOM came to around 1,300 rupees. The code is on GitHub with a README and wiring diagram."</div>
+      </details>
+
+      <details class="q">
+        <summary>What's the flyback diode for?</summary>
+        <div class="answer">When switching off an inductive load (relay coil, motor), the collapsing magnetic field generates a large reverse voltage spike. The flyback diode (connected in reverse across the load) absorbs that spike safely, protecting the transistor from destruction.</div>
+      </details>
+
+      <details class="q">
+        <summary>Why do we put 100 nF caps on IC power pins?</summary>
+        <div class="answer">It's a decoupling (bypass) capacitor. At high switching frequencies, it acts as a local charge reservoir that shorts noise to ground before it propagates through the board. Every IC needs one right next to its V<sub>cc</sub> pin &mdash; no exceptions.</div>
+      </details>
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">3</span>Certifications Worth Earning</h2>
+
+    <table>
+      <tr><th>Certification</th><th>Cost</th><th>Time</th><th>Value</th></tr>
+      <tr><td><strong>NPTEL: Introduction to IoT</strong> (IIT KGP)</td><td>Free</td><td>12 weeks</td><td>&#11088;&#11088;&#11088;&#11088; Very high &mdash; respected in India</td></tr>
+      <tr><td><strong>Eduskills-AICTE Embedded Systems</strong></td><td>Free</td><td>8 weeks</td><td>&#11088;&#11088;&#11088;&#11088; Has placement assistance</td></tr>
+      <tr><td><strong>ESP32 on Udemy</strong> (Rui Santos / Shawn Hymel)</td><td>&#8377;500</td><td>30 hrs</td><td>&#11088;&#11088;&#11088; Good with GitHub portfolio</td></tr>
+      <tr><td><strong>MATLAB Onramp</strong> (MathWorks)</td><td>Free</td><td>2 hrs</td><td>&#11088;&#11088;&#11088; Free, quick keyword</td></tr>
+      <tr><td><strong>Six Sigma Yellow Belt</strong></td><td>Free</td><td>1 week</td><td>&#11088;&#11088; For quality-adjacent roles</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <strong class="label">&#9888; Don't Waste Money On</strong>
+      Expensive "Full-Stack Developer Bootcamps", crypto/Web3 certificates, generic "Data Scientist" courses. They dilute your embedded story. Focus wins.
+    </div>
+
+    <h2 style="margin-top:40px"><span class="icon">4</span>Where to Continue Learning (After Your First Job)</h2>
+
+    <h3>Going Deeper into Embedded</h3>
+    <ul>
+      <li><strong>STM32 with HAL</strong> &mdash; STM32 is the industry standard for mid-range embedded. Arduino is training wheels; STM32 is the bike.</li>
+      <li><strong>FreeRTOS</strong> &mdash; Real-time operating system. Learn it once you're comfortable with bare-metal.</li>
+      <li><strong>Bare-metal C on ARM Cortex-M</strong> &mdash; When you really want to understand what's happening below Arduino.</li>
+      <li><strong>PCB design in KiCad / Altium</strong> &mdash; From schematic to manufactured board. Hugely valuable skill.</li>
+    </ul>
+
+    <h3>Going Deeper into Linux Embedded</h3>
+    <ul>
+      <li><strong>Raspberry Pi projects</strong> &mdash; First step into Linux-based embedded.</li>
+      <li><strong>Yocto Project</strong> &mdash; Building custom embedded Linux distributions (this is where Vaibhav works at Omnidya).</li>
+      <li><strong>Device drivers</strong> &mdash; Writing kernel-level code for hardware.</li>
+      <li><strong>NXP i.MX, Rockchip, Qualcomm</strong> platforms &mdash; industrial-grade SoCs.</li>
+    </ul>
+
+    <h3>Great Resources</h3>
+    <table>
+      <tr><th>Resource</th><th>What for</th></tr>
+      <tr><td><a href="https://randomnerdtutorials.com/" target="_blank">Random Nerd Tutorials</a></td><td>ESP32 projects, IoT</td></tr>
+      <tr><td><a href="https://learn.adafruit.com/" target="_blank">Adafruit Learning</a></td><td>Sensor integration, tutorials</td></tr>
+      <tr><td><a href="https://learn.sparkfun.com/" target="_blank">SparkFun Learn</a></td><td>Electronics fundamentals</td></tr>
+      <tr><td><a href="https://www.phils-lab.net/" target="_blank">Phil's Lab (YouTube)</a></td><td>PCB design, STM32, advanced hardware</td></tr>
+      <tr><td><a href="https://eevblog.com/" target="_blank">EEVblog (YouTube)</a></td><td>Hardware deep-dives, Dave Jones</td></tr>
+      <tr><td><a href="https://digikey.com/" target="_blank">DigiKey</a></td><td>Component sourcing + learning center</td></tr>
+    </table>
+
+    <h2 style="margin-top:40px"><span class="icon">5</span>Final Words</h2>
+
+    <p>Bahar &mdash; you started this course barely knowing what a resistor does. Now you've built a multi-sensor IoT device and can walk into any entry-level embedded interview and hold your own.</p>
+
+    <p>The gap between "MSc Applied Physics student" and "Embedded Systems Engineer" is much smaller than you thought, right? It was mostly about closing the hands-on practical gap. Your physics brain already understood the theory &mdash; you just needed the muscle memory of building real circuits.</p>
+
+    <div class="callout physics">
+      <strong class="label">&#127775; What You've Really Accomplished</strong>
+      You've taken a subject that was an <em>elective</em> for you in MSc and turned it into a career-ready skill set. That's a pivot 95% of people never make. Be proud. And keep going &mdash; the job you land will teach you 10&times; more in 6 months than any course could.
+    </div>
+
+    <p>From Vaibhav, me as your instructor: you did the work, you earned this. Now go get the offer. Aimtron already knows you &mdash; walk in with confidence and a GitHub that shows you've been serious since the internship ended.</p>
+
+    <div class="takeaways">
+      <h3>Your Final Checklist</h3>
+      <ul>
+        <li>All 12 lessons completed</li>
+        <li>At least 3 projects on GitHub with good READMEs</li>
+        <li>LinkedIn profile polished (custom URL, headline, Featured section)</li>
+        <li>Resume updated (use the LaTeX template Vaibhav gave you)</li>
+        <li>Applied to at least 10 companies (target: Aimtron, Kaynes, eInfochips, GSFC, Siemens)</li>
+        <li>Done at least 2 mock interviews with Vaibhav</li>
+        <li>Ready to answer the "walk me through your project" question confidently</li>
+      </ul>
+    </div>
+
+    <div class="lesson-nav">
+      <a class="prev" href="lesson-11.html">
+        <span class="direction">&larr; Previous</span>
+        <span class="title">Your First Real Project</span>
+      </a>
+      <a class="next" href="index.html">
+        <span class="direction">All done!</span>
+        <span class="title">&#127881; Back to Home</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Lesson 12 of 12 &middot; <strong>Course complete!</strong> &middot; Made with &#9829; for Bahar by Vaibhav
+    <br><br>
+    <a href="index.html">Back to Home</a> &middot; <a href="../teaching/index.html">Vaibhav's Teaching Guide</a> &middot; <a href="../career_plan.html">Career Plan</a>
+  </div>
+</footer>
+
+</body>
+</html>

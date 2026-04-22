@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teaching Guide &mdash; Labs</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> &nbsp;/&nbsp; Labs</div>
+    <h1>Hands-On Labs</h1>
+    <p class="subtitle">21 breadboard builds to run with her &mdash; one per 1&ndash;2 theory sessions. Listed in teaching order.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="index.html">Home</a>
+    <a href="overview.html">Overview</a>
+    <a href="symbols.html">Symbols</a>
+    <a href="electronics.html">Part 1</a>
+    <a href="hardware.html">Part 2</a>
+    <a href="embedded.html">Part 3</a>
+    <a href="pcb.html">Part 4</a>
+    <a href="labs.html" class="active">Labs</a>
+    <a href="cheats.html">Cheats</a>
+  </div>
+</nav>
+
+<section class="part">
+  <div class="wrap">
+    <div class="pedagogy">
+      <h3>Lab Philosophy</h3>
+      <p style="font-size:14px;color:var(--ink-soft)">Every concept gets a hands-on session within 24 hours of theory. Labs use the ESP32 kit (~&#8377;1800) from Overview page. If hardware delayed, use <strong>Tinkercad Circuits</strong> or <strong>Wokwi</strong> simulator &mdash; both free, browser-based, fine for first exposure.</p>
+    </div>
+
+    <table class="ref" style="margin-top:18px">
+      <tr><th>#</th><th>Topic</th><th>Build</th><th>Time</th><th>Deliverable</th></tr>
+      <tr><td>L1</td><td><a href="electronics.html#t1-2">T1.2</a></td><td>LED + current-limit R from 5V</td><td>20 min</td><td>Measure V across LED + R with DMM</td></tr>
+      <tr><td>L2</td><td><a href="electronics.html#t1-4">T1.4</a></td><td>Voltage divider 5V &rarr; 2.5V</td><td>15 min</td><td>DMM reading matches calculation</td></tr>
+      <tr><td>L3</td><td><a href="electronics.html#t1-5">T1.5</a></td><td>Series + parallel R network</td><td>25 min</td><td>3 measurements documented</td></tr>
+      <tr><td>L4</td><td><a href="electronics.html#t1-7">T1.7</a></td><td>RC charging (100k + 100&mu;F, visible)</td><td>30 min</td><td>Graph V<sub>cap</sub> vs time + &tau;</td></tr>
+      <tr><td>L5</td><td><a href="electronics.html#t1-8">T1.8</a></td><td>Zener reference circuit</td><td>20 min</td><td>Verify regulation across load</td></tr>
+      <tr><td>L6</td><td><a href="electronics.html#t1-9">T1.9</a></td><td>BJT low-side switch driving relay from 3.3V</td><td>35 min</td><td>Click relay on GPIO command</td></tr>
+      <tr><td>L7</td><td><a href="electronics.html#t1-10">T1.10</a></td><td>MOSFET switching an LED strip</td><td>30 min</td><td>PWM-controlled brightness</td></tr>
+      <tr><td>L8</td><td><a href="electronics.html#t1-11">T1.11</a></td><td>LM358 buffer driving what divider couldn't</td><td>30 min</td><td>V<sub>out</sub> with/without buffer</td></tr>
+      <tr><td>L9</td><td><a href="electronics.html#t1-12">T1.12</a></td><td>LM358 non-inv amp, gain=2</td><td>30 min</td><td>Sweep input, verify 2&times;</td></tr>
+      <tr><td>L10</td><td><a href="embedded.html#t3-5">T3.5</a></td><td>Blink on ESP32 (first sketch)</td><td>20 min</td><td>Blink pushed to GitHub</td></tr>
+      <tr><td>L11</td><td><a href="embedded.html#t3-6">T3.6</a></td><td>Button + LED, INPUT_PULLUP</td><td>30 min</td><td>Sketch + GitHub commit</td></tr>
+      <tr><td>L12</td><td><a href="embedded.html#t3-7">T3.7</a></td><td>Pot &rarr; Serial Monitor with volts</td><td>30 min</td><td>Raw + volts on SM</td></tr>
+      <tr><td>L13</td><td><a href="embedded.html#t3-8">T3.8</a></td><td>LEDC fade + MOSFET fan</td><td>40 min</td><td>Breathing LED + speed-adjusted fan</td></tr>
+      <tr><td>L14</td><td><a href="embedded.html#t3-9">T3.9</a></td><td>UART echo + ESP32-to-Arduino talk</td><td>45 min</td><td>Bidirectional flow</td></tr>
+      <tr><td>L15</td><td><a href="embedded.html#t3-10">T3.10</a></td><td>I2C scan + BMP280 + OLED display</td><td>60 min</td><td>Sensor data on OLED</td></tr>
+      <tr><td>L16</td><td><a href="embedded.html#t3-11">T3.11</a></td><td>SPI SD card logging</td><td>45 min</td><td>Pot logged to CSV every 1s</td></tr>
+      <tr><td>L17</td><td><a href="embedded.html#t3-12">T3.12</a></td><td>Interrupt-driven button counter</td><td>30 min</td><td>Accurate counting (debounced)</td></tr>
+      <tr><td>L18</td><td><a href="embedded.html#t3-13">T3.13</a></td><td>Non-blocking blink + button</td><td>40 min</td><td>Both responsive simultaneously</td></tr>
+      <tr><td>L19</td><td><a href="embedded.html#t3-14">T3.14</a></td><td>Pick up new sensor cold (DHT11 / MPU6050)</td><td>60 min</td><td>Readings in Serial Monitor</td></tr>
+      <tr><td>L20</td><td><a href="pcb.html#t4-2">T4.1&ndash;T4.2</a></td><td>Open existing KiCad project, modify silkscreen, export Gerber</td><td>60 min</td><td>Modified .kicad_pcb on GitHub</td></tr>
+      <tr><td>L21</td><td>Capstone</td><td><strong>Portfolio Project:</strong> ESP32 + DHT11 + BMP280 + OLED integrated sensor hub with BOM</td><td>1 week</td><td>GitHub: README + photos + BOM + code</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="pcb.html">&larr; Part 4</a> &middot; <a href="index.html">Home</a> &middot; Next: <a href="cheats.html">Cheat Sheets &rarr;</a>
+  </div>
+</footer>
+
+</body>
+</html>

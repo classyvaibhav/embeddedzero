@@ -8,8 +8,8 @@
    - Correct password sets the token so you only enter it once per
      browser session (closing the tab/browser resets it).
    
-   To change the password, update PASS_HASH below.
-   Current password: "vaibhav2026"
+   To change the password, update the base64 value below.
+   Current password: "classyvaibhav@1506"
    ========================================================= */
 
 (function () {
@@ -88,7 +88,7 @@
 
     /* The password — stored as a simple reversed + base64 check for light obfuscation.
        Not truly secure (client-side never is), but keeps casual visitors out. */
-    var PASS = atob('Y2xhc3N5dmFpYmhhdkAxNQ=='); // "classyvaibhav@15"
+    var PASS = atob('Y2xhc3N5dmFpYmhhdkAxNTA2'); // "classyvaibhav@1506"
 
     function attempt() {
       if (inp.value === PASS) {

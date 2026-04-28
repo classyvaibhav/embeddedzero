@@ -2,7 +2,7 @@
 
 A free, hands-on entry-level embedded systems course. Covers basic electronics, Arduino, ESP32, sensors, and real projects.
 
-**Live site:** <https://classyvaibhav.github.io/embedded-course/>
+**Live site:** <https://classyvaibhav.github.io/embeddedzero/>
 
 ## What's Inside
 
@@ -53,8 +53,8 @@ Shopping list for the full course (one-time, ~₹1,800):
 This is a pure static HTML/CSS site — no build step, no dependencies.
 
 ```bash
-git clone git@github.com:classyvaibhav/embedded-course.git
-cd embedded-course
+git clone git@github.com:classyvaibhav/embeddedzero.git
+cd embeddedzero
 # Open index.html in any browser, or:
 python3 -m http.server 8000
 # Visit http://localhost:8000

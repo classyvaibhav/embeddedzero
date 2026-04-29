@@ -97,9 +97,52 @@
   }
   .overlay-card .start-btn:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 22px rgba(13,148,136,.35)}
   [data-theme="dark"] .overlay-card .start-btn{color:#0a0e1a}
+
+  /* ---- Desktop-only gate ---- */
+  .mobile-block{
+    position:fixed;inset:0;z-index:99999;
+    display:none;align-items:center;justify-content:center;
+    background:var(--bg);padding:32px;text-align:center;
+    flex-direction:column;gap:16px;
+  }
+  .mobile-block .mb-icon{font-size:56px;line-height:1}
+  .mobile-block h2{font-size:22px;font-weight:800;letter-spacing:-.3px;color:var(--ink)}
+  .mobile-block p{color:var(--muted);font-size:14px;line-height:1.7;max-width:380px}
+  .mobile-block .mb-hint{
+    font-size:12px;color:var(--muted);opacity:.7;
+    border-top:1px solid var(--border);padding-top:14px;margin-top:8px;
+  }
+  /* Show on small screens */
+  @media (max-width:1024px){
+    .mobile-block{display:flex}
+    .live-strip, iframe.lessons, .overlay, header.site-bar{display:none!important}
+  }
+  /* JS adds this class for UA-detected mobile even on wide screens (e.g. tablet landscape) */
+  body.mobile-detected .mobile-block{display:flex}
+  body.mobile-detected .live-strip,
+  body.mobile-detected iframe.lessons,
+  body.mobile-detected .overlay,
+  body.mobile-detected header.site-bar{display:none!important}
 </style>
 </head>
 <body class="locked">
+
+<!-- Desktop-only gate -->
+<div class="mobile-block" id="mobile-block">
+  <span class="mb-icon">💻</span>
+  <h2>Desktop only</h2>
+  <p>This live session is designed for laptops and desktops. Please switch to a computer with a larger screen to continue.</p>
+  <p class="mb-hint">Minimum recommended screen width: 1024 px</p>
+</div>
+<script>
+  // UA-based mobile detection (catches tablets in landscape too)
+  (function(){
+    var ua = navigator.userAgent || '';
+    if (/Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+      document.body.classList.add('mobile-detected');
+    }
+  })();
+</script>
 
 <header class="site-bar">
   <div class="site-bar-inner">
@@ -319,7 +362,7 @@
   }
 
   function goLive() {
-    setStatus('Live — interactive learning', 'live');
+    setStatus('Interactive learning', '');
     document.body.classList.add('live');
     els.end.hidden = false;
     setSessionActive(true);

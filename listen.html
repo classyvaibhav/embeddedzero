@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listen — EmbeddedZero</title>
+<meta name="description" content="Tutor's listening page — receives the student's microphone audio.">
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="assets/js/theme-toggle.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+  :root{
+    --primary:#0d9488;--primary-dark:#0f766e;--primary-soft:#f0fdfa;--primary-light:#ccfbf1;
+    --accent-strong:#0891b2;
+    --ink:#0f172a;--muted:#64748b;
+    --border:#e2e8f0;--bg:#fafbfc;--card:#ffffff;
+  }
+  [data-theme="dark"]{
+    --primary:#2dd4bf;--primary-dark:#5eead4;--primary-soft:rgba(45,212,191,.08);--primary-light:rgba(45,212,191,.16);
+    --accent-strong:#06b6d4;
+    --ink:#f1f5f9;--muted:#94a3b8;
+    --border:#2a3245;--bg:#0a0e1a;--card:#141926;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+  main{flex:1;padding:48px 24px;max-width:680px;margin:0 auto;width:100%}
+  h1{font-size:28px;font-weight:800;letter-spacing:-.4px;margin-bottom:8px}
+  .lede{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:28px}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:18px}
+  .panel h2{font-size:13px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:14px;font-weight:700}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input[type=text]{flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font:600 14px 'Inter',sans-serif;font-family:'JetBrains Mono',ui-monospace,monospace}
+  input[type=text]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+  button{padding:10px 18px;border:none;border-radius:8px;background:var(--primary);color:#fff;font:700 14px 'Inter',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.2px}
+  button:hover{background:var(--primary-dark)}
+  button.ghost{background:transparent;border:1px solid var(--border);color:var(--ink)}
+  button.ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+  [data-theme="dark"] button{color:#0a0e1a}
+  [data-theme="dark"] button.ghost{color:var(--ink)}
+  .status{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--bg);border-radius:10px;font-size:14px;font-weight:600;margin-top:8px}
+  .dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;flex-shrink:0;transition:all .25s}
+  .dot.pending{background:#f59e0b;animation:pulse 1.2s infinite}
+  .dot.ready{background:#10b981}
+  .dot.live{background:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,.6);animation:liveBlink 1.4s infinite}
+  .dot.err{background:#ef4444}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes liveBlink{0%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}70%{box-shadow:0 0 0 10px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+  code{font-family:'JetBrains Mono',ui-monospace,monospace;background:var(--primary-light);color:var(--primary-dark);padding:3px 8px;border-radius:5px;font-size:13px;word-break:break-all}
+  .share-link{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .meter{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border);margin-top:14px}
+  .meter-fill{height:100%;background:linear-gradient(90deg,#10b981,#facc15,#ef4444);width:0;transition:width .1s}
+  .help{font-size:13px;color:var(--muted);line-height:1.7;margin-top:12px}
+  .help strong{color:var(--ink)}
+  audio{display:none}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="index.html">Home</a>
+      <a href="notes/index.html">Course Notes</a>
+      <a href="teaching/index.html">Teaching Guide</a>
+      <a href="career_plan.html">Career Plan</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Tutor listen-in</h1>
+  <p class="lede">This page receives your student's microphone audio while she studies. Set your tutor ID, share the matching link, then keep this tab open. You'll hear her voice as soon as she clicks <strong>Start session</strong> on her end.</p>
+
+  <div class="panel">
+    <h2>Your tutor ID</h2>
+    <div class="row">
+      <input type="text" id="tutor-id" placeholder="vk-tutor" autocomplete="off">
+      <button id="apply-id">Apply</button>
+    </div>
+    <p class="help">Pick anything — random characters are best for privacy. Saved in this browser. <strong>Anyone who knows this ID could connect to your listener</strong>, so don't pick something obvious.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Share with her</h2>
+    <div class="share-link">
+      <code id="share-link">—</code>
+      <button id="copy" class="ghost">Copy</button>
+    </div>
+    <p class="help">Send her this link once (e.g., over WhatsApp). She bookmarks it. Each study session she opens the link, clicks Start session, and you hear her here.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Status</h2>
+    <div class="status">
+      <span class="dot" id="dot"></span>
+      <span id="status-text">Initializing…</span>
+    </div>
+    <div class="meter"><div class="meter-fill" id="meter"></div></div>
+    <p class="help" id="hint">Waiting for the broker connection. Once you see <em>Waiting for her to join</em>, this tab is ready.</p>
+    <button id="hangup" class="ghost hidden" style="margin-top:14px">Hang up current call</button>
+  </div>
+
+  <audio id="audio-out" autoplay></audio>
+</main>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'ec-tutor-id';
+  const els = {
+    id: document.getElementById('tutor-id'),
+    apply: document.getElementById('apply-id'),
+    copy: document.getElementById('copy'),
+    share: document.getElementById('share-link'),
+    dot: document.getElementById('dot'),
+    status: document.getElementById('status-text'),
+    hint: document.getElementById('hint'),
+    audio: document.getElementById('audio-out'),
+    meter: document.getElementById('meter'),
+    hangup: document.getElementById('hangup'),
+  };
+
+  let tutorId = (localStorage.getItem(STORAGE_KEY) || '').trim();
+  if (!tutorId) tutorId = 'vk-' + Math.random().toString(36).slice(2, 10);
+  els.id.value = tutorId;
+  updateShareLink();
+
+  let peer = null;
+  let currentCall = null;
+  let audioCtx = null, analyser = null, animFrame = null;
+
+  function setStatus(text, dotClass) {
+    els.status.textContent = text;
+    els.dot.className = 'dot' + (dotClass ? ' ' + dotClass : '');
+  }
+
+  function updateShareLink() {
+    try {
+      const url = new URL('live.html', location.href);
+      url.searchParams.set('id', tutorId);
+      els.share.textContent = url.toString();
+    } catch (e) {
+      els.share.textContent = 'live.html?id=' + encodeURIComponent(tutorId);
+    }
+  }
+
+  function connectPeer() {
+    if (peer) { try { peer.destroy(); } catch (e) {} }
+    setStatus('Connecting to broker…', 'pending');
+    els.hint.textContent = 'Reaching the PeerJS broker — this takes a second.';
+
+    peer = new Peer(tutorId, { debug: 1 });
+
+    peer.on('open', () => {
+      setStatus('Waiting for her to join…', 'ready');
+      els.hint.innerHTML = 'Ready. Send her the link above. Keep this tab open while she studies.';
+    });
+
+    peer.on('call', call => {
+      if (currentCall) { try { currentCall.close(); } catch (e) {} }
+      currentCall = call;
+      call.answer(); // no stream from us = listen only
+      call.on('stream', remoteStream => {
+        els.audio.srcObject = remoteStream;
+        els.audio.play().catch(() => {});
+        setStatus('🔴  Live — listening to her', 'live');
+        els.hint.innerHTML = 'Audio is flowing. The meter below shows her voice level.';
+        els.hangup.classList.remove('hidden');
+        startMeter(remoteStream);
+      });
+      call.on('close', () => {
+        setStatus('She ended the session', 'ready');
+        els.hint.textContent = 'Tab still open and ready for her next session.';
+        els.hangup.classList.add('hidden');
+        stopMeter();
+      });
+      call.on('error', err => {
+        setStatus('Call error: ' + err, 'err');
+      });
+    });
+
+    peer.on('disconnected', () => {
+      setStatus('Disconnected from broker — retrying…', 'pending');
+      try { peer.reconnect(); } catch (e) {}
+    });
+
+    peer.on('error', err => {
+      if (err.type === 'unavailable-id') {
+        setStatus('That tutor ID is already in use elsewhere. Pick a different one.', 'err');
+        els.hint.innerHTML = 'Edit the ID above (add some random chars) and click <strong>Apply</strong>.';
+      } else {
+        setStatus('Error: ' + err.type, 'err');
+      }
+    });
+  }
+
+  function startMeter(stream) {
+    stopMeter();
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = audioCtx.createMediaStreamSource(stream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    src.connect(analyser);
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    function tick() {
+      analyser.getByteFrequencyData(buf);
+      let sum = 0; for (let i = 0; i < buf.length; i++) sum += buf[i];
+      const avg = sum / buf.length / 255;
+      els.meter.style.width = Math.min(100, avg * 220) + '%';
+      animFrame = requestAnimationFrame(tick);
+    }
+    tick();
+  }
+  function stopMeter() {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    animFrame = null;
+    if (audioCtx) { try { audioCtx.close(); } catch (e) {} audioCtx = null; }
+    els.meter.style.width = '0';
+  }
+
+  els.apply.addEventListener('click', () => {
+    const next = els.id.value.trim();
+    if (!next) return;
+    tutorId = next;
+    localStorage.setItem(STORAGE_KEY, tutorId);
+    updateShareLink();
+    connectPeer();
+  });
+
+  els.copy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(els.share.textContent);
+      const orig = els.copy.textContent;
+      els.copy.textContent = 'Copied ✓';
+      setTimeout(() => { els.copy.textContent = orig; }, 1500);
+    } catch (e) {
+      alert('Copy failed — select the link and copy manually.');
+    }
+  });
+
+  els.hangup.addEventListener('click', () => {
+    if (currentCall) { try { currentCall.close(); } catch (e) {} currentCall = null; }
+    stopMeter();
+    setStatus('You hung up — waiting for her again', 'ready');
+    els.hangup.classList.add('hidden');
+  });
+
+  window.addEventListener('beforeunload', () => {
+    if (currentCall) { try { currentCall.close(); } catch (e) {} }
+    if (peer) { try { peer.destroy(); } catch (e) {} }
+  });
+
+  connectPeer();
+})();
+</script>
+</body>
+</html>

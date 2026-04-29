@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live study session — EmbeddedZero</title>
+<meta name="description" content="Live study session — read aloud while your tutor listens.">
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="assets/js/theme-toggle.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>
+  :root{
+    --primary:#0d9488;--primary-dark:#0f766e;--primary-soft:#f0fdfa;
+    --ink:#0f172a;--muted:#64748b;
+    --border:#e2e8f0;--bg:#fafbfc;--card:#ffffff;
+  }
+  [data-theme="dark"]{
+    --primary:#2dd4bf;--primary-dark:#5eead4;--primary-soft:rgba(45,212,191,.08);
+    --ink:#f1f5f9;--muted:#94a3b8;
+    --border:#2a3245;--bg:#0a0e1a;--card:#141926;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+  /* Live strip — sits between site-bar and the lesson iframe */
+  .live-strip{
+    display:flex;align-items:center;gap:12px;
+    padding:10px 18px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+    flex:0 0 auto;
+    font-size:13px;font-weight:600;color:var(--ink);
+    transition:background .25s,color .25s;
+  }
+  .live-strip .dot{width:9px;height:9px;border-radius:50%;background:#cbd5e1;flex-shrink:0;transition:all .25s}
+  .live-strip .dot.pending{background:#f59e0b;animation:pulse 1.2s infinite}
+  .live-strip .dot.live{background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.7);animation:liveBlink 1.4s infinite}
+  .live-strip .dot.err{background:#ef4444}
+  .live-strip .progress{display:flex;align-items:center;gap:10px;margin-left:auto;min-width:180px;max-width:340px;flex:1 1 240px}
+  .live-strip .prog-bar{flex:1;height:6px;background:rgba(15,23,42,.10);border-radius:3px;overflow:hidden;position:relative}
+  body.live .live-strip .prog-bar,body.session-open:not(.live) .live-strip .prog-bar{background:rgba(255,255,255,.22)}
+  .live-strip .prog-fill{height:100%;background:var(--primary);border-radius:3px;width:0;transition:width .5s cubic-bezier(.4,.2,.2,1)}
+  body.live .live-strip .prog-fill,body.session-open:not(.live) .live-strip .prog-fill{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.4)}
+  .live-strip .prog-label{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap;color:var(--ink);opacity:.85}
+  body.live .live-strip .prog-label,body.session-open:not(.live) .live-strip .prog-label{color:#fff;opacity:.95}
+  .live-strip .timer{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;opacity:.7;letter-spacing:1px}
+  @media(max-width:720px){
+    .live-strip{flex-wrap:wrap;gap:8px;padding:8px 14px}
+    .live-strip .progress{order:3;flex:1 1 100%;margin-left:0;max-width:none}
+    .live-strip #status{font-size:12px}
+  }
+  .live-strip .end-btn{padding:6px 14px;border:1px solid var(--border);background:transparent;color:var(--ink);border-radius:6px;cursor:pointer;font:700 12px 'Inter',sans-serif;letter-spacing:.3px;transition:all .15s}
+  .live-strip .end-btn:hover{border-color:#ef4444;color:#ef4444;background:rgba(239,68,68,.06)}
+
+  /* Mic active but tutor not yet connected — amber */
+  body.session-open:not(.live) .live-strip{background:linear-gradient(135deg,#f59e0b 0%,#fb923c 100%);color:#fff;border-bottom-color:transparent}
+  body.session-open:not(.live) .live-strip .timer{opacity:.9;color:#fff}
+  body.session-open:not(.live) .live-strip .end-btn{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.18);color:#fff}
+  body.session-open:not(.live) .live-strip .end-btn:hover{background:rgba(255,255,255,.28);border-color:#fff;color:#fff}
+
+  /* Tutor is on the line — red */
+  body.live .live-strip{background:linear-gradient(135deg,#ef4444 0%,#f59e0b 100%);color:#fff;border-bottom-color:transparent}
+  body.live .live-strip .timer{opacity:.9}
+  body.live .live-strip .end-btn{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.18);color:#fff}
+  body.live .live-strip .end-btn:hover{background:rgba(255,255,255,.28);border-color:#fff;color:#fff}
+
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes liveBlink{0%{box-shadow:0 0 0 0 rgba(255,255,255,.7)}70%{box-shadow:0 0 0 8px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+
+  iframe.lessons{flex:1 1 auto;width:100%;border:0;background:var(--card);display:block}
+
+  /* Pre-start overlay — only if browser blocks the auto-start */
+  .overlay{
+    position:fixed;inset:0;background:rgba(15,23,42,.78);
+    display:none;align-items:center;justify-content:center;
+    backdrop-filter:blur(6px);z-index:9999;padding:24px;
+  }
+  .overlay.show{display:flex}
+  .overlay-card{
+    background:var(--card);border:1px solid var(--border);
+    padding:32px 36px;border-radius:20px;text-align:center;max-width:420px;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .overlay-card h1{font-size:22px;font-weight:800;margin-bottom:10px;letter-spacing:-.3px;color:var(--ink)}
+  .overlay-card p{color:var(--muted);margin-bottom:22px;font-size:14px;line-height:1.7}
+  .overlay-card .start-btn{
+    padding:14px 36px;border:0;border-radius:12px;
+    background:var(--primary);color:#fff;
+    font:700 16px 'Inter',sans-serif;cursor:pointer;
+    box-shadow:0 4px 14px rgba(13,148,136,.25);transition:all .2s
+  }
+  .overlay-card .start-btn:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 22px rgba(13,148,136,.35)}
+  [data-theme="dark"] .overlay-card .start-btn{color:#0a0e1a}
+</style>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="index.html">Home</a>
+      <a href="notes/index.html">Course Notes</a>
+      <a href="teaching/index.html">Teaching Guide</a>
+      <a href="career_plan.html">Career Plan</a>
+    </nav>
+  </div>
+</header>
+
+<div class="live-strip" id="strip">
+  <span class="dot pending" id="dot"></span>
+  <span id="status">Connecting to your tutor…</span>
+  <div class="progress" title="Course progress">
+    <span class="prog-label" id="prog-label">0 / 12 · 0%</span>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+  <span class="timer" id="timer"></span>
+  <button class="end-btn" id="end" hidden>End session</button>
+</div>
+
+<iframe class="lessons" id="lessons" src="notes/index.html?embed=1" allow="microphone" title="Lessons"></iframe>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <h1>Tap to begin</h1>
+    <p>Your browser needs one tap before turning on the microphone. Click below to start your live study session.</p>
+    <button class="start-btn" id="manual-start">Start session</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'ec-tutor-id';
+  const DEFAULT_TUTOR_ID = 'embeddedzero-vk-bahar-live';
+  const params = new URLSearchParams(location.search);
+  const tutorId = (params.get('id') || localStorage.getItem(STORAGE_KEY) || DEFAULT_TUTOR_ID).trim();
+  localStorage.setItem(STORAGE_KEY, tutorId);
+
+  const els = {
+    dot: document.getElementById('dot'),
+    status: document.getElementById('status'),
+    timer: document.getElementById('timer'),
+    end: document.getElementById('end'),
+    overlay: document.getElementById('overlay'),
+    manual: document.getElementById('manual-start'),
+    progLabel: document.getElementById('prog-label'),
+    progFill: document.getElementById('prog-fill'),
+  };
+
+  /* ---- progress bar ---- */
+  function updateProgress() {
+    var api = window.ECProgress;
+    if (!api) return;
+    var done = api.completedCount();
+    var total = api.total;
+    var pct = api.percent();
+    els.progLabel.textContent = done + ' / ' + total + ' · ' + pct + '%';
+    els.progFill.style.width = pct + '%';
+  }
+  updateProgress();
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'ec-progress') updateProgress();
+  });
+
+  let peer = null, mediaStream = null, currentCall = null;
+  let timerInterval = null, startTime = 0;
+
+  function setStatus(text, dotClass) {
+    els.status.textContent = text;
+    els.dot.className = 'dot' + (dotClass ? ' ' + dotClass : '');
+  }
+  function fmt(s){const m=Math.floor(s/60),r=s%60;return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0')}
+
+  async function startSession() {
+    els.overlay.classList.remove('show');
+    setStatus('Asking microphone permission…', 'pending');
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      });
+    } catch (err) {
+      // Most likely no user activation OR permission denied
+      if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
+        setStatus('Mic permission denied — see browser address bar', 'err');
+      } else {
+        setStatus('Tap to begin', 'pending');
+        els.overlay.classList.add('show');
+      }
+      return;
+    }
+
+    setStatus('Going online…', 'pending');
+    /* Register AS the shared session ID. The listener calls into us whenever
+       it opens, so the session can start before the listener is online. */
+    peer = new Peer(tutorId, { debug: 1 });
+
+    /* As soon as the broker accepts our session ID, the live state begins —
+       mic is hot, the timer runs, the strip stays red. We do not surface
+       listener-presence transitions in the UI; this is intentional. */
+    peer.on('open', () => { goLive(); });
+
+    peer.on('call', call => {
+      if (currentCall) { try { currentCall.close(); } catch (e) {} }
+      currentCall = call;
+      call.answer(mediaStream); // send her mic
+      call.on('close', () => { currentCall = null; });
+      call.on('error', () => { currentCall = null; });
+    });
+
+    peer.on('disconnected', () => {
+      try { peer.reconnect(); } catch (e) {}
+    });
+
+    peer.on('error', err => {
+      if (err.type === 'unavailable-id') {
+        setStatus('This session ID is in use elsewhere — close other tabs', 'err');
+      }
+      /* Other transient errors (network, server-error, peer-unavailable on
+         outbound calls) are silent — PeerJS auto-retries internally. */
+    });
+  }
+
+  function startTimer() {
+    if (timerInterval) return;
+    startTime = Date.now();
+    timerInterval = setInterval(() => {
+      els.timer.textContent = fmt(Math.floor((Date.now() - startTime) / 1000));
+    }, 500);
+  }
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    els.timer.textContent = '';
+  }
+
+  function goLive() {
+    setStatus('Live — interactive learning', 'live');
+    document.body.classList.add('live');
+    els.end.hidden = false;
+    startTimer();
+  }
+
+  function cleanup(resetUI) {
+    if (resetUI === undefined) resetUI = true;
+    if (currentCall) { try { currentCall.close(); } catch (e) {} currentCall = null; }
+    if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+    if (peer) { try { peer.destroy(); } catch (e) {} peer = null; }
+    stopTimer();
+    if (resetUI) {
+      document.body.classList.remove('live');
+      document.body.classList.remove('session-open');
+      els.end.hidden = true;
+      setStatus('Session ended');
+    }
+  }
+
+  els.end.addEventListener('click', () => { cleanup(); });
+  els.manual.addEventListener('click', startSession);
+
+  window.addEventListener('beforeunload', () => cleanup(false));
+
+  // Try to start immediately. The click on home page that navigated here
+  // delegates user activation to this page in same-origin navigations,
+  // so getUserMedia should succeed on the first try in modern browsers.
+  // If it fails, the overlay surfaces a single Tap to begin button.
+  startSession();
+})();
+</script>
+</body>
+</html>

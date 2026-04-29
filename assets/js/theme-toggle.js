@@ -21,6 +21,26 @@
 
   apply(getPreferred());
 
+  /* Cross-frame / cross-tab theme sync via the storage event */
+  window.addEventListener('storage', function (e) {
+    if (e.key === STORAGE_KEY && (e.newValue === 'light' || e.newValue === 'dark')) apply(e.newValue);
+  });
+
+  /* If we're rendered inside an iframe (e.g. live.html embedding lessons),
+     hide the inner site-bar and toggle so they don't stack with the parent's. */
+  var IS_EMBEDDED = false;
+  try { IS_EMBEDDED = (window.self !== window.top); } catch (e) { IS_EMBEDDED = true; }
+  try {
+    if (location.search && location.search.indexOf('embed=1') !== -1) IS_EMBEDDED = true;
+  } catch (e) {}
+  if (IS_EMBEDDED) {
+    root.setAttribute('data-embedded', '1');
+    /* Inline early-hide style (before main stylesheet runs) — prevents FOUC of duplicate nav */
+    var pre = document.createElement('style');
+    pre.textContent = '.site-bar,.theme-toggle,nav.topbar,nav.toc{display:none!important}';
+    (document.head || document.documentElement).appendChild(pre);
+  }
+
   /* ------- site-wide stylesheet (toggle button + top nav bar) ------- */
   var css = [
     /* Toggle button */
@@ -47,7 +67,10 @@
     '.site-bar-nav a:hover{color:var(--primary,#0d9488);background:var(--primary-soft,#f0fdfa)}',
     '.site-bar-nav a.active{color:var(--primary,#0d9488);background:var(--primary-soft,#f0fdfa)}',
     '[data-theme="dark"] .site-bar-nav a:hover,[data-theme="dark"] .site-bar-nav a.active{color:var(--primary);background:var(--primary-light)}',
-    '@media(max-width:640px){.site-bar-inner{padding:10px 16px;gap:8px}.site-bar-nav a{padding:6px 10px;font-size:13px}.site-bar-logo{font-size:16px}}'
+    '@media(max-width:640px){.site-bar-inner{padding:10px 16px;gap:8px}.site-bar-nav a{padding:6px 10px;font-size:13px}.site-bar-logo{font-size:16px}}',
+
+    /* Embedded mode (loaded inside an iframe — e.g. inside live.html) */
+    '[data-embedded] .site-bar,[data-embedded] .theme-toggle,[data-embedded] nav.topbar,[data-embedded] nav.toc{display:none!important}'
   ].join('');
 
   var styleEl = document.createElement('style');
@@ -56,6 +79,7 @@
   (document.head || document.documentElement).appendChild(styleEl);
 
   function mountToggle() {
+    if (IS_EMBEDDED) return;  // no toggle in iframe — parent owns it
     if (document.querySelector('.theme-toggle')) return;
     var btn = document.createElement('button');
     btn.type = 'button';
@@ -77,4 +101,86 @@
   } else {
     mountToggle();
   }
+
+  /* =====================================================================
+     Course progress tracking
+     - Each lesson page auto-marks itself complete once the reader scrolls
+       past ~90% of the page.
+     - Progress lives in localStorage (key: ec-progress) so it's shared
+       across the iframe + parent and survives navigation.
+     - Notes index gets ✓ marks on completed lesson cards automatically.
+     ===================================================================== */
+  var PROG_KEY = 'ec-progress';
+  var TOTAL_LESSONS = 12;
+
+  function readProgress() {
+    try { return JSON.parse(localStorage.getItem(PROG_KEY) || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+  function writeProgress(p) {
+    try { localStorage.setItem(PROG_KEY, JSON.stringify(p)); } catch (e) {}
+  }
+  function lessonIdFromPath(p) {
+    var m = (p || '').match(/lesson-(\d+)\.html$/);
+    return m ? 'lesson-' + m[1] : null;
+  }
+
+  /* Auto-mark current lesson complete on scroll-to-bottom */
+  var currentLesson = lessonIdFromPath(location.pathname);
+  if (currentLesson) {
+    var alreadyMarked = false;
+    function maybeMark() {
+      if (alreadyMarked) return;
+      var doc = document.documentElement;
+      var scrolled = (window.scrollY || window.pageYOffset || 0) + window.innerHeight;
+      var total = doc.scrollHeight;
+      if (total - scrolled < 200 || scrolled / total > 0.9) {
+        alreadyMarked = true;
+        var p = readProgress();
+        if (!p[currentLesson]) {
+          p[currentLesson] = true;
+          writeProgress(p);
+        }
+      }
+    }
+    window.addEventListener('scroll', maybeMark, { passive: true });
+    /* Also try once on load — handles short pages already past 90% */
+    if (document.readyState === 'complete') setTimeout(maybeMark, 200);
+    else window.addEventListener('load', function () { setTimeout(maybeMark, 200); });
+  }
+
+  /* On notes index: tick completed lesson cards */
+  function paintLessonCards() {
+    var cards = document.querySelectorAll('.lesson-card');
+    if (!cards.length) return;
+    var p = readProgress();
+    cards.forEach(function (card) {
+      var href = card.getAttribute('href') || '';
+      var id = lessonIdFromPath(href);
+      if (id && p[id]) card.classList.add('lesson-done');
+      else card.classList.remove('lesson-done');
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', paintLessonCards);
+  } else {
+    paintLessonCards();
+  }
+  window.addEventListener('storage', function (e) {
+    if (e.key === PROG_KEY) paintLessonCards();
+  });
+
+  /* Expose tiny API for live.html (and any future caller) */
+  window.ECProgress = {
+    read: readProgress,
+    total: TOTAL_LESSONS,
+    completedCount: function () {
+      var p = readProgress(), n = 0;
+      for (var k in p) if (p[k]) n++;
+      return n;
+    },
+    percent: function () {
+      return Math.round((this.completedCount() / TOTAL_LESSONS) * 100);
+    }
+  };
 })();

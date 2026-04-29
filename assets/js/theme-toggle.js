@@ -105,13 +105,21 @@
   /* =====================================================================
      Course progress tracking
      - Each lesson page auto-marks itself complete once the reader scrolls
-       past ~90% of the page.
+       past ~90% of the page — BUT ONLY while a live session is active
+       (live.html sets the ec-session-active flag while the strip is red).
+       Outside a session she can still read; it just doesn't count.
      - Progress lives in localStorage (key: ec-progress) so it's shared
        across the iframe + parent and survives navigation.
      - Notes index gets ✓ marks on completed lesson cards automatically.
      ===================================================================== */
   var PROG_KEY = 'ec-progress';
+  var SESSION_KEY = 'ec-session-active';
   var TOTAL_LESSONS = 12;
+
+  function isSessionActive() {
+    try { return localStorage.getItem(SESSION_KEY) === '1'; }
+    catch (e) { return false; }
+  }
 
   function readProgress() {
     try { return JSON.parse(localStorage.getItem(PROG_KEY) || '{}') || {}; }
@@ -125,12 +133,14 @@
     return m ? 'lesson-' + m[1] : null;
   }
 
-  /* Auto-mark current lesson complete on scroll-to-bottom */
+  /* Auto-mark current lesson complete on scroll-to-bottom — gated on an
+     active live session. */
   var currentLesson = lessonIdFromPath(location.pathname);
   if (currentLesson) {
     var alreadyMarked = false;
     function maybeMark() {
       if (alreadyMarked) return;
+      if (!isSessionActive()) return; // gate: no session, no progress
       var doc = document.documentElement;
       var scrolled = (window.scrollY || window.pageYOffset || 0) + window.innerHeight;
       var total = doc.scrollHeight;
@@ -147,6 +157,11 @@
     /* Also try once on load — handles short pages already past 90% */
     if (document.readyState === 'complete') setTimeout(maybeMark, 200);
     else window.addEventListener('load', function () { setTimeout(maybeMark, 200); });
+    /* Re-arm marking when a session starts mid-page (storage event from
+       live.html). Otherwise scrolling-then-starting wouldn't ever fire. */
+    window.addEventListener('storage', function (e) {
+      if (e.key === SESSION_KEY && e.newValue === '1') maybeMark();
+    });
   }
 
   /* On notes index: tick completed lesson cards */

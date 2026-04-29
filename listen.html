@@ -7,7 +7,7 @@
 <meta name="description" content="Tutor's listening page — receives the student's microphone audio.">
 <meta name="robots" content="noindex,nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="assets/js/theme-toggle.js?v=2"></script>
+<script src="assets/js/theme-toggle.js?v=3"></script>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
   :root{
@@ -151,28 +151,46 @@
   }
 
   /* Silent outbound stream — required because peer.call() needs a MediaStream
-     to negotiate, but we don't actually want to send any audio to her. */
-  let silentStream = null;
+     to negotiate. We emit a continuous near-silent tone (not literal silence)
+     so WebRTC's keep-alive sees an active track and doesn't tear the call
+     down for inactivity. */
+  let silentStream = null, silentCtx = null;
   function getSilentStream() {
     if (silentStream) return silentStream;
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const dst = ctx.createMediaStreamDestination();
-    const osc = ctx.createOscillator();
-    osc.frequency.value = 0;
-    osc.connect(dst);
+    silentCtx = new (window.AudioContext || window.webkitAudioContext)();
+    silentCtx.resume().catch(() => {});
+    const dst = silentCtx.createMediaStreamDestination();
+    const osc = silentCtx.createOscillator();
+    osc.frequency.value = 100;
+    const gain = silentCtx.createGain();
+    gain.gain.value = 0.00005; // imperceptible but non-zero so samples flow
+    osc.connect(gain);
+    gain.connect(dst);
     osc.start();
     silentStream = dst.stream;
     return silentStream;
   }
 
+  /* Track whether we're "live" — the only state that should suppress retries.
+     A call's peerConnection in 'connected' or 'completed' state is live. */
+  function isCallLive() {
+    if (!currentCall) return false;
+    const pc = currentCall.peerConnection;
+    if (!pc) return false;
+    const s = pc.iceConnectionState;
+    return s === 'connected' || s === 'completed';
+  }
+
   let retryTimeout = null;
-  function scheduleRetry() {
+  function scheduleRetry(delayMs) {
     if (retryTimeout) clearTimeout(retryTimeout);
-    retryTimeout = setTimeout(() => { tryCall(); }, 5000);
+    if (isCallLive()) return; // already connected — don't displace it
+    retryTimeout = setTimeout(() => { tryCall(); }, delayMs || 8000);
   }
 
   function tryCall() {
     if (!peer || peer.destroyed) return;
+    if (isCallLive()) return; // guard against overlapping calls
     setStatus('Calling her session…', 'pending');
     let call;
     try {
@@ -195,11 +213,11 @@
       startMeter(remoteStream);
     });
     call.on('close', () => {
-      setStatus('Disconnected — reconnecting…', 'pending');
-      els.hint.textContent = 'She may have ended the session, or the connection dropped. Trying again.';
       els.hangup.classList.add('hidden');
       stopMeter();
       currentCall = null;
+      setStatus('Reconnecting…', 'pending');
+      els.hint.textContent = 'Connection dropped — retrying.';
       scheduleRetry();
     });
     call.on('error', () => {
@@ -231,6 +249,11 @@
     });
 
     peer.on('error', err => {
+      /* CRITICAL: ignore broker glitches if we already have a live call — a
+         spurious peer-unavailable signal must NOT spawn a duplicate call,
+         since that would displace the active connection on her side. */
+      if (isCallLive()) return;
+
       if (err.type === 'peer-unavailable') {
         setStatus('She isn\'t in a session yet — retrying…', 'pending');
         els.hint.innerHTML = 'When she clicks <strong>Start Live Learning</strong> on the home page, this tab will pick up her audio automatically.';

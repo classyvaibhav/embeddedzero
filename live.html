@@ -7,7 +7,7 @@
 <meta name="description" content="Live study session — read aloud while your tutor listens.">
 <meta name="robots" content="noindex,nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<script src="assets/js/theme-toggle.js?v=2"></script>
+<script src="assets/js/theme-toggle.js?v=3"></script>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
   :root{
@@ -151,6 +151,14 @@
     progFill: document.getElementById('prog-fill'),
   };
 
+  const SESSION_KEY = 'ec-session-active';
+  function setSessionActive(on) {
+    try {
+      if (on) localStorage.setItem(SESSION_KEY, '1');
+      else localStorage.removeItem(SESSION_KEY);
+    } catch (e) {}
+  }
+
   /* ---- progress bar ---- */
   function updateProgress() {
     var api = window.ECProgress;
@@ -168,6 +176,7 @@
 
   let peer = null, mediaStream = null, currentCall = null;
   let timerInterval = null, startTime = 0;
+  let sessionStarting = false;
 
   function setStatus(text, dotClass) {
     els.status.textContent = text;
@@ -175,7 +184,14 @@
   }
   function fmt(s){const m=Math.floor(s/60),r=s%60;return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0')}
 
+  function isSessionActive() {
+    try { return localStorage.getItem(SESSION_KEY) === '1'; }
+    catch (e) { return false; }
+  }
+
   async function startSession() {
+    if (sessionStarting || isSessionActive()) return;
+    sessionStarting = true;
     els.overlay.classList.remove('show');
     setStatus('Asking microphone permission…', 'pending');
     try {
@@ -183,6 +199,7 @@
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
       });
     } catch (err) {
+      sessionStarting = false;
       // Most likely no user activation OR permission denied
       if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
         setStatus('Mic permission denied — see browser address bar', 'err');
@@ -193,18 +210,56 @@
       return;
     }
 
+    /* Resume path: if the peer is still alive (this is a re-start after End
+       session), splice the new mic track into any existing live call so audio
+       resumes seamlessly without re-registering with the broker. */
+    if (peer && !peer.destroyed) {
+      if (currentCall && currentCall.peerConnection) {
+        const newTrack = mediaStream.getAudioTracks()[0];
+        const audioSender = currentCall.peerConnection.getSenders()
+          .find(s => !s.track || (s.track && s.track.kind === 'audio'));
+        if (audioSender && newTrack) {
+          try { await audioSender.replaceTrack(newTrack); }
+          catch (e) {
+            /* If replaceTrack fails, drop the call; the listener will
+               reconnect through its own retry. */
+            try { currentCall.close(); } catch (_) {}
+            currentCall = null;
+          }
+        }
+      }
+      sessionStarting = false;
+      goLive();
+      return;
+    }
+
+    /* First-start path: create the peer and register with the broker. */
     setStatus('Going online…', 'pending');
-    /* Register AS the shared session ID. The listener calls into us whenever
-       it opens, so the session can start before the listener is online. */
     peer = new Peer(tutorId, { debug: 1 });
 
     /* As soon as the broker accepts our session ID, the live state begins —
        mic is hot, the timer runs, the strip stays red. We do not surface
        listener-presence transitions in the UI; this is intentional. */
-    peer.on('open', () => { goLive(); });
+    peer.on('open', () => {
+      sessionStarting = false;
+      goLive();
+    });
 
     peer.on('call', call => {
-      if (currentCall) { try { currentCall.close(); } catch (e) {} }
+      /* No mic = between sessions — reject the call. */
+      if (!mediaStream) { try { call.close(); } catch (e) {} return; }
+      /* If we already have a live call, ignore the new inbound — it's almost
+         always a spurious retry from the listener's side, and closing the
+         existing call to answer it would cause a momentary audio break. */
+      if (currentCall) {
+        const pc = currentCall.peerConnection;
+        const live = pc && (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed');
+        if (live) {
+          try { call.close(); } catch (e) {}
+          return;
+        }
+        try { currentCall.close(); } catch (e) {}
+      }
       currentCall = call;
       call.answer(mediaStream); // send her mic
       call.on('close', () => { currentCall = null; });
@@ -216,11 +271,11 @@
     });
 
     peer.on('error', err => {
+      sessionStarting = false;
       if (err.type === 'unavailable-id') {
-        setStatus('This session ID is in use elsewhere — close other tabs', 'err');
+        setStatus('Session ID is in use elsewhere — close other tabs', 'err');
       }
-      /* Other transient errors (network, server-error, peer-unavailable on
-         outbound calls) are silent — PeerJS auto-retries internally. */
+      /* Other transient errors are silent — PeerJS auto-retries internally. */
     });
   }
 
@@ -240,27 +295,72 @@
     setStatus('Live — interactive learning', 'live');
     document.body.classList.add('live');
     els.end.hidden = false;
+    setSessionActive(true);
     startTimer();
   }
 
-  function cleanup(resetUI) {
-    if (resetUI === undefined) resetUI = true;
+  /* End session WITHOUT destroying the peer. The mic is released so the
+     browser indicator goes away, but the peer registration stays — that way
+     resume is instant and the broker never sees an "unavailable-id" race. */
+  function endSession() {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(t => t.stop());
+      mediaStream = null;
+    }
+    /* Mute outbound on any active call — listener stays connected but hears silence */
+    if (currentCall && currentCall.peerConnection) {
+      currentCall.peerConnection.getSenders().forEach(s => {
+        if (s.track && s.track.kind === 'audio') {
+          try { s.replaceTrack(null); } catch (e) {}
+        }
+      });
+    }
+    stopTimer();
+    setSessionActive(false);
+    document.body.classList.remove('live');
+    document.body.classList.remove('session-open');
+    els.end.hidden = true;
+    setStatus('Session ended');
+  }
+
+  /* Hard tear-down on page unload only. */
+  function fullCleanup() {
     if (currentCall) { try { currentCall.close(); } catch (e) {} currentCall = null; }
     if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
     if (peer) { try { peer.destroy(); } catch (e) {} peer = null; }
     stopTimer();
-    if (resetUI) {
-      document.body.classList.remove('live');
-      document.body.classList.remove('session-open');
-      els.end.hidden = true;
-      setStatus('Session ended');
-    }
+    setSessionActive(false);
   }
 
-  els.end.addEventListener('click', () => { cleanup(); });
+  els.end.addEventListener('click', endSession);
   els.manual.addEventListener('click', startSession);
 
-  window.addEventListener('beforeunload', () => cleanup(false));
+  window.addEventListener('beforeunload', fullCleanup);
+
+  /* Auto-restart on iframe interaction: after End session, any click or
+     scroll inside the lessons iframe re-triggers startSession. Same-origin
+     iframe lets us attach handlers directly to its contentDocument; we
+     re-bind on every iframe load (lesson navigation creates a new doc). */
+  function bindAutoRestart() {
+    const iframe = document.getElementById('lessons');
+    if (!iframe) return;
+    function attach() {
+      let doc;
+      try { doc = iframe.contentDocument; } catch (e) { return; }
+      if (!doc) return;
+      const handler = () => {
+        if (!isSessionActive() && !sessionStarting) startSession();
+      };
+      doc.addEventListener('click', handler, true);
+      doc.addEventListener('scroll', handler, { capture: true, passive: true });
+    }
+    iframe.addEventListener('load', attach);
+    /* If the iframe is already loaded by the time this runs, attach now too */
+    try {
+      if (iframe.contentDocument && iframe.contentDocument.readyState !== 'loading') attach();
+    } catch (e) {}
+  }
+  bindAutoRestart();
 
   // Try to start immediately. The click on home page that navigated here
   // delegates user activation to this page in same-origin navigations,

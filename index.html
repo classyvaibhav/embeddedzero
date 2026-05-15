@@ -48,16 +48,22 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
 
 /* ── HERO ── */
-.hero{position:relative;padding:80px 32px 90px;text-align:center;overflow:hidden}
+.hero{position:relative;padding:80px 32px 60px;overflow:hidden}
 .hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(13,148,136,.06) 0%,transparent 70%);pointer-events:none}
 [data-theme="dark"] .hero::before{background:radial-gradient(circle,rgba(45,212,191,.10) 0%,transparent 70%)}
+.hero-inner{display:flex;align-items:center;gap:48px;max-width:1100px;margin:0 auto}
+.hero-text{flex:1;text-align:left}
+.hero-visual{flex:0 0 420px;position:relative}
+.hero-visual img{width:100%;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.18);border:1px solid var(--border)}
+[data-theme="dark"] .hero-visual img{box-shadow:0 20px 60px rgba(0,0,0,.5);border-color:var(--border)}
+.hero-visual::after{content:'';position:absolute;inset:-8px;border-radius:22px;background:linear-gradient(135deg,rgba(13,148,136,.15),rgba(6,182,212,.1));z-index:-1;filter:blur(20px)}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--primary-soft);border:1px solid var(--teal-mint);padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;color:var(--primary-dark);margin-bottom:28px}
 .hero-badge .dot{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
-.hero h1{font-size:clamp(36px,5.5vw,62px);font-weight:900;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px;color:var(--ink)}
+.hero h1{font-size:clamp(32px,4.5vw,54px);font-weight:900;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px;color:var(--ink)}
 .hero h1 .accent{background:linear-gradient(135deg,var(--primary),var(--accent-strong));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:18px;color:var(--muted);max-width:620px;margin:0 auto 40px;line-height:1.8}
-.hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.hero-sub{font-size:17px;color:var(--muted);max-width:520px;margin:0 0 32px;line-height:1.8}
+.hero-buttons{display:flex;gap:14px;flex-wrap:wrap}
 .btn{padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;transition:all .3s;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
 .btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(13,148,136,.25)}
 .btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 8px 25px rgba(13,148,136,.35)}
@@ -137,6 +143,22 @@ section{padding:90px 0;position:relative;z-index:1}
 .tagline-section p{color:var(--muted);font-size:17px;max-width:600px;margin:0 auto}
 .tagline-section .accent{color:var(--primary)}
 
+/* ── INSTRUCTOR ── */
+.instructor{background:var(--card);border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft)}
+.instr-inner{display:flex;align-items:center;gap:40px;max-width:900px;margin:0 auto}
+.instr-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:42px;flex-shrink:0;box-shadow:0 8px 24px rgba(13,148,136,.2)}
+.instr-info h3{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.instr-info .role{font-size:14px;color:var(--primary);font-weight:600;margin-bottom:10px}
+.instr-info p{color:var(--muted);font-size:15px;line-height:1.7}
+.instr-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.instr-tags span{background:var(--primary-soft);color:var(--primary-dark);padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--teal-mint)}
+
+/* ── TOOLS ── */
+.tools-strip{padding:60px 32px;text-align:center;position:relative;z-index:1}
+.tools-strip h3{font-size:14px;text-transform:uppercase;letter-spacing:2px;color:var(--muted-2);font-weight:700;margin-bottom:24px}
+.tools-logos{display:flex;justify-content:center;align-items:center;gap:36px;flex-wrap:wrap;opacity:.7}
+.tools-logos span{font-size:15px;font-weight:700;color:var(--muted);letter-spacing:.5px}
+
 /* ── FEATURES ── */
 .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
 .feat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:30px;transition:all .3s;text-align:center}
@@ -161,6 +183,14 @@ footer a:hover{color:var(--footer-link-h)}
 footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#06b6d4);margin:20px auto;border-radius:2px}
 
 /* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero-inner{flex-direction:column;text-align:center}
+  .hero-text{text-align:center}
+  .hero-visual{flex:0 0 auto;max-width:360px}
+  .hero-sub{margin:0 auto 32px}
+  .hero-buttons{justify-content:center}
+  .instr-inner{flex-direction:column;text-align:center}
+}
 @media(max-width:768px){
   .nav-links{display:none}
   .stats-grid{grid-template-columns:repeat(2,1fr);gap:16px}
@@ -180,7 +210,7 @@ footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#
     <a href="index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
     <nav class="site-bar-nav">
       <a href="index.html" class="active">Home</a>
-      <a href="live.html">Course Notes</a>
+      <a href="notes/index.html">Course Notes</a>
       <a href="teaching/index.html">Teaching Guide</a>
       <a href="career_plan.html">Career Plan</a>
     </nav>
@@ -189,12 +219,19 @@ footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#
 
 <!-- HERO -->
 <section class="hero" id="hero">
-  <div class="hero-badge"><span class="dot"></span> Free &amp; Open Source Course</div>
-  <h1>Smartest way to master<br><span class="accent">Embedded Systems.</span></h1>
-  <p class="hero-sub">A practical, hands-on curriculum covering basic electronics, Arduino, ESP32, sensors, and real projects. Built for entry-level embedded systems roles in India.</p>
-  <div class="hero-buttons">
-    <a href="live.html?v=4" class="btn btn-primary" id="hero-start-btn">Start Live Learning →</a>
-    <a href="live.html" class="btn btn-outline" id="hero-explore-btn">Browse Lessons</a>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge"><span class="dot"></span> Built by an Embedded R&amp;D Engineer</div>
+      <h1>Learn <span class="accent">Embedded Systems</span> the hands-on way.</h1>
+      <p class="hero-sub">From Ohm's law to ESP32 IoT projects — 12 structured lessons covering electronics, microcontrollers, sensors &amp; communication protocols. Built for aspiring embedded engineers.</p>
+      <div class="hero-buttons">
+        <a href="notes/index.html" class="btn btn-primary" id="hero-start-btn">Browse Lessons →</a>
+        <a href="#curriculum" class="btn btn-outline" id="hero-explore-btn">See Curriculum</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="assets/images/hero-embedded.png" alt="ESP32 microcontroller on breadboard with sensors and LEDs" loading="eager">
+    </div>
   </div>
 </section>
 
@@ -202,9 +239,9 @@ footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#
 <div class="stats">
   <div class="stats-grid">
     <div class="stat"><div class="num" data-target="12">0</div><div class="label">Lessons</div></div>
-    <div class="stat"><div class="num" data-target="10">0</div><div class="label">Weeks</div></div>
+    <div class="stat"><div class="num" data-target="4">0</div><div class="label">Course Parts</div></div>
     <div class="stat"><div class="num" data-target="21">0</div><div class="label">Hands-on Labs</div></div>
-    <div class="stat"><div class="num" data-target="35">0</div><div class="label">Topic Cards</div></div>
+    <div class="stat"><div class="num" data-target="0">0</div><div class="label">Cost (₹)</div></div>
   </div>
 </div>
 
@@ -247,8 +284,8 @@ footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#
 
 <!-- TAGLINE -->
 <div class="tagline-section">
-  <h2>Great Engineers Are Built by <span class="accent">Solving.</span></h2>
-  <p>Not by just watching videos — but by designing, debugging, and building real-world embedded projects from scratch.</p>
+  <h2>Real skills come from <span class="accent">building real circuits.</span></h2>
+  <p>Every lesson includes simulator links (Tinkercad &amp; Wokwi) so you can wire circuits and run code in your browser — no hardware purchase required to start.</p>
 </div>
 
 <!-- CURRICULUM -->
@@ -304,29 +341,87 @@ footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#
   </div>
 </section>
 
+<!-- TOOLS STRIP -->
+<div class="tools-strip">
+  <h3>Tools &amp; Platforms You'll Use</h3>
+  <div class="tools-logos">
+    <span>Arduino IDE</span>
+    <span>·</span>
+    <span>ESP32</span>
+    <span>·</span>
+    <span>Tinkercad</span>
+    <span>·</span>
+    <span>Wokwi</span>
+    <span>·</span>
+    <span>KiCad</span>
+    <span>·</span>
+    <span>GitHub</span>
+  </div>
+</div>
+
 <!-- FEATURES -->
 <section id="features">
   <div class="wrap">
     <div class="section-header sr">
-      <span class="section-tag">Built for Results</span>
-      <h2>Why Choose <span class="accent">This Course</span></h2>
-      <p>Not another textbook. A practical system designed to make you industry-ready.</p>
+      <span class="section-tag">What Makes It Different</span>
+      <h2>Why This <span class="accent">Course Works</span></h2>
+      <p>Designed by a working embedded engineer — not an academic syllabus.</p>
     </div>
     <div class="feat-grid sc">
       <div class="feat-card sr" style="--i:0">
         <span class="feat-icon">🔬</span>
-        <h3>Simulator-First</h3>
-        <p>Every lesson links to free Tinkercad or Wokwi circuits. No hardware purchase needed to start learning.</p>
+        <h3>Simulator-First Approach</h3>
+        <p>Every lesson includes direct Tinkercad or Wokwi links. Start building circuits in your browser — zero hardware cost to begin.</p>
       </div>
       <div class="feat-card sr" style="--i:1">
-        <span class="feat-icon">🎯</span>
-        <h3>Industry-Aligned</h3>
-        <p>Curriculum maps to actual embedded trainee job descriptions from Indian EMS and product companies.</p>
+        <span class="feat-icon">⚡</span>
+        <h3>Physics-to-Practice Bridge</h3>
+        <p>Designed for science graduates — connects semiconductor theory and electromagnetism knowledge to practical circuit design and coding.</p>
       </div>
       <div class="feat-card sr" style="--i:2">
-        <span class="feat-icon">🚀</span>
-        <h3>Portfolio-Ready</h3>
-        <p>Capstone project with full BOM, code, and documentation — ready to showcase on your GitHub profile.</p>
+        <span class="feat-icon">🛠️</span>
+        <h3>Real Project Capstone</h3>
+        <p>Build an ESP32 sensor hub with OLED display, full BOM, and documented code — a portfolio project you can demo in interviews.</p>
+      </div>
+      <div class="feat-card sr" style="--i:3">
+        <span class="feat-icon">📋</span>
+        <h3>Interview-Ready Skills</h3>
+        <p>Covers GPIO, ADC, PWM, UART, I2C, SPI, and interrupts — the exact topics asked in embedded systems interviews.</p>
+      </div>
+      <div class="feat-card sr" style="--i:4">
+        <span class="feat-icon">📐</span>
+        <h3>Hardware + Software Balance</h3>
+        <p>From reading schematics and datasheets to writing non-blocking firmware — the full skill mix that companies actually hire for.</p>
+      </div>
+      <div class="feat-card sr" style="--i:5">
+        <span class="feat-icon">🎓</span>
+        <h3>Teaching Guide Included</h3>
+        <p>Instructor handbook with 35 topic cards, session scripts, common-mistake callouts, and check-questions — for mentors and self-study.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INSTRUCTOR -->
+<section class="instructor" id="instructor">
+  <div class="wrap">
+    <div class="section-header sr">
+      <span class="section-tag">About the Author</span>
+      <h2>Built by an <span class="accent">Industry Engineer</span></h2>
+    </div>
+    <div class="instr-inner sr">
+      <div class="instr-avatar">👨‍💻</div>
+      <div class="instr-info">
+        <h3>Vaibhav Kawade</h3>
+        <div class="role">Embedded R&amp;D Engineer · Omnidya Technologies</div>
+        <p>Working in embedded systems R&amp;D — designing hardware, writing firmware, and building IoT products. This course distills real industry knowledge into a practical, entry-level curriculum that covers everything a new embedded engineer needs to know.</p>
+        <div class="instr-tags">
+          <span>Embedded C</span>
+          <span>ESP32 / STM32</span>
+          <span>PCB Design</span>
+          <span>IoT Systems</span>
+          <span>Sensor Integration</span>
+        </div>
       </div>
     </div>
   </div>
@@ -335,7 +430,8 @@ footer .divider{width:60px;height:2px;background:linear-gradient(90deg,#0d9488,#
 <!-- FOOTER -->
 <footer>
   <div class="logo">⚡ <span>Embedded</span>Zero</div>
-  <p>Built and maintained by <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> · Free for everyone · Contributions welcome</p>
+  <p>Built and maintained by <a href="https://github.com/classyvaibhav" target="_blank">Vaibhav Kawade</a> · Embedded R&amp;D @ Omnidya Tech</p>
+  <p style="margin-top:4px">Free &amp; open source · <a href="https://github.com/classyvaibhav/embeddedzero" target="_blank">View on GitHub</a></p>
   <div class="divider"></div>
 </footer>
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Your First Arduino — Blink! — EmbeddedZero</title>
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; All Quizzes</a> &nbsp;/&nbsp; Lesson 6</div>
+    <span class="lesson-tag">Lesson 6 Quiz</span>
+    <h1>Your First Arduino &mdash; Blink!</h1>
+    <p class="subtitle">8 questions on Arduino IDE, sketch structure, digitalRead/Write, and basic I/O.</p>
+  </div>
+</header>
+
+<section class="lesson">
+  <div class="wrap">
+    <div id="quiz-root"></div>
+
+    <div class="lesson-nav" style="margin-top:32px">
+      <a class="prev" href="lesson-05-quiz.html">
+        <span class="direction">← Previous Quiz</span>
+        <span class="title">Embedded Systems</span>
+      </a>
+      <a class="next" href="index.html">
+        <span class="direction">All Quizzes →</span>
+        <span class="title">Quiz Hub</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Quiz 6 of 6 &middot; <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+QuizEngine.init('quiz-root', {
+  id: 'lesson-06-arduino-blink',
+  title: "Your First Arduino — Blink!",
+  questions: [
+    {
+      question: "In an Arduino sketch, which function runs only once when the board is powered on or reset?",
+      options: ["loop()", "setup()", "main()", "init()"],
+      correct: 1,
+      explanation: "<strong>setup()</strong> runs once at startup. It's where you initialize pins, serial communication, and other one-time configurations. <code>loop()</code> runs repeatedly after setup completes."
+    },
+    {
+      question: "What does <code>pinMode(13, OUTPUT)</code> do?",
+      options: [
+        "Reads the voltage on pin 13",
+        "Sets pin 13 to output mode so it can drive HIGH or LOW",
+        "Connects pin 13 to the serial monitor",
+        "Sets pin 13 to analog input mode"
+      ],
+      correct: 1,
+      explanation: "<code>pinMode(13, OUTPUT)</code> configures digital pin 13 as an <strong>output</strong>, allowing you to use <code>digitalWrite()</code> to set it HIGH (5V) or LOW (0V)."
+    },
+    {
+      question: "What does <code>delay(1000)</code> do?",
+      options: [
+        "Waits for 1 second (1000 milliseconds)",
+        "Waits for 1000 seconds",
+        "Sets the clock speed to 1000 Hz",
+        "Reads a value for 1000 cycles"
+      ],
+      correct: 0,
+      explanation: "<code>delay()</code> pauses the program for the specified number of <strong>milliseconds</strong>. <code>delay(1000)</code> = 1 second. Note: during delay, the MCU can't do anything else — that's why non-blocking code is preferred in real applications."
+    },
+    {
+      question: "The built-in LED on most Arduino boards is connected to which pin?",
+      options: ["Pin 0", "Pin 1", "Pin 13", "Pin A0"],
+      correct: 2,
+      explanation: "Most Arduino boards have a built-in LED on <strong>pin 13</strong>. You can also refer to it using the constant <code>LED_BUILTIN</code>."
+    },
+    {
+      question: "What voltage does <code>digitalWrite(pin, HIGH)</code> output on an Arduino Uno?",
+      options: ["3.3 V", "5 V", "12 V", "1.8 V"],
+      correct: 1,
+      explanation: "The Arduino Uno operates at <strong>5V logic</strong>. HIGH = 5V, LOW = 0V (GND). The ESP32, by contrast, uses 3.3V logic."
+    },
+    {
+      question: "What is the baud rate typically set to for Serial communication in Arduino sketches?",
+      options: ["4800", "9600", "115200", "1000000"],
+      correct: 1,
+      explanation: "The most common default baud rate is <strong>9600</strong>, set with <code>Serial.begin(9600)</code>. The Serial Monitor must be set to the same baud rate to display text correctly. 115200 is also common for faster communication."
+    },
+    {
+      question: "What happens if you call <code>digitalWrite()</code> on a pin that hasn't been set to OUTPUT mode?",
+      options: [
+        "The board crashes",
+        "The pin outputs the voltage correctly anyway",
+        "The pin may not drive properly — it stays in INPUT mode with weak pull-up at best",
+        "An error message appears on the serial monitor"
+      ],
+      correct: 2,
+      explanation: "Without <code>pinMode(pin, OUTPUT)</code>, the pin remains in its default <strong>INPUT mode</strong>. Calling <code>digitalWrite(HIGH)</code> on an input pin only enables the internal pull-up resistor (~20-50 kΩ), which can't drive loads properly."
+    },
+    {
+      question: "How do you upload a sketch to an Arduino board?",
+      options: [
+        "Copy the .ino file to an SD card",
+        "Click the Upload button (→) in the Arduino IDE while the board is connected via USB",
+        "Send it over WiFi using OTA",
+        "Use a JTAG debugger only"
+      ],
+      correct: 1,
+      explanation: "In the Arduino IDE, click the <strong>Upload button (right arrow)</strong> while the board is connected via USB. The IDE compiles the sketch, then flashes it to the board via the USB-serial connection and bootloader."
+    }
+  ]
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — What Is an Embedded System? — EmbeddedZero</title>
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; All Quizzes</a> &nbsp;/&nbsp; Lesson 5</div>
+    <span class="lesson-tag">Lesson 5 Quiz</span>
+    <h1>What Is an Embedded System?</h1>
+    <p class="subtitle">8 questions on microcontrollers vs microprocessors, memory types, boot process, and toolchains.</p>
+  </div>
+</header>
+
+<section class="lesson">
+  <div class="wrap">
+    <div id="quiz-root"></div>
+
+    <div class="lesson-nav" style="margin-top:32px">
+      <a class="prev" href="lesson-04-quiz.html">
+        <span class="direction">← Previous Quiz</span>
+        <span class="title">Op-Amps</span>
+      </a>
+      <a class="next" href="lesson-06-quiz.html">
+        <span class="direction">Next Quiz →</span>
+        <span class="title">Arduino Blink</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Quiz 5 of 6 &middot; <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+QuizEngine.init('quiz-root', {
+  id: 'lesson-05-embedded-systems',
+  title: "What Is an Embedded System?",
+  questions: [
+    {
+      question: "What is the key difference between a microcontroller and a microprocessor?",
+      options: [
+        "Microcontrollers are faster than microprocessors",
+        "Microcontrollers integrate CPU, memory, and peripherals on a single chip",
+        "Microprocessors can only run assembly language",
+        "Microcontrollers require an operating system"
+      ],
+      correct: 1,
+      explanation: "A <strong>microcontroller (MCU)</strong> is a system-on-chip with CPU + RAM + Flash + peripherals (GPIO, ADC, timers) all integrated. A microprocessor needs external memory and peripheral chips."
+    },
+    {
+      question: "Which memory type retains data even when power is turned off?",
+      options: ["RAM (SRAM)", "Flash memory", "Cache", "Registers"],
+      correct: 1,
+      explanation: "<strong>Flash memory</strong> is non-volatile — it retains its contents without power. This is where your program code is stored. RAM, cache, and registers lose their data when power is removed."
+    },
+    {
+      question: "What is an example of an embedded system?",
+      options: [
+        "A desktop PC running Windows",
+        "A washing machine controller",
+        "A cloud web server",
+        "A laptop running Linux"
+      ],
+      correct: 1,
+      explanation: "A <strong>washing machine controller</strong> is a classic embedded system — a dedicated computer designed for a specific task, running a fixed program, with real-time constraints."
+    },
+    {
+      question: "What does GPIO stand for?",
+      options: [
+        "General Purpose Input/Output",
+        "Graphical Processing Input/Output",
+        "Ground Pin Internal Operation",
+        "General Programmatic Interface Output"
+      ],
+      correct: 0,
+      explanation: "<strong>General Purpose Input/Output</strong> — these are the programmable digital pins on a microcontroller that can be configured as inputs (read sensors/buttons) or outputs (drive LEDs/motors)."
+    },
+    {
+      question: "What happens first when a microcontroller is powered on?",
+      options: [
+        "The main() function runs immediately",
+        "The bootloader/reset vector initialises the system, then jumps to user code",
+        "The operating system loads",
+        "All GPIO pins are set to output mode"
+      ],
+      correct: 1,
+      explanation: "On power-up, the MCU starts from the <strong>reset vector</strong>, which points to the bootloader or startup code. This initialises clocks, memory, and stack pointer before jumping to main()."
+    },
+    {
+      question: "An Arduino Uno uses which microcontroller?",
+      options: ["ESP32", "ATmega328P", "STM32F103", "PIC16F877"],
+      correct: 1,
+      explanation: "The Arduino Uno is based on the <strong>ATmega328P</strong> — an 8-bit AVR microcontroller by Microchip (formerly Atmel) running at 16 MHz with 32 KB Flash and 2 KB SRAM."
+    },
+    {
+      question: "What is the purpose of a 'toolchain' in embedded development?",
+      options: [
+        "A set of physical tools for soldering",
+        "Software tools (compiler, linker, debugger) that convert source code to firmware",
+        "A chain of hardware components in a circuit",
+        "A networking protocol for IoT devices"
+      ],
+      correct: 1,
+      explanation: "A <strong>toolchain</strong> includes the compiler (converts C to machine code), linker (combines object files), and debugger. For Arduino, this is handled behind the scenes by the IDE."
+    },
+    {
+      question: "How much RAM does a typical Arduino Uno (ATmega328P) have?",
+      options: ["2 KB", "32 KB", "256 KB", "1 MB"],
+      correct: 0,
+      explanation: "The ATmega328P has only <strong>2 KB of SRAM</strong>. This is why embedded programming requires careful memory management — you can't allocate large arrays or use dynamic memory freely."
+    }
+  ]
+});
+</script>
+</body>
+</html>

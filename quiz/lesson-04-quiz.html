@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Op-Amps — EmbeddedZero</title>
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; All Quizzes</a> &nbsp;/&nbsp; Lesson 4</div>
+    <span class="lesson-tag">Lesson 4 Quiz</span>
+    <h1>Op-Amps &mdash; The Two Golden Rules</h1>
+    <p class="subtitle">8 questions on op-amp configurations, gain calculations, and comparator circuits.</p>
+  </div>
+</header>
+
+<section class="lesson">
+  <div class="wrap">
+    <div id="quiz-root"></div>
+
+    <div class="lesson-nav" style="margin-top:32px">
+      <a class="prev" href="lesson-03-quiz.html">
+        <span class="direction">← Previous Quiz</span>
+        <span class="title">Diodes & Transistors</span>
+      </a>
+      <a class="next" href="lesson-05-quiz.html">
+        <span class="direction">Next Quiz →</span>
+        <span class="title">Embedded Systems</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Quiz 4 of 6 &middot; <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+QuizEngine.init('quiz-root', {
+  id: 'lesson-04-opamps',
+  title: "Op-Amps — The Two Golden Rules",
+  questions: [
+    {
+      question: "What are the two golden rules of an ideal op-amp with negative feedback?",
+      options: [
+        "V+ = V− and no current flows into the inputs",
+        "Gain is always 1 and output impedance is infinite",
+        "Input impedance is zero and output impedance is infinite",
+        "V+ = 0V and V− = 0V always"
+      ],
+      correct: 0,
+      explanation: "The two golden rules: <strong>(1) V+ = V−</strong> (the inputs are at the same voltage), and <strong>(2) No current flows into the inputs</strong> (infinite input impedance). These only apply when negative feedback is present."
+    },
+    {
+      question: "An inverting amplifier has R<sub>f</sub> = 100 kΩ and R<sub>in</sub> = 10 kΩ. What is the voltage gain?",
+      options: ["+10", "−10", "+11", "−11"],
+      correct: 1,
+      explanation: "Gain of an inverting amplifier = −R<sub>f</sub> / R<sub>in</sub> = −100k / 10k = <strong>−10</strong>. The negative sign indicates phase inversion — the output is inverted relative to the input."
+    },
+    {
+      question: "What is the gain of a non-inverting amplifier with R<sub>f</sub> = 9 kΩ and R<sub>g</sub> = 1 kΩ?",
+      options: ["9", "10", "−9", "1"],
+      correct: 1,
+      explanation: "Gain of non-inverting amp = 1 + R<sub>f</sub> / R<sub>g</sub> = 1 + 9k / 1k = <strong>10</strong>. The +1 comes from the voltage follower component of the circuit."
+    },
+    {
+      question: "What is a voltage follower (buffer) and what is its gain?",
+      options: [
+        "An amplifier with gain of 0",
+        "A non-inverting amp with gain of exactly 1 (output = input)",
+        "An inverting amp with gain of −1",
+        "A comparator with hysteresis"
+      ],
+      correct: 1,
+      explanation: "A <strong>voltage follower</strong> (unity-gain buffer) has the output connected directly back to the inverting input. Gain = 1. It's used to isolate a high-impedance source from a low-impedance load."
+    },
+    {
+      question: "When is an op-amp used as a comparator?",
+      options: [
+        "When negative feedback is applied",
+        "When no feedback is used (open-loop)",
+        "When both inputs are grounded",
+        "When the supply voltage is below 3V"
+      ],
+      correct: 1,
+      explanation: "With <strong>no feedback (open-loop)</strong>, the op-amp has extremely high gain. Any tiny difference between V+ and V− drives the output to one supply rail or the other, making it a comparator."
+    },
+    {
+      question: "An op-amp is powered by ±12V rails. What is the maximum peak-to-peak output swing (approximately)?",
+      options: ["12V", "24V", "~22V (slightly less than rail-to-rail)", "Infinite"],
+      correct: 2,
+      explanation: "Most standard op-amps can't swing all the way to the supply rails. With ±12V, the output typically reaches about <strong>±11V, giving ~22V peak-to-peak</strong>. Rail-to-rail op-amps get closer to the supply limits."
+    },
+    {
+      question: "If you need to amplify a sensor signal from 0–100 mV to 0–5V, what gain do you need?",
+      options: ["5", "50", "100", "500"],
+      correct: 1,
+      explanation: "Required gain = V<sub>out(max)</sub> / V<sub>in(max)</sub> = 5V / 0.1V = <strong>50</strong>. You'd use a non-inverting amp with R<sub>f</sub>/R<sub>g</sub> = 49 (e.g., R<sub>f</sub> = 49 kΩ, R<sub>g</sub> = 1 kΩ)."
+    },
+    {
+      question: "Why is a buffer (voltage follower) useful when reading a voltage divider with an ADC?",
+      options: [
+        "It doubles the voltage",
+        "It prevents the ADC's input impedance from loading the divider and changing V<sub>out</sub>",
+        "It converts analog to digital",
+        "It adds filtering to the signal"
+      ],
+      correct: 1,
+      explanation: "The ADC has finite input impedance that acts as a parallel resistance on R2, <strong>loading the divider</strong> and pulling V<sub>out</sub> down. A buffer has near-infinite input impedance and low output impedance, isolating the divider from the ADC."
+    }
+  ]
+});
+</script>
+</body>
+</html>

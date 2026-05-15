@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Diodes, LEDs & Transistor Switches — EmbeddedZero</title>
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; All Quizzes</a> &nbsp;/&nbsp; Lesson 3</div>
+    <span class="lesson-tag">Lesson 3 Quiz</span>
+    <h1>Diodes, LEDs &amp; Transistor Switches</h1>
+    <p class="subtitle">8 questions on diode behaviour, LED circuits, BJT vs MOSFET, and transistor switching applications.</p>
+  </div>
+</header>
+
+<section class="lesson">
+  <div class="wrap">
+    <div id="quiz-root"></div>
+
+    <div class="lesson-nav" style="margin-top:32px">
+      <a class="prev" href="lesson-02-quiz.html">
+        <span class="direction">← Previous Quiz</span>
+        <span class="title">Resistors & Caps</span>
+      </a>
+      <a class="next" href="lesson-04-quiz.html">
+        <span class="direction">Next Quiz →</span>
+        <span class="title">Op-Amps</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Quiz 3 of 6 &middot; <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+QuizEngine.init('quiz-root', {
+  id: 'lesson-03-diodes-transistors',
+  title: "Diodes, LEDs & Transistor Switches",
+  questions: [
+    {
+      question: "What is the typical forward voltage drop of a silicon diode?",
+      options: ["0.3 V", "0.7 V", "1.2 V", "3.3 V"],
+      correct: 1,
+      explanation: "A standard silicon diode has a forward voltage drop of approximately <strong>0.7 V</strong>. Germanium diodes are ~0.3V, and Schottky diodes are ~0.2–0.4V."
+    },
+    {
+      question: "What is the function of a flyback diode placed across a relay coil?",
+      options: [
+        "To increase the relay switching speed",
+        "To protect the driving transistor from voltage spikes when the coil is de-energized",
+        "To reduce power consumption",
+        "To convert AC to DC for the coil"
+      ],
+      correct: 1,
+      explanation: "When a relay coil is de-energized, the collapsing magnetic field creates a large <strong>voltage spike</strong> (back-EMF). The flyback diode provides a path for this current, protecting the transistor."
+    },
+    {
+      question: "An NPN transistor is used as a switch. Where is the load connected?",
+      options: [
+        "Between base and emitter",
+        "Between collector and V<sub>CC</sub> (collector side)",
+        "Between emitter and ground",
+        "Across the base resistor"
+      ],
+      correct: 1,
+      explanation: "In a typical NPN switch configuration, the load is connected between <strong>V<sub>CC</sub> and the collector</strong>. When the base is driven high, the transistor saturates and current flows through the load."
+    },
+    {
+      question: "What key advantage does a MOSFET have over a BJT for switching?",
+      options: [
+        "MOSFETs are cheaper",
+        "MOSFETs are voltage-controlled (virtually zero gate current needed)",
+        "MOSFETs work only with AC",
+        "MOSFETs have lower voltage drops in all cases"
+      ],
+      correct: 1,
+      explanation: "MOSFETs are <strong>voltage-controlled</strong> — the gate draws essentially zero DC current. BJTs are current-controlled and require continuous base current, which wastes power in the drive circuit."
+    },
+    {
+      question: "A Zener diode rated at 5.1V is connected in reverse bias with a 12V supply and a series resistor. What voltage appears across the Zener?",
+      options: ["12 V", "5.1 V", "6.9 V", "0 V"],
+      correct: 1,
+      explanation: "A Zener diode <strong>regulates voltage</strong> at its rated breakdown voltage when reverse-biased. It clamps the voltage across it to <strong>5.1V</strong>, regardless of the supply (as long as current is within limits)."
+    },
+    {
+      question: "What does the 'V<sub>f</sub>' specification on an LED datasheet mean?",
+      options: [
+        "The maximum reverse voltage before breakdown",
+        "The forward voltage drop when the LED is conducting",
+        "The flickering voltage",
+        "The voltage at which the LED changes color"
+      ],
+      correct: 1,
+      explanation: "V<sub>f</sub> is the <strong>forward voltage drop</strong> — the voltage consumed by the LED when it is conducting. Typical values: red ~2V, green ~2.2V, blue/white ~3.0–3.3V."
+    },
+    {
+      question: "To drive a 12V relay from a 3.3V microcontroller GPIO, what is the recommended approach?",
+      options: [
+        "Connect the relay directly to the GPIO pin",
+        "Use a voltage divider",
+        "Use an NPN transistor or N-channel MOSFET as a switch",
+        "Use a capacitor to boost the voltage"
+      ],
+      correct: 2,
+      explanation: "A GPIO can't supply enough voltage or current. Use an <strong>NPN transistor or N-channel MOSFET</strong> as a switch: the GPIO controls the base/gate, and the transistor switches the 12V relay coil on/off."
+    },
+    {
+      question: "Which diode type has the lowest forward voltage drop and fastest switching?",
+      options: ["Standard silicon diode", "Zener diode", "Schottky diode", "Light-emitting diode (LED)"],
+      correct: 2,
+      explanation: "A <strong>Schottky diode</strong> uses a metal-semiconductor junction instead of a P-N junction, giving it a low V<sub>f</sub> (~0.2–0.4V) and very fast switching. Ideal for power supply rectification and protection circuits."
+    }
+  ]
+});
+</script>
+</body>
+</html>

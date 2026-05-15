@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quizzes — EmbeddedZero</title>
+<meta name="description" content="Test your embedded systems knowledge with interactive quizzes covering electronics, Arduino, ESP32, and more.">
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="lesson-tag">Practice & Test</span>
+    <h1>Interactive Quizzes</h1>
+    <p class="subtitle">Test your understanding with MCQ quizzes for each lesson. Get instant feedback, explanations, and track your scores.</p>
+  </div>
+</header>
+
+<nav class="topbar">
+  <div class="wrap">
+    <a class="home-link" href="../notes/index.html">← Back to Lessons</a>
+    <div class="progress"><strong id="total-score">—</strong> quizzes completed</div>
+  </div>
+</nav>
+
+<section class="lesson">
+  <div class="wrap">
+    <h2><span class="icon">📝</span>Choose a Quiz</h2>
+    <p>Each quiz is based on a specific lesson. Complete the lesson first, then test yourself here.</p>
+
+    <div class="quiz-grid" id="quiz-grid">
+
+      <a class="quiz-card" href="lesson-01-quiz.html" id="qc-01">
+        <span class="qc-icon">⚡</span>
+        <h3>Electricity Basics & Ohm's Law</h3>
+        <p class="qc-desc">Voltage, current, resistance, power calculations, and LED resistor sizing.</p>
+        <div class="qc-meta">
+          <span>📖 Lesson 1</span>
+          <span>❓ 8 Questions</span>
+        </div>
+      </a>
+
+      <a class="quiz-card" href="lesson-02-quiz.html" id="qc-02">
+        <span class="qc-icon">🔧</span>
+        <h3>Resistors, Capacitors & Voltage Dividers</h3>
+        <p class="qc-desc">Color codes, capacitor markings, time constants, and voltage divider calculations.</p>
+        <div class="qc-meta">
+          <span>📖 Lesson 2</span>
+          <span>❓ 8 Questions</span>
+        </div>
+      </a>
+
+      <a class="quiz-card" href="lesson-03-quiz.html" id="qc-03">
+        <span class="qc-icon">💡</span>
+        <h3>Diodes, LEDs & Transistor Switches</h3>
+        <p class="qc-desc">Diode types, forward voltage, BJT vs MOSFET switching, and LED circuits.</p>
+        <div class="qc-meta">
+          <span>📖 Lesson 3</span>
+          <span>❓ 8 Questions</span>
+        </div>
+      </a>
+
+      <a class="quiz-card" href="lesson-04-quiz.html" id="qc-04">
+        <span class="qc-icon">📐</span>
+        <h3>Op-Amps — The Two Golden Rules</h3>
+        <p class="qc-desc">Inverting & non-inverting amplifiers, gain calculations, comparator circuits.</p>
+        <div class="qc-meta">
+          <span>📖 Lesson 4</span>
+          <span>❓ 8 Questions</span>
+        </div>
+      </a>
+
+      <a class="quiz-card" href="lesson-05-quiz.html" id="qc-05">
+        <span class="qc-icon">🖥️</span>
+        <h3>What Is an Embedded System?</h3>
+        <p class="qc-desc">Microcontroller vs microprocessor, memory types, boot process, and toolchains.</p>
+        <div class="qc-meta">
+          <span>📖 Lesson 5</span>
+          <span>❓ 8 Questions</span>
+        </div>
+      </a>
+
+      <a class="quiz-card" href="lesson-06-quiz.html" id="qc-06">
+        <span class="qc-icon">🤖</span>
+        <h3>Your First Arduino — Blink!</h3>
+        <p class="qc-desc">Arduino IDE, setup/loop, digitalRead/Write, and basic sketch structure.</p>
+        <div class="qc-meta">
+          <span>📖 Lesson 6</span>
+          <span>❓ 8 Questions</span>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="callout tip" style="margin-top:32px">
+      <strong class="label">💡 Tip</strong>
+      Your scores are saved locally in your browser. You can retry any quiz as many times as you like — only your latest attempt is saved.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+// Show completion badges
+(function() {
+  var quizIds = [
+    { el: 'qc-01', id: 'lesson-01-ohms-law', total: 8 },
+    { el: 'qc-02', id: 'lesson-02-resistors-caps', total: 8 },
+    { el: 'qc-03', id: 'lesson-03-diodes-transistors', total: 8 },
+    { el: 'qc-04', id: 'lesson-04-opamps', total: 8 },
+    { el: 'qc-05', id: 'lesson-05-embedded-systems', total: 8 },
+    { el: 'qc-06', id: 'lesson-06-arduino-blink', total: 8 },
+  ];
+  var completed = 0;
+  quizIds.forEach(function(q) {
+    var score = QuizEngine.getScore(q.id);
+    if (score !== null) {
+      completed++;
+      var card = document.getElementById(q.el);
+      if (card) {
+        var badge = document.createElement('span');
+        badge.className = 'qc-score done';
+        badge.textContent = score + '/' + q.total;
+        card.appendChild(badge);
+      }
+    }
+  });
+  document.getElementById('total-score').textContent = completed + ' / ' + quizIds.length;
+})();
+</script>
+</body>
+</html>

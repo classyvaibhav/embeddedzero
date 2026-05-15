@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Electricity Basics & Ohm's Law — EmbeddedZero</title>
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; All Quizzes</a> &nbsp;/&nbsp; Lesson 1</div>
+    <span class="lesson-tag">Lesson 1 Quiz</span>
+    <h1>Electricity Basics &amp; Ohm's Law</h1>
+    <p class="subtitle">8 questions on voltage, current, resistance, power, and LED resistor calculations.</p>
+  </div>
+</header>
+
+<section class="lesson">
+  <div class="wrap">
+    <div id="quiz-root"></div>
+
+    <div class="lesson-nav" style="margin-top:32px">
+      <a class="prev" href="../notes/lesson-01.html">
+        <span class="direction">← Review</span>
+        <span class="title">Lesson 1 Notes</span>
+      </a>
+      <a class="next" href="lesson-02-quiz.html">
+        <span class="direction">Next Quiz →</span>
+        <span class="title">Resistors & Caps</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Quiz 1 of 6 &middot; <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+QuizEngine.init('quiz-root', {
+  id: 'lesson-01-ohms-law',
+  title: "Ohm's Law & Electricity Basics",
+  questions: [
+    {
+      question: "What is the unit of electrical resistance?",
+      options: ["Volt (V)", "Ampere (A)", "Ohm (Ω)", "Watt (W)"],
+      correct: 2,
+      explanation: "Resistance is measured in <strong>Ohms (Ω)</strong>, named after Georg Simon Ohm. Volts measure voltage, Amperes measure current, and Watts measure power."
+    },
+    {
+      question: "A 5V supply drives a circuit with a 1 kΩ resistor. What is the current?",
+      options: ["50 mA", "5 mA", "500 mA", "0.5 mA"],
+      correct: 1,
+      explanation: "Using Ohm's law: I = V / R = 5V / 1000Ω = 0.005A = <strong>5 mA</strong>."
+    },
+    {
+      question: "Which direction does conventional current flow?",
+      options: [
+        "From negative terminal to positive terminal",
+        "From positive terminal to negative terminal",
+        "In both directions simultaneously",
+        "Only through semiconductors"
+      ],
+      correct: 1,
+      explanation: "Conventional current flows from <strong>positive (+) to negative (−)</strong>. This is opposite to actual electron flow, but it's the standard convention used in circuit analysis."
+    },
+    {
+      question: "You want to drive a red LED (V<sub>f</sub> = 2V) at 20 mA from a 5V supply. What resistor do you need?",
+      options: ["100 Ω", "150 Ω", "220 Ω", "250 Ω"],
+      correct: 1,
+      explanation: "R = (V<sub>supply</sub> − V<sub>f</sub>) / I = (5 − 2) / 0.020 = 3 / 0.020 = <strong>150 Ω</strong>."
+    },
+    {
+      question: "What happens if you connect an LED directly to a 5V supply without a resistor?",
+      options: [
+        "It glows at normal brightness",
+        "It glows brighter than normal",
+        "Excessive current flows and the LED may burn out",
+        "Nothing — the LED has built-in protection"
+      ],
+      correct: 2,
+      explanation: "Without a current-limiting resistor, the current through the LED is limited only by the LED's very low internal resistance, causing <strong>excessive current</strong> that can destroy the LED instantly."
+    },
+    {
+      question: "If a resistor dissipates 0.5 W with 10 mA flowing through it, what is the voltage across it?",
+      options: ["5 V", "50 V", "0.5 V", "500 V"],
+      correct: 1,
+      explanation: "P = V × I, so V = P / I = 0.5W / 0.010A = <strong>50 V</strong>."
+    },
+    {
+      question: "Why doesn't Ohm's law apply directly to an LED?",
+      options: [
+        "LEDs only work with AC current",
+        "LEDs have a non-linear (exponential) V-I characteristic",
+        "LEDs have infinite resistance",
+        "Ohm's law only works above 10V"
+      ],
+      correct: 1,
+      explanation: "The LED's current-voltage relationship is <strong>exponential, not linear</strong>. Ohm's law (V = IR) assumes a linear relationship. That's why you use Ohm's law on the series resistor instead."
+    },
+    {
+      question: "What is the power dissipated by a 470 Ω resistor with 10V across it?",
+      options: ["21.3 mW", "213 mW", "47 mW", "4.7 W"],
+      correct: 1,
+      explanation: "P = V² / R = 10² / 470 = 100 / 470 ≈ <strong>213 mW</strong>. Note: a standard 1/4W (250 mW) resistor can just barely handle this — consider using a 1/2W rated resistor."
+    }
+  ]
+});
+</script>
+</body>
+</html>

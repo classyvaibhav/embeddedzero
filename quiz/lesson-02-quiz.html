@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Resistors, Capacitors & Voltage Dividers — EmbeddedZero</title>
+<link rel="stylesheet" href="../assets/css/notes.css">
+<link rel="stylesheet" href="../assets/css/quiz.css">
+<script src="../assets/js/theme-toggle.js?v=3"></script>
+<script src="../assets/js/quiz-engine.js"></script>
+</head>
+<body>
+
+<header class="site-bar">
+  <div class="site-bar-inner">
+    <a href="../index.html" class="site-bar-logo">⚡ <span>EmbeddedZero</span></a>
+    <nav class="site-bar-nav">
+      <a href="../index.html">Home</a>
+      <a href="../notes/index.html">Course Notes</a>
+      <a href="index.html" class="active">Quizzes</a>
+      <a href="../teaching/index.html">Teaching Guide</a>
+    </nav>
+  </div>
+</header>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">&#8962; All Quizzes</a> &nbsp;/&nbsp; Lesson 2</div>
+    <span class="lesson-tag">Lesson 2 Quiz</span>
+    <h1>Resistors, Capacitors &amp; Voltage Dividers</h1>
+    <p class="subtitle">8 questions on resistor color codes, capacitor markings, RC time constants, and voltage dividers.</p>
+  </div>
+</header>
+
+<section class="lesson">
+  <div class="wrap">
+    <div id="quiz-root"></div>
+
+    <div class="lesson-nav" style="margin-top:32px">
+      <a class="prev" href="lesson-01-quiz.html">
+        <span class="direction">← Previous Quiz</span>
+        <span class="title">Ohm's Law</span>
+      </a>
+      <a class="next" href="lesson-03-quiz.html">
+        <span class="direction">Next Quiz →</span>
+        <span class="title">Diodes & Transistors</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Quiz 2 of 6 &middot; <a href="https://github.com/classyvaibhav" target="_blank">@classyvaibhav</a> &middot; MIT License
+  </div>
+</footer>
+
+<script>
+QuizEngine.init('quiz-root', {
+  id: 'lesson-02-resistors-caps',
+  title: "Resistors, Caps & Voltage Dividers",
+  questions: [
+    {
+      question: "A resistor has bands: Brown, Black, Red, Gold. What is its value?",
+      options: ["100 Ω ± 5%", "1 kΩ ± 5%", "10 kΩ ± 5%", "10 Ω ± 5%"],
+      correct: 1,
+      explanation: "Brown=1, Black=0, Red=×100 multiplier, Gold=±5%. So 10 × 100 = <strong>1,000 Ω = 1 kΩ ± 5%</strong>."
+    },
+    {
+      question: "What does a capacitor do in a DC circuit after it is fully charged?",
+      options: [
+        "It acts as a short circuit",
+        "It acts as an open circuit (blocks DC)",
+        "It oscillates between charging and discharging",
+        "It converts DC to AC"
+      ],
+      correct: 1,
+      explanation: "Once fully charged, a capacitor <strong>blocks DC</strong> and acts like an open circuit. No more current flows through it (in ideal conditions)."
+    },
+    {
+      question: "A voltage divider has R1 = 10 kΩ (top) and R2 = 10 kΩ (bottom), powered by 5V. What is V<sub>out</sub>?",
+      options: ["5 V", "2.5 V", "0 V", "10 V"],
+      correct: 1,
+      explanation: "V<sub>out</sub> = V<sub>in</sub> × R2 / (R1 + R2) = 5 × 10k / (10k + 10k) = 5 × 0.5 = <strong>2.5 V</strong>."
+    },
+    {
+      question: "What is the time constant (τ) of a 10 kΩ resistor in series with a 100 μF capacitor?",
+      options: ["1 ms", "10 ms", "100 ms", "1 s"],
+      correct: 3,
+      explanation: "τ = R × C = 10,000 × 0.0001 = <strong>1 second</strong>. After 1τ, the capacitor charges to ~63% of the supply voltage."
+    },
+    {
+      question: "A ceramic capacitor marked '104' has a capacitance of:",
+      options: ["104 pF", "10 nF", "100 nF", "1 μF"],
+      correct: 2,
+      explanation: "The code '104' means 10 × 10<sup>4</sup> pF = 100,000 pF = <strong>100 nF (0.1 μF)</strong>. This is the most common bypass/decoupling cap value."
+    },
+    {
+      question: "Two 10 kΩ resistors in parallel have a combined resistance of:",
+      options: ["20 kΩ", "10 kΩ", "5 kΩ", "100 kΩ"],
+      correct: 2,
+      explanation: "For two equal resistors in parallel: R<sub>total</sub> = R / 2 = 10k / 2 = <strong>5 kΩ</strong>. Parallel resistors always have a lower total resistance than any individual resistor."
+    },
+    {
+      question: "Why are voltage dividers NOT recommended for powering loads that draw significant current?",
+      options: [
+        "They produce AC instead of DC",
+        "The output voltage drops because the load acts as a parallel resistance with R2",
+        "They only work with capacitors",
+        "They reverse the voltage polarity"
+      ],
+      correct: 1,
+      explanation: "When a load is connected, it appears in parallel with R2, <strong>reducing the effective bottom resistance</strong> and causing V<sub>out</sub> to drop below the designed value. Use a voltage regulator instead for powering loads."
+    },
+    {
+      question: "What tolerance does a resistor with a gold tolerance band have?",
+      options: ["±1%", "±2%", "±5%", "±10%"],
+      correct: 2,
+      explanation: "Gold = <strong>±5%</strong>. Silver = ±10%. Brown = ±1%. Red = ±2%. Gold tolerance is the most common in through-hole resistors."
+    }
+  ]
+});
+</script>
+</body>
+</html>
